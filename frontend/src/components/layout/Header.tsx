@@ -26,7 +26,7 @@ export function Header() {
 
                 </div>
                 <div className="flex flex-col">
-                    <h1 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-primary transition-colors">Monitoring</h1>
+                    <h1 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-primary transition-colors">EveryUp</h1>
                 </div>
             </Link>
 
