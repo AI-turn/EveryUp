@@ -34,41 +34,9 @@ everyup/
 
 ## 빠른 시작
 
-### Docker로 배포 (권장)
+### Docker로 실행 (권장)
 
-**1. 환경 변수 설정 (선택)**
-
-```bash
-cp .env.example .env
-# 필요 시 .env 파일에서 타임존 등 선택 옵션 수정
-```
-
-| 변수 | 설명 | 필수 |
-|------|------|:----:|
-| `TZ` | 타임존 (기본: `UTC`) | |
-| `MT_SERVER_PORT` | 서버 포트 (기본: `3001`) | |
-
-> **별도 계정 설정이 필요 없습니다.** 처음 실행 후 브라우저에서 관리자 계정을 직접 생성합니다.
-> **암호화 키와 JWT 시크릿도 별도 설정 없이** 앱이 최초 실행 시 자동 생성하여 DB에 저장합니다.
-
-**2. 실행**
-
-```bash
-docker compose up -d
-```
-
-→ http://localhost:3001 접속 후 관리자 계정 생성
-
-**3. 상태 확인**
-
-```bash
-docker compose ps
-docker compose logs -f
-```
-
----
-
-### Docker Hub에서 직접 실행
+**1. 이미지 받기**
 
 아키텍처에 맞는 이미지를 선택하세요:
 
@@ -78,8 +46,15 @@ docker compose logs -f
 | `aiturn/everyup:arm64` | ARM 서버 (AWS Graviton, Raspberry Pi 등) |
 
 ```bash
+docker pull aiturn/everyup:amd64   # x86-64
+# 또는
+docker pull aiturn/everyup:arm64   # ARM64
+```
+
+**2. 실행**
+
+```bash
 # x86-64 (amd64)
-docker pull aiturn/everyup:amd64
 docker run -d \
   --name everyup \
   -p 3001:3001 \
@@ -88,13 +63,38 @@ docker run -d \
   aiturn/everyup:amd64
 
 # ARM64
-docker pull aiturn/everyup:arm64
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
   -e TZ=Asia/Seoul \
   aiturn/everyup:arm64
+```
+
+**3. 접속**
+
+→ http://localhost:3001 접속 후 관리자 계정 생성
+
+> **별도 계정 설정이 필요 없습니다.** 처음 실행 후 브라우저에서 관리자 계정을 직접 생성합니다.
+> **암호화 키와 JWT 시크릿도 별도 설정 없이** 앱이 최초 실행 시 자동 생성하여 DB에 저장합니다.
+
+---
+
+### Docker Compose로 실행
+
+이 저장소를 클론한 경우 Docker Compose를 사용할 수 있습니다.
+
+```bash
+git clone https://github.com/AI-turn/EveryUp.git
+cd EveryUp
+docker compose up -d
+```
+
+상태 확인:
+
+```bash
+docker compose ps
+docker compose logs -f
 ```
 
 ---
