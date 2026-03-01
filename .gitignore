@@ -1,0 +1,26 @@
+# Internal documentation
+doc/
+
+# Dependencies
+node_modules/
+
+# Claude Code
+.claude/
+
+# Agent skills
+.agent/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

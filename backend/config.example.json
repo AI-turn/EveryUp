@@ -1,0 +1,61 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3001,
+    "mode": "production"
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "./data/monitoring.db"
+  },
+  "security": {
+    "encryptionKey": "your-32-char-secret-key-here-!!",
+    "adminPassword": "admin"
+  },
+  "system": {
+    "collectInterval": 5,
+    "ssh": {
+      "connectionTimeout": 10,
+      "commandTimeout": 5,
+      "maxReconnectAttempts": 10,
+      "keepAliveInterval": 30
+    }
+  },
+  "services": [
+    {
+      "id": "example-api",
+      "name": "Example API",
+      "type": "http",
+      "url": "https://jsonplaceholder.typicode.com/posts/1",
+      "method": "GET",
+      "interval": 30,
+      "timeout": 5000,
+      "expectedStatus": 200,
+      "tags": ["example", "api"]
+    }
+  ],
+  "alerts": {
+    "enabled": false,
+    "consecutiveFailures": 3,
+    "channels": {
+      "slack": {
+        "enabled": false,
+        "webhookUrl": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      },
+      "email": {
+        "enabled": false,
+        "smtp": {
+          "host": "smtp.example.com",
+          "port": 587,
+          "username": "your-email@example.com",
+          "password": "your-smtp-password"
+        },
+        "recipients": ["admin@example.com"]
+      }
+    }
+  },
+  "retention": {
+    "metrics": "7d",
+    "logs": "3d"
+  }
+}

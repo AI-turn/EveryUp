@@ -1,0 +1,52 @@
+# Binary
+server
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build directory
+tmp/
+build/
+bin/
+
+# Data (covers data/ at any depth, e.g. cmd/server/data/)
+data/
+**/data/*.db
+**/data/*.db-journal
+**/data/*.db-wal
+**/data/*.db-shm
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Config (keep example)
+config.json
+!config.example.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+build-errors.log
+
+# Test
+coverage.out
+coverage.html
+
+# Go
+vendor/
+go.work
+
+# Air
+tmp/

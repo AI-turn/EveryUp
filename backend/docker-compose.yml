@@ -1,0 +1,31 @@
+# =============================================================================
+# Backend-only Docker Compose (API without frontend)
+#
+# For the full-stack setup (backend + frontend), use docker-compose.yml
+# at the repo root:
+#   docker compose up   (from repo root)
+# =============================================================================
+
+services:
+  mt-monitoring-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mt-monitoring-api
+    ports:
+      - "3001:3001"
+    volumes:
+      - mt-data:/app/data
+      # - ./config.json:/app/config.json:ro
+    environment:
+      - TZ=Asia/Seoul
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mt-data:
+    driver: local

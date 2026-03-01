@@ -1,0 +1,149 @@
+/* Google Material Symbols & Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+@import "tailwindcss";
+
+/* Tailwind v4 Variant Setup */
+@variant dark (.dark &);
+
+@theme {
+  /* 1. Primary: 다크모드에서 조금 더 화사한 블루 채택 */
+  --color-primary: #3b76c9;
+  --color-primary-hover: #2563eb;
+  --color-primary-dark: #3F6FDB;
+
+  /* 2. Backgrounds */
+  --color-bg-main: #fbfcfe;
+  --color-bg-main-dark: #0d1117;   /* GitHub Dark 수준 — 눈 피로 감소 */
+  --color-bg-surface: #f0f5fc;
+  --color-bg-surface-dark: #161b22; /* bg와 충분한 명도차 확보 */
+
+  /* 3. UI Components */
+  --color-ui-border: #d0def2;
+  --color-ui-border-dark: #30363d;
+  --color-ui-hover: #e4edf9;
+  --color-ui-hover-dark: #1f2937;
+  --color-ui-active-dark: #374151;  /* toggle/active 상태 bg (≈ slate-700) */
+
+  /* 4. Text Colors: 대비(Contrast) 최적화 */
+  --color-text-base: #0b0f14;
+  --color-text-base-dark: #f0f4f8;
+
+  --color-text-secondary-dark: #cbd5e1; /* base와 muted 사이 (≈ slate-300) */
+
+  --color-text-muted: #4b6a8e;
+  --color-text-muted-dark: #94a3b8;
+
+  --color-text-dim: #88a8c8;
+  --color-text-dim-dark: #6b7280;   /* WCAG AA 대비비 충족 (was #484f58) */
+
+  /* 5. Status: 다크모드 가독성을 고려한 미세 조정 */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* 6. Chart/Visualization tokens (모니터링·차트 컴포넌트 전용) */
+  --color-chart-bg: #131920;        /* chart container 배경 */
+  --color-chart-surface: #1c2433;   /* chart 내부 surface */
+  --color-chart-hover: #243040;     /* chart hover 상태 */
+  --color-chart-border: #2e3c4a;    /* chart border/divider */
+  --color-text-chart-dim: #6b7c8d;  /* chart dim 텍스트 */
+}
+
+/* Variable Scoping: 다크모드 대응을 위한 변수 재할당
+*/
+:root {
+  --app-bg: var(--color-bg-main);
+  --app-text: var(--color-text-base);
+  --app-text-muted: var(--color-text-muted);
+  --card-bg: var(--color-bg-surface);
+  --border-color: var(--color-ui-border);
+
+  /* Toast Light */
+  --toast-bg: #ffffff;
+  --toast-color: var(--color-text-base);
+  --toast-border: var(--color-ui-border);
+}
+
+.dark {
+  /* --color-primary 오버라이드: bg-primary / text-primary / ring-primary 등 모든 Tailwind primary 유틸리티에 자동 반영 */
+  --color-primary: var(--color-primary-dark);
+
+  --app-bg: var(--color-bg-main-dark);
+  --app-text: var(--color-text-base-dark);
+  --app-text-muted: var(--color-text-muted-dark);
+  --card-bg: var(--color-bg-surface-dark);
+  --border-color: var(--color-ui-border-dark);
+
+  /* Toast Dark */
+  --toast-bg: #161b22;
+  --toast-color: var(--color-text-base-dark);
+  --toast-border: var(--color-ui-border-dark);
+}
+
+/* Reset & Base Styles */
+body {
+  margin: 0;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  /*font-family: 'Inter', system-ui, sans-serif;*/
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Global Focus Ring: 사용자 경험(UX) 개선 */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Icon Styling */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Status Pulse: 계열색에 맞춰 미세 조정 */
+.status-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: pulse-ring 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Typography Utility */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

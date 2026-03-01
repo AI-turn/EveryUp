@@ -1,0 +1,48 @@
+# =============================================================================
+# Docker Build Context Exclusions
+# =============================================================================
+
+# Version control
+.git
+.gitignore
+
+# IDE / Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment & secrets
+.env
+.env.*
+**/.env
+**/.env.*
+backend/config.json
+frontend/.env
+frontend/.env.*
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Documentation (not needed in image)
+doc/
+*.md
+LICENSE
+
+# Log agent (separate image)
+log-agent/
+
+# Node modules (re-installed in build)
+frontend/node_modules/
+
+# Build artifacts
+frontend/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude / dev tools
+.claude/
