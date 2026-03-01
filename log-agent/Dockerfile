@@ -7,8 +7,8 @@ COPY conf/parsers.conf    /fluent-bit/etc/parsers.conf
 COPY conf/mt_transform.lua /fluent-bit/etc/mt_transform.lua
 
 # Copy entrypoint (parses MT_ENDPOINT into host/port/tls)
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Use --chmod to avoid RUN chmod (fluent-bit image has no shell on ARM)
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
 
 # Default environment variables
 ENV MT_LOG_LEVEL=info

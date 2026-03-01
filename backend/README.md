@@ -30,7 +30,7 @@ air
 docker run -d -p 3001:3001 \
   -v ./config.json:/app/config.json:ro \
   -v mt-data:/app/data \
-  username/mt-monitoring
+  aiturn/mt-monitoring:latest
 ```
 
 ## 설정

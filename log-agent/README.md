@@ -11,8 +11,8 @@ Fluent Bit 기반 로그 수집 에이전트입니다. 모니터링할 서버에
 docker build -t mt-log-agent .
 
 # Docker Hub 푸시
-docker build -t your-dockerhub-user/mt-log-agent:latest .
-docker push your-dockerhub-user/mt-log-agent:latest
+docker build -t aiturn/mt-log-agent:latest .
+docker push aiturn/mt-log-agent:latest
 ```
 
 ### 멀티 플랫폼 (amd64 + arm64)
@@ -20,7 +20,7 @@ docker push your-dockerhub-user/mt-log-agent:latest
 ```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t your-dockerhub-user/mt-log-agent:latest \
+  -t aiturn/mt-log-agent:latest \
   --push \
   .
 ```
@@ -64,7 +64,7 @@ docker run -d \
   -e MT_ENDPOINT=https://monitoring.example.com \
   -e MT_API_KEY=mt_your_api_key_here \
   -e MT_FILE=/var/log/app/*.log \
-  your-dockerhub-user/mt-log-agent:latest
+  aiturn/mt-log-agent:latest
 ```
 
 ### Docker Compose (사이드카 패턴)
@@ -79,7 +79,7 @@ services:
       - app-logs:/var/log/app
 
   mt-log-agent:
-    image: your-dockerhub-user/mt-log-agent:latest
+    image: aiturn/mt-log-agent:latest
     volumes:
       - app-logs:/var/log/app:ro
     environment:

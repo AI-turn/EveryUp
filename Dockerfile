@@ -31,7 +31,7 @@ RUN pnpm run build
 # -----------------------------------------------------------------------------
 # Stage 2: Build Go Backend
 # -----------------------------------------------------------------------------
-FROM --platform=$BUILDPLATFORM golang:1.22-alpine AS backend
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS backend
 
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
@@ -84,11 +84,6 @@ ENV MT_SERVER_HOST=0.0.0.0
 ENV MT_SERVER_PORT=3001
 ENV MT_DATABASE_PATH=/app/data/monitoring.db
 ENV TZ=UTC
-
-# REQUIRED at runtime — GitHub OAuth App credentials:
-#   MT_AUTH_GITHUB_CLIENTID      — GitHub OAuth App Client ID
-#   MT_AUTH_GITHUB_CLIENTSECRET  — GitHub OAuth App Client Secret
-#   MT_AUTH_GITHUB_REDIRECTURL   — e.g. https://your-domain.com/api/v1/auth/github/callback
 
 EXPOSE 3001
 

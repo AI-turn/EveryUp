@@ -3,7 +3,7 @@
 > 셀프 호스팅 통합 모니터링 플랫폼 — 서비스 헬스체크, 인프라 리소스, 알림을 하나의 대시보드에서 관리합니다.
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Go](https://img.shields.io/badge/Go-1.22-00ADD8?logo=go)
+![Go](https://img.shields.io/badge/Go-1.24-00ADD8?logo=go)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)
 
@@ -76,7 +76,7 @@ docker run -d \
   -p 3001:3001 \
   -v mt-data:/app/data \
   -e TZ=Asia/Seoul \
-  your-dockerhub-user/mt-monitoring:latest
+  aiturn/mt-monitoring:latest
 ```
 
 ---
@@ -109,7 +109,7 @@ docker run -d \
   -v /var/log/myapp:/var/log/app:ro \
   -e MT_ENDPOINT=http://your-mt-server:3001 \
   -e MT_API_KEY=mt_your_api_key \
-  your-dockerhub-user/mt-log-agent:latest
+  aiturn/mt-log-agent:latest
 ```
 
 자세한 내용은 [log-agent/README.md](log-agent/README.md)를 참고하세요.
