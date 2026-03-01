@@ -70,17 +70,31 @@ docker compose logs -f
 
 ### Docker Hub에서 직접 실행
 
-```bash
-# 이미지 받기
-docker pull aiturn/everyup:latest
+아키텍처에 맞는 이미지를 선택하세요:
 
-# 실행
+| 태그 | 대상 |
+|------|------|
+| `aiturn/everyup:amd64` | x86-64 서버 (일반 클라우드 VM) |
+| `aiturn/everyup:arm64` | ARM 서버 (AWS Graviton, Raspberry Pi 등) |
+
+```bash
+# x86-64 (amd64)
+docker pull aiturn/everyup:amd64
 docker run -d \
   --name everyup \
   -p 3001:3001 \
-  -v mt-data:/app/data \
+  -v everyup-data:/app/data \
   -e TZ=Asia/Seoul \
-  aiturn/everyup:latest
+  aiturn/everyup:amd64
+
+# ARM64
+docker pull aiturn/everyup:arm64
+docker run -d \
+  --name everyup \
+  -p 3001:3001 \
+  -v everyup-data:/app/data \
+  -e TZ=Asia/Seoul \
+  aiturn/everyup:arm64
 ```
 
 ---
@@ -109,11 +123,19 @@ pnpm dev
 외부 서비스의 로그를 수집하려면 해당 서버에 `everyup-log-agent`를 배포합니다.
 
 ```bash
+# amd64
 docker run -d \
   -v /var/log/myapp:/var/log/app:ro \
-  -e MT_ENDPOINT=http://your-mt-server:3001 \
+  -e MT_ENDPOINT=http://your-everyup-server:3001 \
   -e MT_API_KEY=mt_your_api_key \
-  aiturn/everyup-log-agent:latest
+  aiturn/everyup-log-agent:amd64
+
+# arm64
+docker run -d \
+  -v /var/log/myapp:/var/log/app:ro \
+  -e MT_ENDPOINT=http://your-everyup-server:3001 \
+  -e MT_API_KEY=mt_your_api_key \
+  aiturn/everyup-log-agent:arm64
 ```
 
 자세한 내용은 [log-agent/README.md](log-agent/README.md)를 참고하세요.
