@@ -34,12 +34,14 @@ jobs:
         working-directory: frontend
         run: pnpm install --frozen-lockfile
 
+      # Vite는 .env.production 파일을 production 빌드 시 확실하게 읽음
+      - name: Create demo environment file
+        working-directory: frontend
+        run: |
+          printf 'VITE_USE_MOCK=true\nVITE_DEMO_MODE=true\nVITE_BASE_PATH=/EveryUp/\n' > .env.production
+
       - name: Build demo
         working-directory: frontend
-        env:
-          VITE_USE_MOCK: 'true'
-          VITE_DEMO_MODE: 'true'
-          VITE_BASE_PATH: /EveryUp/
         run: pnpm run build
 
       # GitHub Pages SPA 라우팅: 모든 경로에서 index.html을 서빙
