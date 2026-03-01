@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/config"
+	"github.com/aiturn/everyup/internal/config"
 )
 
 // SettingsHandler handles system settings requests

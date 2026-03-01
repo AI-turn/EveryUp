@@ -58,7 +58,7 @@ func SignToken(claims UserClaims) (string, error) {
 	claims.RegisteredClaims = jwt.RegisteredClaims{
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
-		Issuer:    "mt-monitoring",
+		Issuer:    "everyup",
 	}
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return t.SignedString(jwtSecret)

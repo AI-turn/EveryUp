@@ -25,13 +25,13 @@ export function Footer() {
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden">
               <img
                 src={theme === 'dark' ? logoDark : logo}
-                alt="Monitoring Logo"
+                alt="EveryUp Logo"
                 className="h-full w-full object-contain opacity-80 hover:opacity-100 transition-opacity"
               />
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                MT Monitoring
+                EveryUp
               </span>
               <span className="text-xs text-slate-500 dark:text-text-muted-dark">
                 © {currentYear} {t('footer.rights')}
@@ -42,7 +42,7 @@ export function Footer() {
           {/* Center - GitHub + Bug Report */}
           <div className="flex items-center gap-5">
             <a
-              href="https://github.com/Al-trun/Monitoring"
+              href="https://github.com/AI-turn/Monitoring"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-text-muted-dark hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -51,7 +51,7 @@ export function Footer() {
               <span>GitHub</span>
             </a>
             <a
-              href="https://github.com/Al-trun/Monitoring/issues"
+              href="https://github.com/AI-turn/Monitoring/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-text-muted-dark hover:text-red-500 dark:hover:text-red-400 transition-colors"

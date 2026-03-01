@@ -19,7 +19,7 @@ class ApiService {
   }
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const token = localStorage.getItem('mt_jwt_token');
+    const token = localStorage.getItem('everyup_jwt_token');
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ class ApiService {
     });
 
     if (response.status === 401) {
-      localStorage.removeItem('mt_jwt_token');
+      localStorage.removeItem('everyup_jwt_token');
       window.location.href = '/login';
       throw new Error('Unauthorized');
     }

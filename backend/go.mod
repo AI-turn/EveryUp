@@ -1,4 +1,4 @@
-module github.com/mt-monitoring/api
+module github.com/aiturn/everyup
 
 go 1.24.0
 

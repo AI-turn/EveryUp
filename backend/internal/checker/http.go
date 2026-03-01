@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // HTTPChecker performs HTTP health checks
@@ -58,7 +58,7 @@ func (c *HTTPChecker) Check(config *models.HTTPConfig) *CheckResult {
 
 	// Set default User-Agent
 	if req.Header.Get("User-Agent") == "" {
-		req.Header.Set("User-Agent", "MT-Monitoring/1.0")
+		req.Header.Set("User-Agent", "EveryUp/1.0")
 	}
 
 	// Perform request

@@ -1,6 +1,6 @@
 # MT Log Agent
 
-Fluent Bit 기반 로그 수집 에이전트입니다. 모니터링할 서버에 배포하여 로그 파일을 MT Monitoring으로 전송합니다.
+Fluent Bit 기반 로그 수집 에이전트입니다. 모니터링할 서버에 배포하여 로그 파일을 EveryUp으로 전송합니다.
 
 ---
 
@@ -8,11 +8,11 @@ Fluent Bit 기반 로그 수집 에이전트입니다. 모니터링할 서버에
 
 ```bash
 # log-agent/ 폴더에서 실행
-docker build -t mt-log-agent .
+docker build -t everyup-log-agent .
 
 # Docker Hub 푸시
-docker build -t aiturn/mt-log-agent:latest .
-docker push aiturn/mt-log-agent:latest
+docker build -t aiturn/everyup-log-agent:latest .
+docker push aiturn/everyup-log-agent:latest
 ```
 
 ### 멀티 플랫폼 (amd64 + arm64)
@@ -20,7 +20,7 @@ docker push aiturn/mt-log-agent:latest
 ```bash
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t aiturn/mt-log-agent:latest \
+  -t aiturn/everyup-log-agent:latest \
   --push \
   .
 ```
@@ -31,7 +31,7 @@ docker buildx build \
 
 | 변수 | 설명 | 기본값 |
 |------|------|--------|
-| `MT_ENDPOINT` | MT Monitoring 서버 URL **(권장)** | — |
+| `MT_ENDPOINT` | EveryUp 서버 URL **(권장)** | — |
 | `MT_API_KEY` | 서비스 API Key | `changeme` **(필수 변경)** |
 | `MT_FILE` | 수집할 로그 파일 경로 (glob 지원) | `/var/log/app/*.log` |
 | `MT_LOG_LEVEL` | Fluent Bit 로그 레벨 | `info` |
@@ -48,23 +48,23 @@ docker buildx build \
 
 ```bash
 docker run -d \
-  --name mt-log-agent \
+  --name everyup-log-agent \
   -v /var/log/myapp:/var/log/app:ro \
   -e MT_ENDPOINT=http://localhost:3001 \
   -e MT_API_KEY=mt_your_api_key_here \
-  mt-log-agent
+  everyup-log-agent
 ```
 
 ### 원격 MT 서버
 
 ```bash
 docker run -d \
-  --name mt-log-agent \
+  --name everyup-log-agent \
   -v /var/log/myapp:/var/log/app:ro \
   -e MT_ENDPOINT=https://monitoring.example.com \
   -e MT_API_KEY=mt_your_api_key_here \
   -e MT_FILE=/var/log/app/*.log \
-  aiturn/mt-log-agent:latest
+  aiturn/everyup-log-agent:latest
 ```
 
 ### Docker Compose (사이드카 패턴)
@@ -79,7 +79,7 @@ services:
       - app-logs:/var/log/app
 
   mt-log-agent:
-    image: aiturn/mt-log-agent:latest
+    image: aiturn/everyup-log-agent:latest
     volumes:
       - app-logs:/var/log/app:ro
     environment:
@@ -97,7 +97,7 @@ volumes:
 
 ## API Key 발급
 
-MT Monitoring 대시보드 → **서비스 상세** → **Integration** 탭에서 API Key를 발급받습니다.
+EveryUp 대시보드 → **서비스 상세** → **Integration** 탭에서 API Key를 발급받습니다.
 
 ---
 

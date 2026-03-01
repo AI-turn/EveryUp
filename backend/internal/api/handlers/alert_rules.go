@@ -3,8 +3,8 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // AlertRuleHandler handles alert rule CRUD operations

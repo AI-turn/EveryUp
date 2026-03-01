@@ -1,6 +1,6 @@
 package collector
 
-import "github.com/mt-monitoring/api/internal/models"
+import "github.com/aiturn/everyup/internal/models"
 
 // MetricCollector is the common interface for all metric collection backends.
 // LocalCollector implements it using gopsutil, SSHCollector will implement it

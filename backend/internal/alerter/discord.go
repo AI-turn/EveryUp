@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // DiscordProvider sends alerts to Discord via webhook

@@ -10,9 +10,9 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/mt-monitoring/api/internal/collector/parser"
-	"github.com/mt-monitoring/api/internal/config"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/collector/parser"
+	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // Compile-time check that SSHCollector implements MetricCollector.

@@ -1,4 +1,4 @@
-# MT Monitoring API
+# EveryUp API
 
 Go (Fiber) + SQLite + WebSocket 기반 모니터링 백엔드 서버
 
@@ -30,7 +30,7 @@ air
 docker run -d -p 3001:3001 \
   -v ./config.json:/app/config.json:ro \
   -v mt-data:/app/data \
-  aiturn/mt-monitoring:latest
+  aiturn/everyup:latest
 ```
 
 ## 설정
@@ -159,7 +159,7 @@ ws.onmessage = (event) => {
 CGO_ENABLED=0 go build -o server ./cmd/server
 
 # Docker 이미지 빌드
-docker build -t mt-monitoring .
+docker build -t everyup .
 ```
 
 ## 아키텍처

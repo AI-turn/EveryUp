@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/collector"
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/collector"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // HostHandler handles host-related requests

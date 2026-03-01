@@ -6,9 +6,9 @@ import (
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/crypto"
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/crypto"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // apiKeyCache maps SHA-256 hash → *models.Service for fast API key lookups.

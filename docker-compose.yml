@@ -1,13 +1,13 @@
 services:
-  mt-monitoring:
+  everyup:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mt-monitoring
+    container_name: everyup
     ports:
       - "3001:3001"
     volumes:
-      - mt-data:/app/data
+      - everyup-data:/app/data
     env_file:
       - .env
     restart: unless-stopped
@@ -19,5 +19,5 @@ services:
       start_period: 10s
 
 volumes:
-  mt-data:
+  everyup-data:
     driver: local

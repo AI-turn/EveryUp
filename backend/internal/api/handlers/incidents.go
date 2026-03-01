@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/database"
+	"github.com/aiturn/everyup/internal/database"
 )
 
 // IncidentHandler handles incident-related requests

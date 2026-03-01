@@ -1,5 +1,5 @@
 # =============================================================================
-# MT Monitoring - Full-Stack Dockerfile
+# EveryUp - Full-Stack Dockerfile
 # Build context: repo root (c:\dev\mt-app or git repo root)
 # Result: Single container — Go backend serves API + React SPA
 # Supports: linux/amd64, linux/arm64

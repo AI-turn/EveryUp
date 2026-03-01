@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // TCPChecker performs TCP port health checks

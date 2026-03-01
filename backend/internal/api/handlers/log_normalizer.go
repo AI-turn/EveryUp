@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // normalizeRawLogs detects the format of the incoming JSON body and converts it

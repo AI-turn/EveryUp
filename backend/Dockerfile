@@ -1,11 +1,11 @@
 # =============================================================================
 # Backend-only Dockerfile
-# Build context: mt-monitoring-api/
+# Build context: everyup/
 # Use this for backend-only deployments (API without frontend).
 #
 # For the full-stack build (backend + frontend in one container),
 # use the Dockerfile at the repo root:
-#   docker build -f Dockerfile -t mt-monitoring .   (from repo root)
+#   docker build -f Dockerfile -t everyup .   (from repo root)
 #   docker compose up                               (from repo root)
 # =============================================================================
 

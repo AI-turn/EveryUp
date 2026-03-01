@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/crypto"
+	"github.com/aiturn/everyup/internal/crypto"
 	_ "modernc.org/sqlite" // Pure Go SQLite driver (no CGO required)
 )
 

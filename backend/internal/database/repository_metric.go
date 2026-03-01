@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // MetricRepository handles metric data operations

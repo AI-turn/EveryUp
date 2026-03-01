@@ -1,5 +1,5 @@
 -- mt_transform.lua
--- Transforms Fluent Bit records into MT monitoring native format:
+-- Transforms Fluent Bit records into EveryUp native format:
 --   { "level": "error|warn|info", "message": "...", "metadata": {...} }
 
 function mt_transform(tag, timestamp, record)

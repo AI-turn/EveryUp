@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/crypto"
+	"github.com/aiturn/everyup/internal/crypto"
 )
 
 // JWTAuth validates the JWT from the Authorization: Bearer <token> header.

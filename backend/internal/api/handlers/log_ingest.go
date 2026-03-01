@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/alerter"
-	"github.com/mt-monitoring/api/internal/config"
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/alerter"
+	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 const maxMessageBytes = 10 * 1024  // 10 KB

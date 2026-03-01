@@ -6,9 +6,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/config"
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // Manager manages alert dispatching to multiple providers

@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/crypto"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/crypto"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // HostRepository handles host data operations

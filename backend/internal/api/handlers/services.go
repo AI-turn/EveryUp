@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/api/middleware"
-	"github.com/mt-monitoring/api/internal/checker"
-	"github.com/mt-monitoring/api/internal/crypto"
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/api/middleware"
+	"github.com/aiturn/everyup/internal/checker"
+	"github.com/aiturn/everyup/internal/crypto"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // ServiceHandler handles service-related requests

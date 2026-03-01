@@ -1,9 +1,9 @@
 # =============================================================================
-# MT Monitoring API - Makefile
+# EveryUp - Makefile
 # =============================================================================
 
 # Variables
-DOCKER_REPO ?= username/mt-monitoring
+DOCKER_REPO ?= aiturn/everyup
 VERSION ?= $(shell date +%Y%m%d)
 PLATFORMS ?= linux/amd64,linux/arm64
 
@@ -39,19 +39,19 @@ docker-build: ## Build Docker image for current platform
 docker-run: ## Run Docker container
 	docker run -d -p 3001:3001 \
 		-v $(PWD)/config.json:/app/config.json:ro \
-		-v mt-data:/app/data \
-		--name mt-monitoring \
+		-v everyup-data:/app/data \
+		--name everyup \
 		$(DOCKER_REPO):latest
 
 docker-stop: ## Stop Docker container
-	docker stop mt-monitoring && docker rm mt-monitoring
+	docker stop everyup && docker rm everyup
 
 # =============================================================================
 # Docker - Multi Platform (requires docker buildx)
 # =============================================================================
 
 docker-buildx-setup: ## Setup docker buildx for multi-arch builds
-	docker buildx create --name mtbuilder --use --bootstrap || docker buildx use mtbuilder
+	docker buildx create --name everyup-builder --use --bootstrap || docker buildx use everyup-builder
 
 docker-buildx: docker-buildx-setup ## Build multi-arch image (amd64 + arm64)
 	docker buildx build \

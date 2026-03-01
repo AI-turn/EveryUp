@@ -5,10 +5,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/mt-monitoring/api/internal/api/handlers"
-	"github.com/mt-monitoring/api/internal/api/middleware"
-	"github.com/mt-monitoring/api/internal/checker"
-	"github.com/mt-monitoring/api/internal/collector"
+	"github.com/aiturn/everyup/internal/api/handlers"
+	"github.com/aiturn/everyup/internal/api/middleware"
+	"github.com/aiturn/everyup/internal/checker"
+	"github.com/aiturn/everyup/internal/collector"
 )
 
 // SetupRoutes configures all API routes

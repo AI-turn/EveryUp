@@ -4,8 +4,8 @@ import (
 	"database/sql"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/crypto"
-	"github.com/mt-monitoring/api/internal/database"
+	"github.com/aiturn/everyup/internal/crypto"
+	"github.com/aiturn/everyup/internal/database"
 	"golang.org/x/crypto/bcrypt"
 )
 

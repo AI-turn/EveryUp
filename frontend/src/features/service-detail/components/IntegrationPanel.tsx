@@ -209,7 +209,7 @@ logger.warning('Slow query detected')
   // ── Agent Snippets (Fluent Bit) ──
   const agentSnippets: Record<string, string> = {
     config: `# fluent-bit.conf — Fluent Bit 설정 파일
-# 파일 tail → MT Monitoring API로 전송
+# 파일 tail → EveryUp API로 전송
 
 [SERVICE]
     flush           1
@@ -257,8 +257,8 @@ services:
     volumes:
       - app-logs:/var/log/myapp
 
-  mt-agent:
-    image: ghcr.io/mt-monitoring/fluent-bit:latest
+  everyup-agent:
+    image: aiturn/everyup-log-agent:latest
     volumes:
       - app-logs:/var/log/myapp:ro
     environment:
@@ -278,8 +278,8 @@ services:
     image: myapp:latest
     # 앱은 stdout으로 로그 출력
 
-  mt-agent:
-    image: ghcr.io/mt-monitoring/fluent-bit:latest
+  everyup-agent:
+    image: aiturn/everyup-log-agent:latest
     environment:
       MT_ENDPOINT: "${ingestUrl}"
       MT_API_KEY: "${displayKey}"
@@ -557,15 +557,15 @@ WantedBy=multi-user.target
               </div>
             </div>
             <div className="relative">
-              <pre className="p-3 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre">{`docker run -d --name mt-log-agent \\
+              <pre className="p-3 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre">{`docker run -d --name everyup-log-agent \\
   -v /var/log/myapp:/var/log/myapp:ro \\
   -e MT_ENDPOINT="${window.location.origin}" \\
   -e MT_API_KEY="${displayKey}" \\
   -e MT_FILE="/var/log/myapp/*.log" \\
   --restart unless-stopped \\
-  aiturn/mt-log-agent:latest`}</pre>
+  aiturn/everyup-log-agent:latest`}</pre>
               <button
-                onClick={() => copy(`docker run -d --name mt-log-agent \\\n  -v /var/log/myapp:/var/log/myapp:ro \\\n  -e MT_ENDPOINT="${window.location.origin}" \\\n  -e MT_API_KEY="${displayKey}" \\\n  -e MT_FILE="/var/log/myapp/*.log" \\\n  --restart unless-stopped \\\n  aiturn/mt-log-agent:latest`)}
+                onClick={() => copy(`docker run -d --name everyup-log-agent \\\n  -v /var/log/myapp:/var/log/myapp:ro \\\n  -e MT_ENDPOINT="${window.location.origin}" \\\n  -e MT_API_KEY="${displayKey}" \\\n  -e MT_FILE="/var/log/myapp/*.log" \\\n  --restart unless-stopped \\\n  aiturn/everyup-log-agent:latest`)}
                 className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
                 title={t('services.integration.snippets.copy')}
               >

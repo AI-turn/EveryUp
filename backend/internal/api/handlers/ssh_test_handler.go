@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/mt-monitoring/api/internal/config"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/models"
 	"golang.org/x/crypto/ssh"
 )
 

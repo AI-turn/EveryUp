@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // AlertRuleRepository handles alert rule data operations

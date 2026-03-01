@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-const STORAGE_KEY = 'mt_jwt_token'
+const STORAGE_KEY = 'everyup_jwt_token'
 
 interface User {
   user_id: number

@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mt-monitoring/api/internal/database"
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // ServiceRuleEvaluator evaluates alert rules against incoming endpoint check results.

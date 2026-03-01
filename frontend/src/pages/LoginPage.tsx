@@ -78,7 +78,7 @@ export function LoginPage() {
             <MaterialIcon name="monitor_heart" className="text-3xl text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-white">
-            {isSetup ? '초기 설정' : 'MT Monitoring'}
+            {isSetup ? '초기 설정' : 'EveryUp'}
           </h1>
           <p className="text-slate-400 text-sm mt-1">
             {isSetup ? '관리자 계정을 생성하세요' : '관리자 계정으로 로그인하세요'}

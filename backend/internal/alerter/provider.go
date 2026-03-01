@@ -3,7 +3,7 @@ package alerter
 import (
 	"time"
 
-	"github.com/mt-monitoring/api/internal/models"
+	"github.com/aiturn/everyup/internal/models"
 )
 
 // AlertProvider defines the interface for sending notifications

@@ -7,11 +7,11 @@
 # =============================================================================
 
 services:
-  mt-monitoring-api:
+  everyup-api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mt-monitoring-api
+    container_name: everyup-api
     ports:
       - "3001:3001"
     volumes:
