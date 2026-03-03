@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../../../components/common';
 import type { Resource } from '../../../mocks/monitoring/resourceList.mock';
 
-interface ResourceCardProps {
+interface InfraCardProps {
     resource: Resource;
     onClick: () => void;
 }
@@ -26,7 +26,7 @@ const typeBadgeColors: Record<Resource['type'], string> = {
     container: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400',
 };
 
-export function ResourceCard({ resource, onClick }: ResourceCardProps) {
+export function InfraCard({ resource, onClick }: InfraCardProps) {
     const { t } = useTranslation();
     return (
         <div
@@ -66,7 +66,7 @@ export function ResourceCard({ resource, onClick }: ResourceCardProps) {
 
             {/* Footer: IP + badges */}
             <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-ui-border-dark/50">
-                <span className="text-xs text-slate-500 dark:text-text-muted-dark font-mono">
+                <span className="text-xs text-slate-500 dark:text-text-muted-dark font-mono min-w-0 truncate">
                     {resource.ip}
                     {resource.isRemote && resource.sshPort ? `:${resource.sshPort}` : ''}
                 </span>

@@ -33,19 +33,18 @@ const hostSchema = z.object({
         }
         if (data.sshAuthType === 'password' && (!data.sshPassword || data.sshPassword.trim() === '')) {
             // For edit mode, password can be empty (meaning no change)
-            // We'll handle this in the submit logic or by checking if it's edit mode
         }
     }
 });
 
 type HostFormValues = z.infer<typeof hostSchema>;
 
-interface HostFormProps {
+interface InfraFormProps {
     onSuccess: () => void;
     host?: Host;
 }
 
-export function HostForm({ onSuccess, host }: HostFormProps) {
+export function InfraForm({ onSuccess, host }: InfraFormProps) {
     const { t } = useTranslation();
     const { closePanel } = useSidePanel();
     const isEditMode = !!host;

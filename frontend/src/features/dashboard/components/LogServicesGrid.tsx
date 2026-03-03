@@ -57,7 +57,7 @@ export function LogServicesGrid() {
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-20 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
           ))}
@@ -79,7 +79,7 @@ export function LogServicesGrid() {
 
       {/* Grid */}
       {!loading && displayItems.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {displayItems.map((service) => (
             <LogServiceCard
               key={service.id}

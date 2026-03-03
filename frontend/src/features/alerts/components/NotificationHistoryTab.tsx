@@ -118,7 +118,7 @@ export function NotificationHistoryTab() {
     <div className="space-y-6">
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white dark:bg-bg-surface-dark rounded-lg p-4 shadow-sm border border-gray-200 dark:border-ui-border-dark">
             <div className="flex items-center justify-between">
               <div>

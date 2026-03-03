@@ -56,8 +56,8 @@ export function NotificationRulesTable() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark/30">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark/30">
+        <table className="w-full min-w-100 text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 dark:bg-ui-hover-dark/50 border-b border-slate-200 dark:border-ui-border-dark">
               <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">

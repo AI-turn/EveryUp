@@ -23,13 +23,13 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
     >
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center shrink-0">
             <MaterialIcon name={service.icon} className="text-primary" />
           </div>
-          <div>
-            <h3 className="font-bold text-sm">{service.name}</h3>
-            <p className="text-xs text-slate-500">{service.cluster}</p>
+          <div className="min-w-0">
+            <h3 className="font-bold text-sm truncate">{service.name}</h3>
+            <p className="text-xs text-slate-500 truncate">{service.cluster}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">

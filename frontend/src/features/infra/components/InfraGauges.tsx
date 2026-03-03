@@ -2,11 +2,11 @@ import { RadialGauge } from '../../../components/charts/RadialGauge';
 import { useMonitoringGauges } from '../../../hooks/useData';
 import { Skeleton } from '../../../components/skeleton';
 
-interface ResourceGaugesProps {
+interface InfraGaugesProps {
   hostId: string;
 }
 
-export function ResourceGauges({ hostId }: ResourceGaugesProps) {
+export function InfraGauges({ hostId }: InfraGaugesProps) {
   const { data: gauges, loading } = useMonitoringGauges(hostId);
 
   if (loading) {

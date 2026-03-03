@@ -20,7 +20,7 @@ export function ServiceHealthGrid({
   searchQuery = '',
   statusFilter = '',
   refreshKey = 0,
-  navigateTo = (id) => `/services/${id}`,
+  navigateTo = (id) => `/healthcheck/${id}`,
   maxItems,
 }: ServiceHealthGridProps) {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ export function ServiceHealthGrid({
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => navigate('/services', { state: { openAddModal: true } })}
+              onClick={() => navigate('/healthcheck', { state: { openAddModal: true } })}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
             >
               <MaterialIcon name="add" className="text-sm" />
@@ -74,7 +74,7 @@ export function ServiceHealthGrid({
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {[1, 2, 3].map((i) => (
             <ServiceCardSkeleton key={i} />
           ))}
@@ -96,14 +96,14 @@ export function ServiceHealthGrid({
           description={t('dashboard.emptyStateDesc', { defaultValue: 'Add your first service to start monitoring.' })}
           action={{
             label: t('dashboard.addService'),
-            onClick: () => navigate('/services'),
+            onClick: () => navigate('/healthcheck'),
           }}
         />
       )}
 
       {/* Grid */}
       {!loading && !error && displayServices.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {displayServices.map((service) => (
             <ServiceCard
               key={service.id}
@@ -118,7 +118,7 @@ export function ServiceHealthGrid({
       {!loading && !error && hasMore && (
         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-ui-border-dark/50 text-center">
           <button
-            onClick={() => navigate('/services')}
+            onClick={() => navigate('/healthcheck')}
             className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             {t('common.viewMore', { defaultValue: 'View More' })}

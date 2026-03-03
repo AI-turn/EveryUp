@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { MaterialIcon } from '../components/common';
 import { useTheme } from '../contexts/ThemeContext';
 import { api } from '../services/api';
+import { SectionCard, SettingRow } from '../features/settings';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -18,69 +19,6 @@ function retentionLabel(v: string) {
   const unit = v.endsWith('d') ? `일 / ${n === 1 ? 'Day' : 'Days'}` : '';
   return `${n} ${unit}`;
 }
-
-// ────────────────────────────────────────────────────────────────────────────
-// Section Card wrapper
-// ────────────────────────────────────────────────────────────────────────────
-
-function SectionCard({
-  icon,
-  title,
-  subtitle,
-  children,
-}: {
-  icon: string;
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <MaterialIcon name={icon} className="text-primary text-lg" />
-        </div>
-        <div>
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">{title}</h2>
-          {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">{subtitle}</p>
-          )}
-        </div>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Row component for settings items
-// ────────────────────────────────────────────────────────────────────────────
-
-function SettingRow({
-  label,
-  description,
-  children,
-}: {
-  label: string;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-4 py-4 border-b border-slate-100 dark:border-ui-border-dark last:border-0">
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-slate-900 dark:text-white">{label}</p>
-        {description && (
-          <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">{description}</p>
-        )}
-      </div>
-      <div className="shrink-0">{children}</div>
-    </div>
-  );
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Main Page
-// ────────────────────────────────────────────────────────────────────────────
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation();

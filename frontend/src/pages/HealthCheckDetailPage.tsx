@@ -7,17 +7,17 @@ import { toast } from 'react-hot-toast';
 import { MaterialIcon, Toggle } from '../components/common';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 import {
-  ServiceIdentity,
+  HealthCheckIdentity,
   RealtimeMetrics,
   ResponseTimeChart,
   UptimeCalendar,
-} from '../features/service-detail';
-import { ServiceForm } from '../features/services/components/ServiceForm';
+} from '../features/healthcheck';
+import { HealthCheckForm } from '../features/healthcheck/components/HealthCheckForm';
 import { useSidePanel } from '../contexts/SidePanelContext';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { api, Service } from '../services/api';
 
-export function ServiceDetailPage() {
+export function HealthCheckDetailPage() {
   const { serviceId } = useParams<{ serviceId: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -33,7 +33,6 @@ export function ServiceDetailPage() {
 
   const dateLocale = useMemo(() => (i18n.language.startsWith('ko') ? ko : enUS), [i18n.language]);
 
-  // Fetch service data
   const fetchService = useCallback(async () => {
     if (!serviceId) return;
 
@@ -75,14 +74,12 @@ export function ServiceDetailPage() {
     if (!service) return;
     openPanel(
       t('services.detail.manage'),
-      <ServiceForm onSuccess={fetchService} service={service} />
+      <HealthCheckForm onSuccess={fetchService} service={service} />
     );
   };
 
-  // Auto-refresh every 5 seconds when live mode is enabled
   const { refresh } = useAutoRefresh(handleRefresh, 5000, isLive);
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -94,7 +91,6 @@ export function ServiceDetailPage() {
     );
   }
 
-  // Error state
   if (error || !service) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
@@ -112,7 +108,6 @@ export function ServiceDetailPage() {
     );
   }
 
-  // Map service status to identity status
   const getIdentityStatus = (status: Service['status']): 'online' | 'offline' | 'degraded' => {
     switch (status) {
       case 'healthy':
@@ -130,7 +125,7 @@ export function ServiceDetailPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
         <Breadcrumbs
           items={[
-            { label: t('nav.healthcheck'), href: '/services' },
+            { label: t('nav.healthcheck'), href: '/healthcheck' },
             { label: service.name },
           ]}
         />
@@ -179,7 +174,7 @@ export function ServiceDetailPage() {
       </div>
 
       {/* Service Identity */}
-      <ServiceIdentity
+      <HealthCheckIdentity
         name={service.name}
         endpoint={service.url || service.host || '-'}
         lastCheckedAt={service.lastCheckedAt}

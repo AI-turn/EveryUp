@@ -13,7 +13,7 @@ import {
 import { useMonitoringTrends } from '../../../hooks/useData';
 import { Skeleton } from '../../../components/skeleton';
 
-interface ResourceTrendsProps {
+interface InfraTrendsProps {
   hostId: string;
 }
 
@@ -30,7 +30,7 @@ function getIsDark() {
   return document.documentElement.classList.contains('dark');
 }
 
-export function ResourceTrends({ hostId }: ResourceTrendsProps) {
+export function InfraTrends({ hostId }: InfraTrendsProps) {
   const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<'6H' | '12H' | '24H'>('6H');
   const { data: charts, loading } = useMonitoringTrends(hostId, timeRange.toLowerCase());

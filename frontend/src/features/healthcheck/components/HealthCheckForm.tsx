@@ -72,12 +72,12 @@ const serviceSchema = z.object({
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
 
-interface ServiceFormProps {
+interface HealthCheckFormProps {
     onSuccess: () => void;
     service?: Service;
 }
 
-export function ServiceForm({ onSuccess, service }: ServiceFormProps) {
+export function HealthCheckForm({ onSuccess, service }: HealthCheckFormProps) {
     const { t } = useTranslation();
     const { closePanel } = useSidePanel();
     const isEditMode = !!service;
@@ -412,7 +412,7 @@ export function ServiceForm({ onSuccess, service }: ServiceFormProps) {
                 )}
             </div>
 
-            <div className="pt-8 flex gap-3 sticky bottom-0 bg-white dark:bg-bg-surface-dark py-4 mt-auto">
+            <div className="pt-8 flex gap-3 sticky bottom-16 lg:bottom-0 bg-white dark:bg-bg-surface-dark py-4 mt-auto">
                 <button
                     type="button"
                     onClick={closePanel}

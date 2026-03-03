@@ -29,8 +29,8 @@ export function ProcessTable({ hostId }: ProcessTableProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-chart-border bg-white dark:bg-bg-surface-dark/30">
-        <table className="w-full text-left">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-chart-border bg-white dark:bg-bg-surface-dark/30">
+        <table className="w-full min-w-150 text-left">
           <thead className="bg-slate-50 dark:bg-chart-surface/50 border-b border-slate-200 dark:border-chart-border">
             <tr>
               <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">

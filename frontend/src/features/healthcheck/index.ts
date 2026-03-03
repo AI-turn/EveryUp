@@ -1,6 +1,6 @@
-export { ServiceIdentity } from './components/ServiceIdentity';
+export { HealthCheckForm } from './components/HealthCheckForm';
+export { HealthCheckIdentity } from './components/HealthCheckIdentity';
 export { RealtimeMetrics } from './components/RealtimeMetrics';
 export { ResponseTimeChart } from './components/ResponseTimeChart';
 export { UptimeCalendar } from './components/UptimeCalendar';
-export { ErrorLogTable } from './components/ErrorLogTable';
 export { IntegrationPanel } from './components/IntegrationPanel';

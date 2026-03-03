@@ -3,13 +3,13 @@ import { MainLayout } from './components/layout';
 import { NetworkStatusBanner } from './components/feedback/NetworkStatusBanner';
 import {
   DashboardPage,
-  ServiceDetailPage,
-  ServicesPage,
+  HealthCheckDetailPage,
+  HealthCheckPage,
   LogListPage,
   LogDetailPage,
-  MonitoringPage,
-  MonitoringListPage,
-  AlertsSetupPage,
+  InfraDetailPage,
+  InfraPage,
+  AlertsPage,
   SettingsPage,
   NotFoundPage,
   LoginPage,
@@ -37,13 +37,13 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
               <Route index element={<DashboardPage />} />
-              <Route path="/services" element={<ServicesPage />} />
-              <Route path="/services/:serviceId" element={<ServiceDetailPage />} />
+              <Route path="/healthcheck" element={<HealthCheckPage />} />
+              <Route path="/healthcheck/:serviceId" element={<HealthCheckDetailPage />} />
               <Route path="/logs" element={<LogListPage />} />
               <Route path="/logs/:serviceId" element={<LogDetailPage />} />
-              <Route path="/monitoring" element={<MonitoringListPage />} />
-              <Route path="/monitoring/:resourceId" element={<MonitoringPage />} />
-              <Route path="/alerts" element={<AlertsSetupPage />} />
+              <Route path="/infra" element={<InfraPage />} />
+              <Route path="/infra/:resourceId" element={<InfraDetailPage />} />
+              <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>

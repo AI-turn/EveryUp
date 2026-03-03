@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, EmptyState } from '../../../components/common';
-import { ResourceCard } from '../../monitoring/components/ResourceCard';
+import { InfraCard } from '../../infra/components/InfraCard';
 import { useMonitoringResources } from '../../../hooks/useData';
 
 const MAX_ITEMS = 3;
@@ -31,7 +31,7 @@ export function ResourceStatusGrid() {
           )}
         </div>
         <button
-          onClick={() => navigate('/monitoring', { state: { openAddModal: true } })}
+          onClick={() => navigate('/infra', { state: { openAddModal: true } })}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
         >
           <MaterialIcon name="add" className="text-sm" />
@@ -41,7 +41,7 @@ export function ResourceStatusGrid() {
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-32 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
           ))}
@@ -56,19 +56,19 @@ export function ResourceStatusGrid() {
           description={t('dashboard.infrastructure.emptyDesc', { defaultValue: 'Add a server to start monitoring CPU, memory, and disk.' })}
           action={{
             label: t('monitoring.addResource'),
-            onClick: () => navigate('/monitoring'),
+            onClick: () => navigate('/infra'),
           }}
         />
       )}
 
       {/* Grid */}
       {!loading && displayItems.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {displayItems.map((resource) => (
-            <ResourceCard
+            <InfraCard
               key={resource.id}
               resource={resource}
-              onClick={() => navigate(`/monitoring/${resource.id}`)}
+              onClick={() => navigate(`/infra/${resource.id}`)}
             />
           ))}
         </div>
@@ -78,7 +78,7 @@ export function ResourceStatusGrid() {
       {!loading && hasMore && (
         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-ui-border-dark/50 text-center">
           <button
-            onClick={() => navigate('/monitoring')}
+            onClick={() => navigate('/infra')}
             className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             {t('common.viewMore', { defaultValue: 'View More' })}

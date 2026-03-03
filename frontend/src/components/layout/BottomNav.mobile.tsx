@@ -4,9 +4,9 @@ import { MaterialIcon } from '../common';
 
 const navItems = [
   { icon: 'home',          labelKey: 'nav.dashboard',   href: '/' },
-  { icon: 'monitor_heart', labelKey: 'nav.healthcheck', href: '/services' },
+  { icon: 'monitor_heart', labelKey: 'nav.healthcheck', href: '/healthcheck' },
   { icon: 'article',       labelKey: 'nav.logs',        href: '/logs' },
-  { icon: 'dns',           labelKey: 'nav.monitoring',  href: '/monitoring' },
+  { icon: 'dns',           labelKey: 'nav.monitoring',  href: '/infra' },
   { icon: 'notifications', labelKey: 'nav.alerts',      href: '/alerts' },
   { icon: 'settings',      labelKey: 'nav.settings',    href: '/settings' },
 ];
@@ -36,7 +36,7 @@ export function BottomNavMobile() {
           `}
         >
           <MaterialIcon name={item.icon} className="text-[20px]" />
-          <span className="text-[9px] font-medium">{t(item.labelKey)}</span>
+          <span className="text-[11px] font-medium">{t(item.labelKey)}</span>
         </Link>
       ))}
     </nav>

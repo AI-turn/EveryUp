@@ -36,7 +36,7 @@ export function Header() {
                 <div className="flex items-center gap-1 bg-slate-100 dark:bg-bg-surface-dark p-1 rounded-lg">
                     <button
                         onClick={() => changeLanguage('ko')}
-                        className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${i18n.language.startsWith('ko')
+                        className={`px-2.5 py-1.5 text-[10px] font-bold rounded-md transition-all ${i18n.language.startsWith('ko')
                             ? 'bg-white dark:bg-ui-hover-dark text-primary shadow-sm'
                             : 'text-slate-500 hover:text-slate-700 dark:text-text-muted-dark dark:hover:text-white'
                             }`}
@@ -58,7 +58,7 @@ export function Header() {
                 <div className="flex gap-2">
                     <button
                         onClick={toggleTheme}
-                        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark dark:hover:text-white transition-colors"
+                        className="p-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark dark:hover:text-white transition-colors"
                         aria-label="Toggle theme"
                     >
                         <MaterialIcon name={theme === 'light' ? 'dark_mode' : 'light_mode'} />

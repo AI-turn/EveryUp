@@ -5,9 +5,9 @@ import { useSidebar } from '../../contexts/SidebarContext';
 
 const navItems: { icon: string; labelKey: string; href: string }[] = [
   { icon: 'home', labelKey: 'nav.dashboard', href: '/' },
-  { icon: 'monitor_heart', labelKey: 'nav.healthcheck', href: '/services' },
+  { icon: 'monitor_heart', labelKey: 'nav.healthcheck', href: '/healthcheck' },
   { icon: 'article', labelKey: 'nav.logs', href: '/logs' },
-  { icon: 'dns', labelKey: 'nav.monitoring', href: '/monitoring' },
+  { icon: 'dns', labelKey: 'nav.monitoring', href: '/infra' },
   { icon: 'notifications', labelKey: 'nav.alerts', href: '/alerts' },
   { icon: 'settings', labelKey: 'nav.settings', href: '/settings' },
 ];

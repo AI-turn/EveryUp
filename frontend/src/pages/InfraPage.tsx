@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, PageHeader } from '../components/common';
-import { ResourceCard, HostForm } from '../features/monitoring';
+import { InfraCard, InfraForm } from '../features/infra';
 import { useMonitoringResources } from '../hooks/useData';
 import { Skeleton } from '../components/skeleton';
 import { useSidePanel } from '../contexts/SidePanelContext';
 
-export function MonitoringListPage() {
+export function InfraPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { openPanel } = useSidePanel();
@@ -19,7 +19,7 @@ export function MonitoringListPage() {
   const handleAddResource = () => {
     openPanel(
       t('monitoring.addResource'),
-      <HostForm onSuccess={refetch} />
+      <InfraForm onSuccess={refetch} />
     );
   };
 
@@ -102,10 +102,10 @@ export function MonitoringListPage() {
       ) : filteredResources.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {filteredResources.map((resource) => (
-            <ResourceCard
+            <InfraCard
               key={resource.id}
               resource={resource}
-              onClick={() => navigate(`/monitoring/${resource.id}`)}
+              onClick={() => navigate(`/infra/${resource.id}`)}
             />
           ))}
         </div>

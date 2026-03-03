@@ -5,10 +5,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko, enUS } from 'date-fns/locale';
 import { MaterialIcon, Toggle } from '../components/common';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
-import {
-  ErrorLogTable,
-  IntegrationPanel,
-} from '../features/service-detail';
+import { ErrorLogTable } from '../features/logs/components/ErrorLogTable';
+import { IntegrationPanel } from '../features/healthcheck/components/IntegrationPanel';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 import { api, Service } from '../services/api';

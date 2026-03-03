@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko, enUS } from 'date-fns/locale';
 import { MaterialIcon } from '../../../components/common';
 
-interface ServiceIdentityProps {
+interface HealthCheckIdentityProps {
   name: string;
   endpoint: string;
   lastCheckedAt?: string;
@@ -40,7 +40,7 @@ function InfoChip({ icon, label, value, accent }: InfoChipProps) {
   );
 }
 
-export function ServiceIdentity({
+export function HealthCheckIdentity({
   name,
   endpoint,
   lastCheckedAt,
@@ -51,7 +51,7 @@ export function ServiceIdentity({
   interval,
   timeout,
   cronExpression,
-}: ServiceIdentityProps) {
+}: HealthCheckIdentityProps) {
   const { t, i18n } = useTranslation();
 
   const dateLocale = useMemo(
@@ -99,14 +99,14 @@ export function ServiceIdentity({
       : '-';
 
   return (
-    <div className="flex items-center gap-6 mb-8 bg-slate-100/50 dark:bg-bg-surface-dark/30 p-6 rounded-xl border border-slate-200 dark:border-chart-surface">
-      <div className="bg-primary/20 rounded-xl p-6 flex items-center justify-center border border-primary/30">
-        <MaterialIcon name={icon} className="text-5xl text-primary" />
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-8 bg-slate-100/50 dark:bg-bg-surface-dark/30 p-6 rounded-xl border border-slate-200 dark:border-chart-surface">
+      <div className="bg-primary/20 rounded-xl p-4 sm:p-6 flex items-center justify-center border border-primary/30 shrink-0">
+        <MaterialIcon name={icon} className="text-4xl sm:text-5xl text-primary" />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         {/* Name + status */}
         <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{name}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{name}</h1>
           <div className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full ${config.bg} border ${config.border}`}>
             <span className="relative flex h-2 w-2">
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${config.ping} opacity-75`} />
@@ -121,7 +121,7 @@ export function ServiceIdentity({
         {/* Endpoint */}
         <p className="text-slate-500 dark:text-text-muted-dark text-sm mb-3">
           <span className="text-slate-400 dark:text-text-dim-dark mr-1">{t('services.detail.identity.endpoint')}:</span>
-          <code className="bg-slate-200 dark:bg-chart-surface px-2 py-0.5 rounded text-primary">{endpoint}</code>
+          <code className="bg-slate-200 dark:bg-chart-surface px-2 py-0.5 rounded text-primary break-all">{endpoint}</code>
         </p>
 
         {/* Info chips */}

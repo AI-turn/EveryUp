@@ -61,7 +61,7 @@ export function SidePanel() {
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto px-6 pt-6 pb-20 lg:pb-6 custom-scrollbar">
                         {content}
                     </div>
                 </div>

@@ -134,7 +134,7 @@ export function ErrorLogTable({ serviceId, refreshKey }: ErrorLogTableProps) {
         <h2 className="text-slate-900 dark:text-white text-lg font-bold tracking-tight">
           {t('logs.titleRecent')}
         </h2>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Pause/Resume Button */}
           <button
             onClick={() => setIsPaused(!isPaused)}
@@ -163,7 +163,7 @@ export function ErrorLogTable({ serviceId, refreshKey }: ErrorLogTableProps) {
           </button>
 
           {/* Search */}
-          <div className="relative">
+          <div className="relative flex-1 min-w-40">
             <MaterialIcon
               name="search"
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-text-dim-dark text-lg"

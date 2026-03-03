@@ -103,14 +103,16 @@ export function UptimeCalendar({ serviceId, refreshKey }: UptimeCalendarProps) {
       </div>
 
       {/* Health Grid */}
-      <div className="grid grid-cols-[repeat(30,1fr)] gap-1 mb-4">
-        {healthGrid.map((day, index) => (
-          <div
-            key={index}
-            className={`h-3 rounded-[1px] ${getStatusColor(day.status)}`}
-            title={day.uptime !== undefined ? `${day.uptime.toFixed(1)}%` : ''}
-          />
-        ))}
+      <div className="overflow-x-auto mb-4">
+        <div className="grid grid-cols-[repeat(30,minmax(8px,1fr))] gap-1 min-w-70">
+          {healthGrid.map((day, index) => (
+            <div
+              key={index}
+              className={`h-3 rounded-[1px] ${getStatusColor(day.status)}`}
+              title={day.uptime !== undefined ? `${day.uptime.toFixed(1)}%` : ''}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Date Range */}

@@ -1,11 +1,11 @@
 export { DashboardPage } from './DashboardPage';
-export { ServiceDetailPage } from './ServiceDetailPage';
-export { ServicesPage } from './ServicesPage';
+export { HealthCheckDetailPage } from './HealthCheckDetailPage';
+export { HealthCheckPage } from './HealthCheckPage';
 export { LogListPage } from './LogListPage';
 export { LogDetailPage } from './LogDetailPage';
-export { MonitoringPage } from './MonitoringPage';
-export { AlertsSetupPage } from './AlertsSetupPage';
+export { InfraDetailPage } from './InfraDetailPage';
+export { InfraPage } from './InfraPage';
+export { AlertsPage } from './AlertsPage';
 export { SettingsPage } from './SettingsPage';
 export { NotFoundPage } from './NotFoundPage';
-export { MonitoringListPage } from './MonitoringListPage';
 export { LoginPage } from './LoginPage';

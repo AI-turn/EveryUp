@@ -1,16 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { MaterialIcon, Toggle } from '../components/common';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
-import { ResourceGauges, ResourceTrends, ProcessTable, HostForm } from '../features/monitoring';
-import { DeleteConfirmDialog } from '../features/monitoring/components/DeleteConfirmDialog';
+import { InfraGauges, InfraTrends, ProcessTable, InfraForm, DeleteConfirmDialog } from '../features/infra';
 import { useHost } from '../hooks/useData';
 import { api } from '../services/api';
 import { useSidePanel } from '../contexts/SidePanelContext';
 
-export function MonitoringPage() {
+export function InfraDetailPage() {
   const { resourceId } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -66,7 +65,7 @@ export function MonitoringPage() {
     try {
       await api.deleteHost(host.id);
       toast.success(t('monitoring.toast.deleted'));
-      navigate('/monitoring');
+      navigate('/infra');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t('monitoring.toast.deleteFailed'));
       setIsDeleting(false);
@@ -77,7 +76,7 @@ export function MonitoringPage() {
     if (!host) return;
     openPanel(
       t('monitoring.editHost'),
-      <HostForm onSuccess={refetch} host={host} />
+      <InfraForm onSuccess={refetch} host={host} />
     );
   };
 
@@ -89,8 +88,8 @@ export function MonitoringPage() {
       <div className="flex flex-col gap-4 mb-6">
         <Breadcrumbs
           items={[
-            { label: t('nav.monitoring'), href: '/monitoring' },
-            { label: cluster || 'Local', href: '/monitoring' },
+            { label: t('nav.monitoring'), href: '/infra' },
+            { label: cluster || 'Local', href: '/infra' },
             { label: name },
           ]}
         />
@@ -142,7 +141,6 @@ export function MonitoringPage() {
             </button>
             {host && (
               <>
-                {/* Pause/Resume Toggle */}
                 {!isLocal && (
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
                     <Toggle
@@ -183,10 +181,10 @@ export function MonitoringPage() {
       </div>
 
       {/* Radial Gauges */}
-      <ResourceGauges hostId={hostId} />
+      <InfraGauges hostId={hostId} />
 
-      {/* Resource Trends */}
-      <ResourceTrends hostId={hostId} />
+      {/* Infra Trends */}
+      <InfraTrends hostId={hostId} />
 
       {/* Process Table */}
       <ProcessTable hostId={hostId} />

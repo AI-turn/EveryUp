@@ -10,7 +10,7 @@ import { ChannelForm } from '../features/alerts/components/ChannelForm';
 
 type TabType = 'channels' | 'rules' | 'history';
 
-export function AlertsSetupPage() {
+export function AlertsPage() {
   const { t } = useTranslation();
   const { openPanel } = useSidePanel();
   const [activeTab, setActiveTab] = useState<TabType>('channels');
@@ -155,12 +155,10 @@ export function AlertsSetupPage() {
         <NotificationHistoryTab />
       ) : activeTab === 'channels' ? (
         <>
-          {/* Channel count */}
           <p className="text-sm text-slate-500 dark:text-text-muted-dark mb-4">
             {t('alerts.configured', { count: channels.length })}
           </p>
 
-          {/* Channels List */}
           <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl overflow-hidden">
             {isLoading ? (
               <div className="p-8 text-center text-slate-500">
@@ -220,7 +218,6 @@ export function AlertsSetupPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      {/* Toggle switch */}
                       <button
                         onClick={() => handleToggle(channel.id)}
                         disabled={togglingIds.has(channel.id)}
@@ -238,7 +235,6 @@ export function AlertsSetupPage() {
 
                       <div className="w-px h-6 bg-slate-200 dark:bg-ui-active-dark" />
 
-                      {/* Test */}
                       <button
                         onClick={() => handleTest(channel.id)}
                         className="px-3 sm:px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary font-bold rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-all flex items-center gap-2"
@@ -249,7 +245,6 @@ export function AlertsSetupPage() {
 
                       <div className="w-px h-6 bg-slate-200 dark:bg-ui-active-dark" />
 
-                      {/* Edit & Delete */}
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleEdit(channel)}
