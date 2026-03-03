@@ -563,6 +563,18 @@
             "logs": "로그 보존 기간",
             "logsDesc": "에러 로그 데이터 보존 기간"
         },
+        "accountReset": {
+            "title": "계정 초기화",
+            "subtitle": "관리자 계정을 삭제하고 최초 설정 상태로 초기화합니다",
+            "button": "계정 초기화",
+            "confirmTitle": "정말 초기화하시겠습니까?",
+            "confirmDesc": "모든 계정 정보가 삭제되며, 다시 계정을 생성해야 합니다. 이 작업은 되돌릴 수 없습니다.",
+            "confirmButton": "초기화",
+            "cancel": "취소",
+            "success": "계정이 초기화되었습니다. 다시 로그인해 주세요.",
+            "error": "계정 초기화에 실패했습니다.",
+            "demoNotice": "데모 환경에서는 계정 초기화를 사용할 수 없습니다."
+        },
         "dataManagement": {
             "title": "데이터 관리",
             "subtitle": "서비스 설정 내보내기 및 API 정보",

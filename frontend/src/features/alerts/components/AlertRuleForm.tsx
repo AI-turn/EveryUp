@@ -297,7 +297,7 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
                 hostId: !isEndpoint ? (data.hostId || null) : null,
                 operator: data.operator,
                 threshold: data.threshold,
-                duration: isEndpoint ? 1 : data.duration,
+                duration: data.duration,
                 severity: data.severity,
                 cooldown: isEndpoint ? 0 : data.cooldown,
                 message: customMessage.trim() || '',
@@ -397,6 +397,22 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
                     ))}
                 </div>
 
+                {isEndpoint && (
+                    <div className="mt-3 flex items-center justify-between p-3 bg-slate-50 dark:bg-ui-hover-dark/50 rounded-xl">
+                        <div>
+                            <p className="text-xs font-bold text-slate-700 dark:text-white">{t('alerts.rules.consecutiveChecks')}</p>
+                            <p className="text-[11px] text-slate-400">{t('alerts.rules.consecutiveChecksHint')}</p>
+                        </div>
+                        <input
+                            type="number"
+                            min={1}
+                            max={20}
+                            {...register('duration', { valueAsNumber: true })}
+                            className="w-16 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg px-2 py-1.5 text-sm font-mono font-semibold text-slate-900 dark:text-white focus:ring-1 focus:ring-primary text-right tabular-nums"
+                        />
+                    </div>
+                )}
+
                 {conditionPreset === 'custom' && (
                     <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 dark:bg-ui-hover-dark/50 rounded-xl mb-4">
                         <div>
@@ -425,7 +441,12 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
                     <code className="px-2 py-0.5 bg-sky-500/20 text-sky-300 rounded text-[11px] font-mono">{metricName}</code>
                     <code className="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded text-[11px] font-mono">{OPERATOR_SYMBOLS[watchedOperator] ?? watchedOperator}</code>
                     <code className="px-2 py-0.5 bg-red-500/20 text-red-300 rounded text-[11px] font-mono">{watchedThreshold}{thresholdUnit}</code>
-                    {!isEndpoint && (
+                    {isEndpoint ? (
+                        <>
+                            <span className="text-slate-600 font-mono text-[11px]">FAILS</span>
+                            <code className="px-2 py-0.5 bg-slate-700 text-slate-300 rounded text-[11px] font-mono">{watchedDuration}×</code>
+                        </>
+                    ) : (
                         <>
                             <span className="text-slate-600 font-mono text-[11px]">FOR</span>
                             <code className="px-2 py-0.5 bg-slate-700 text-slate-300 rounded text-[11px] font-mono">{watchedDuration}min</code>

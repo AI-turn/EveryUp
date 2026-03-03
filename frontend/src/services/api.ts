@@ -337,6 +337,10 @@ class ApiService {
       body: JSON.stringify(settings),
     });
   }
+
+  async resetAccount() {
+    return this.request<void>('/auth/reset', { method: 'POST' });
+  }
 }
 
 export const api = new ApiService();

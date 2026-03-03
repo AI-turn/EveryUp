@@ -61,6 +61,12 @@ func (r *UserRepository) FindByID(id int64) (*models.User, error) {
 	return u, nil
 }
 
+// DeleteAll removes all users from the database (used for account reset).
+func (r *UserRepository) DeleteAll() error {
+	_, err := DB.Exec(`DELETE FROM users`)
+	return err
+}
+
 // Upsert creates the user if not found, or updates the password hash if the user already exists.
 func (r *UserRepository) Upsert(username, passwordHash, role string) (*models.User, error) {
 	existing, err := r.FindByUsername(username)

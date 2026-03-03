@@ -45,6 +45,25 @@ func InitJWTSecret(db *sql.DB) error {
 	return nil
 }
 
+// RotateSecret generates a new JWT signing secret, persists it, and updates the in-memory key.
+// All existing tokens signed with the old secret become immediately invalid.
+func RotateSecret(db *sql.DB) error {
+	key := make([]byte, 64)
+	if _, err := io.ReadFull(rand.Reader, key); err != nil {
+		return fmt.Errorf("failed to generate new JWT secret: %w", err)
+	}
+	keyHex := hex.EncodeToString(key)
+	if _, err := db.Exec(
+		`INSERT INTO app_settings (key, value) VALUES ('jwt_secret', ?)
+		 ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+		keyHex,
+	); err != nil {
+		return fmt.Errorf("failed to persist new JWT secret: %w", err)
+	}
+	jwtSecret = key
+	return nil
+}
+
 // UserClaims holds the JWT payload for an authenticated user.
 type UserClaims struct {
 	UserID   int64  `json:"user_id"`

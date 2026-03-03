@@ -240,7 +240,7 @@ export function AlertRulesTab({ addTrigger }: AlertRulesTabProps) {
                       : `${METRIC_LABELS[rule.metric] || rule.metric} ${OPERATOR_LABELS[rule.operator] || rule.operator} ${rule.threshold}${rule.metric === 'response_time' ? 'ms' : ENDPOINT_METRICS.has(rule.metric) ? '' : '%'}`
                     }
                     {' · '}
-                    {isEndpoint ? checkIntervalLabel : `${rule.duration}min · cooldown ${rule.cooldown}s`}
+                    {isEndpoint ? `${checkIntervalLabel} · ${rule.duration}× fail` : `${rule.duration}min · cooldown ${rule.cooldown}s`}
                     {channelNames && channelNames.length > 0 && (
                       <> · <span className="text-primary">{channelNames.join(', ')}</span></>
                     )}

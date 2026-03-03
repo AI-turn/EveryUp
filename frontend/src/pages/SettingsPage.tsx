@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { MaterialIcon } from '../components/common';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
+import { env } from '../config/env';
 import { SectionCard, SettingRow } from '../features/settings';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -23,31 +26,24 @@ function retentionLabel(v: string) {
 export function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-  // Section 2: Check Defaults
-  const [defaultInterval, setDefaultIntervalState] = useState(
-    () => parseInt(localStorage.getItem('mt-default-interval') || '30')
-  );
-  const [defaultTimeout, setDefaultTimeoutState] = useState(
-    () => parseInt(localStorage.getItem('mt-default-timeout') || '5000')
-  );
-  const [intervalInput, setIntervalInput] = useState(String(defaultInterval));
-  const [timeoutInput, setTimeoutInput] = useState(String(defaultTimeout));
-
-  // Section 3 & 4: Backend settings
-  const [consecutiveFailures, setConsecutiveFailures] = useState(3);
+  // Section 2: Backend settings
   const [metricsRetention, setMetricsRetention] = useState('7d');
   const [logsRetention, setLogsRetention] = useState('3d');
   const [backendLoading, setBackendLoading] = useState(true);
-  const [savingThreshold, setSavingThreshold] = useState(false);
   const [savingRetention, setSavingRetention] = useState(false);
+
+  // Account reset
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   // Load backend settings on mount
   useEffect(() => {
     const load = async () => {
       try {
         const settings = await api.getSettings();
-        setConsecutiveFailures(settings.alerts.consecutiveFailures);
         setMetricsRetention(settings.retention.metrics);
         setLogsRetention(settings.retention.logs);
       } catch {
@@ -65,36 +61,6 @@ export function SettingsPage() {
     i18n.changeLanguage(lng);
   };
 
-  const handleSaveDefaults = () => {
-    const interval = parseInt(intervalInput);
-    const timeout = parseInt(timeoutInput);
-    if (isNaN(interval) || interval < 1) {
-      toast.error(t('settings.checkDefaults.intervalError'));
-      return;
-    }
-    if (isNaN(timeout) || timeout < 100) {
-      toast.error(t('settings.checkDefaults.timeoutError'));
-      return;
-    }
-    localStorage.setItem('mt-default-interval', String(interval));
-    localStorage.setItem('mt-default-timeout', String(timeout));
-    setDefaultIntervalState(interval);
-    setDefaultTimeoutState(timeout);
-    toast.success(t('settings.saved'));
-  };
-
-  const handleSaveThreshold = async () => {
-    setSavingThreshold(true);
-    try {
-      await api.updateSettings({ alerts: { consecutiveFailures } });
-      toast.success(t('settings.saved'));
-    } catch {
-      toast.error(t('settings.saveError'));
-    } finally {
-      setSavingThreshold(false);
-    }
-  };
-
   const handleSaveRetention = async () => {
     setSavingRetention(true);
     try {
@@ -107,26 +73,24 @@ export function SettingsPage() {
     }
   };
 
-  const handleExportServices = async () => {
+
+  const handleReset = async () => {
+    setResetting(true);
     try {
-      const services = await api.getServices();
-      const json = JSON.stringify(services, null, 2);
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `mt-services-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success(t('settings.dataManagement.exportSuccess'));
+      await api.resetAccount();
+      toast.success(t('settings.accountReset.success'));
+      logout();
+      navigate('/login');
     } catch {
-      toast.error(t('settings.dataManagement.exportError'));
+      toast.error(t('settings.accountReset.error'));
+      setResetting(false);
     }
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
+    <>
     <div className="space-y-6">
       {/* Page Header */}
       <div className="mb-2">
@@ -191,106 +155,7 @@ export function SettingsPage() {
 
       </SectionCard>
 
-      {/* ── Section 2: Check Defaults ── */}
-      <SectionCard
-        icon="timer"
-        title={t('settings.checkDefaults.title')}
-        subtitle={t('settings.checkDefaults.subtitle')}
-      >
-        <SettingRow
-          label={t('settings.checkDefaults.interval')}
-          description={t('settings.checkDefaults.intervalDesc')}
-        >
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={1}
-              max={3600}
-              value={intervalInput}
-              onChange={(e) => setIntervalInput(e.target.value)}
-              className="w-24 bg-slate-100 dark:bg-ui-hover-dark border-none rounded-lg px-3 py-1.5 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary text-right tabular-nums"
-            />
-            <span className="text-xs text-slate-500 dark:text-text-muted-dark w-6">{t('settings.checkDefaults.sec')}</span>
-          </div>
-        </SettingRow>
-
-        <SettingRow
-          label={t('settings.checkDefaults.timeout')}
-          description={t('settings.checkDefaults.timeoutDesc')}
-        >
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={100}
-              max={30000}
-              step={100}
-              value={timeoutInput}
-              onChange={(e) => setTimeoutInput(e.target.value)}
-              className="w-24 bg-slate-100 dark:bg-ui-hover-dark border-none rounded-lg px-3 py-1.5 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary text-right tabular-nums"
-            />
-            <span className="text-xs text-slate-500 dark:text-text-muted-dark w-6">ms</span>
-          </div>
-        </SettingRow>
-
-        <div className="pt-4 flex justify-end">
-          <button
-            onClick={handleSaveDefaults}
-            className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
-          >
-            <MaterialIcon name="save" className="text-base" />
-            {t('common.saveChanges')}
-          </button>
-        </div>
-      </SectionCard>
-
-      {/* ── Section 3: Alert Threshold ── */}
-      <SectionCard
-        icon="notifications_active"
-        title={t('settings.alertThreshold.title')}
-        subtitle={t('settings.alertThreshold.subtitle')}
-      >
-        {backendLoading ? (
-          <div className="h-16 bg-slate-100 dark:bg-ui-hover-dark rounded-lg animate-pulse" />
-        ) : (
-          <>
-            <SettingRow
-              label={t('settings.alertThreshold.consecutiveFailures')}
-              description={t('settings.alertThreshold.consecutiveFailuresDesc')}
-            >
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={consecutiveFailures}
-                  onChange={(e) => setConsecutiveFailures(parseInt(e.target.value) || 1)}
-                  className="w-20 bg-slate-100 dark:bg-ui-hover-dark border-none rounded-lg px-3 py-1.5 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary text-right tabular-nums"
-                />
-                <span className="text-xs text-slate-500 dark:text-text-muted-dark">
-                  {t('settings.alertThreshold.times')}
-                </span>
-              </div>
-            </SettingRow>
-
-            <div className="pt-4 flex justify-end">
-              <button
-                onClick={handleSaveThreshold}
-                disabled={savingThreshold}
-                className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
-              >
-                {savingThreshold ? (
-                  <MaterialIcon name="sync" className="text-base animate-spin" />
-                ) : (
-                  <MaterialIcon name="save" className="text-base" />
-                )}
-                {t('common.saveChanges')}
-              </button>
-            </div>
-          </>
-        )}
-      </SectionCard>
-
-      {/* ── Section 4: Data Retention ── */}
+      {/* ── Section 2: Data Retention ── */}
       <SectionCard
         icon="archive"
         title={t('settings.retention.title')}
@@ -363,26 +228,70 @@ export function SettingsPage() {
         )}
       </SectionCard>
 
-      {/* ── Section 5: Data Management ── */}
+      {/* ── Section 3: Account Reset ── */}
       <SectionCard
-        icon="folder_open"
-        title={t('settings.dataManagement.title')}
-        subtitle={t('settings.dataManagement.subtitle')}
+        icon="person_off"
+        title={t('settings.accountReset.title')}
+        subtitle={t('settings.accountReset.subtitle')}
       >
+        {env.useMock && (
+          <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <MaterialIcon name="info" className="text-sm text-amber-500 shrink-0" />
+            <p className="text-xs text-amber-700 dark:text-amber-400">{t('settings.accountReset.demoNotice')}</p>
+          </div>
+        )}
         <SettingRow
-          label={t('settings.dataManagement.exportServices')}
-          description={t('settings.dataManagement.exportServicesDesc')}
+          label={t('settings.accountReset.title')}
+          description={t('settings.accountReset.subtitle')}
         >
           <button
-            onClick={handleExportServices}
-            className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-ui-border-dark text-sm font-semibold text-slate-700 dark:text-text-secondary-dark hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-colors"
+            onClick={() => !env.useMock && setShowResetConfirm(true)}
+            disabled={env.useMock}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 dark:border-red-800 text-sm font-semibold text-red-600 dark:text-red-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20"
           >
-            <MaterialIcon name="download" className="text-base" />
-            {t('settings.dataManagement.export')}
+            <MaterialIcon name="restart_alt" className="text-base" />
+            {t('settings.accountReset.button')}
           </button>
         </SettingRow>
-
       </SectionCard>
+
     </div>
+
+    {/* ── Account Reset Confirm Dialog ── */}
+    {showResetConfirm && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="bg-white dark:bg-bg-surface-dark rounded-xl shadow-2xl max-w-sm w-full p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center w-11 h-11 rounded-full bg-red-100 dark:bg-red-900/30 shrink-0">
+              <MaterialIcon name="warning" className="text-xl text-red-600 dark:text-red-400" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              {t('settings.accountReset.confirmTitle')}
+            </h3>
+          </div>
+          <p className="text-sm text-slate-600 dark:text-text-muted-dark mb-6">
+            {t('settings.accountReset.confirmDesc')}
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setShowResetConfirm(false)}
+              disabled={resetting}
+              className="cursor-pointer px-4 py-2 rounded-lg border border-slate-200 dark:border-ui-border-dark text-sm font-semibold text-slate-700 dark:text-text-secondary-dark hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-colors disabled:opacity-50"
+            >
+              {t('settings.accountReset.cancel')}
+            </button>
+            <button
+              onClick={handleReset}
+              disabled={resetting}
+              className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {resetting && <MaterialIcon name="sync" className="text-base animate-spin" />}
+              {t('settings.accountReset.confirmButton')}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

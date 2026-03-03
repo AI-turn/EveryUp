@@ -137,9 +137,9 @@ export function HealthCheckForm({ onSuccess, service }: HealthCheckFormProps) {
                 host: '',
                 port: undefined,
                 scheduleType: 'interval',
-                interval: parseInt(localStorage.getItem('mt-default-interval') || '30'),
+                interval: 30,
                 cronExpression: '',
-                timeout: parseInt(localStorage.getItem('mt-default-timeout') || '5000'),
+                timeout: 5000,
             });
             setScheduledType('daily');
             setScheduledHour(9);

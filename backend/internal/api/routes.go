@@ -38,6 +38,7 @@ func SetupRoutes(app *fiber.App, scheduler *checker.Scheduler, collectorMgr *col
 	// Auth endpoints — protected
 	local.Get("/auth/verify", authHandler.Verify)
 	local.Get("/auth/me", authHandler.Me)
+	local.Post("/auth/reset", authHandler.Reset)
 
 	// Service endpoints
 	serviceHandler := handlers.NewServiceHandler(scheduler)

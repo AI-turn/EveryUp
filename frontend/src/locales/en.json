@@ -569,6 +569,18 @@
             "logs": "Logs Retention",
             "logsDesc": "How long to keep error log data"
         },
+        "accountReset": {
+            "title": "Account Reset",
+            "subtitle": "Delete the admin account and return to first-run setup",
+            "button": "Reset Account",
+            "confirmTitle": "Are you sure?",
+            "confirmDesc": "All account data will be deleted and you will need to create a new account. This action cannot be undone.",
+            "confirmButton": "Reset",
+            "cancel": "Cancel",
+            "success": "Account has been reset. Please set up a new account.",
+            "error": "Failed to reset account.",
+            "demoNotice": "Account reset is not available in demo mode."
+        },
         "dataManagement": {
             "title": "Data Management",
             "subtitle": "Export service configuration and API information",

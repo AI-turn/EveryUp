@@ -174,3 +174,24 @@ func (h *AuthHandler) Me(c *fiber.Ctx) error {
 		},
 	})
 }
+
+// Reset deletes all users and rotates the JWT secret, returning the app to first-run state.
+// POST /auth/reset  (protected)
+func (h *AuthHandler) Reset(c *fiber.Ctx) error {
+	repo := database.NewUserRepository()
+	if err := repo.DeleteAll(); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"error":   fiber.Map{"code": "DB_ERROR", "message": err.Error()},
+		})
+	}
+
+	if err := crypto.RotateSecret(database.DB); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"error":   fiber.Map{"code": "SECRET_ERROR", "message": err.Error()},
+		})
+	}
+
+	return c.JSON(fiber.Map{"success": true})
+}
