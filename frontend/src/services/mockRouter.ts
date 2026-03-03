@@ -6,7 +6,7 @@
 
 import { mockServices } from '../mocks/dashboard/services.mock';
 import { mockIncidents as mockDashboardIncidents } from '../mocks/dashboard/incidents.mock';
-import { mockErrorLogs } from '../mocks/service-detail/error-logs.mock';
+import { mockLogEntries as allMockLogs } from '../mocks/logs/logs.mock';
 import { mockResponseTimeChartData } from '../mocks/service-detail/charts.mock';
 import { mockGauges } from '../mocks/monitoring';
 import { mockResources } from '../mocks/monitoring/resourceList.mock';
@@ -99,14 +99,17 @@ const mockUptimeData: UptimeData = {
 
 // ── Logs ──────────────────────────────────────────────────────────────────────
 
-const mockLogEntries: LogEntry[] = mockErrorLogs.map((l) => ({
-  id: l.id,
-  serviceId: '1',
-  serviceName: 'API Gateway',
-  level: l.level === 'CRITICAL' ? 'error' : l.level === 'WARNING' ? 'warning' : 'info',
-  message: l.message,
-  createdAt: l.timestamp,
-}));
+function filterLogs(endpoint: string, serviceId?: string): LogEntry[] {
+  const [, qs] = endpoint.split('?');
+  const params = new URLSearchParams(qs ?? '');
+  const level = params.get('level') ?? '';
+  const limit = parseInt(params.get('limit') ?? '50', 10);
+
+  let logs = allMockLogs;
+  if (serviceId) logs = logs.filter(l => l.serviceId === serviceId);
+  if (level && level !== 'all') logs = logs.filter(l => l.level === level);
+  return logs.slice(0, limit);
+}
 
 // ── Incidents ─────────────────────────────────────────────────────────────────
 
@@ -333,13 +336,14 @@ export function mockRouter<T>(endpoint: string, method = 'GET'): T {
   // /services/:id/uptime
   if (/^\/services\/[^/]+\/uptime/.test(endpoint)) return mockUptimeData as T;
   // /services/:id/logs
-  if (/^\/services\/[^/]+\/logs/.test(endpoint)) return mockLogEntries as T;
+  const serviceLogsMatch = endpoint.match(/^\/services\/([^/?]+)\/logs/);
+  if (serviceLogsMatch) return filterLogs(endpoint, serviceLogsMatch[1]) as T;
   // /services/:id
-  if (/^\/services\/[^/]+$/.test(endpoint)) return mockApiServices[0] as T;
+  if (/^\/services\/[^/?]+$/.test(endpoint)) return mockApiServices[0] as T;
   // /services
   if (endpoint.startsWith('/services')) return mockApiServices as T;
 
-  if (endpoint.startsWith('/logs')) return mockLogEntries as T;
+  if (endpoint.startsWith('/logs')) return filterLogs(endpoint) as T;
   if (endpoint.startsWith('/incidents')) return mockIncidentList as T;
 
   if (endpoint.startsWith('/notifications')) return mockChannels as T;
