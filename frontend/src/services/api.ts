@@ -387,6 +387,9 @@ export interface Service {
   responseTime?: number;
   scheduleType: 'interval' | 'cron';
   cronExpression?: string;
+  createdAt?: string;
+  // log-type services only. undefined/[] = accept all levels.
+  logLevelFilter?: Array<'error' | 'warn' | 'info'>;
 }
 
 export interface CreateServiceData {
@@ -402,14 +405,16 @@ export interface CreateServiceData {
   tags?: string[];
   scheduleType?: 'interval' | 'cron';
   cronExpression?: string;
+  logLevelFilter?: Array<'error' | 'warn' | 'info'>;
 }
 
 export interface Metric {
   id: string;
   serviceId: string;
-  status: 'healthy' | 'unhealthy';
+  status: 'success' | 'failure';
   responseTime: number;
   statusCode?: number;
+  errorMessage?: string;
   checkedAt: string;
 }
 

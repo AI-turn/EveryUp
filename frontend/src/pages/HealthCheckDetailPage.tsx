@@ -10,7 +10,8 @@ import {
   HealthCheckIdentity,
   RealtimeMetrics,
   ResponseTimeChart,
-  UptimeCalendar,
+  CheckHistoryBar,
+  FailureHistory,
 } from '../features/healthcheck';
 import { HealthCheckForm } from '../features/healthcheck/components/HealthCheckForm';
 import { useSidePanel } from '../contexts/SidePanelContext';
@@ -187,14 +188,17 @@ export function HealthCheckDetailPage() {
         cronExpression={service.cronExpression}
       />
 
+      {/* Check History Timeline Bar */}
+      <CheckHistoryBar serviceId={serviceId!} refreshKey={refreshKey} />
+
       {/* Real-time Metrics */}
       <RealtimeMetrics serviceId={serviceId!} refreshKey={refreshKey} />
 
-      {/* Response Time Chart */}
-      <ResponseTimeChart serviceId={serviceId!} refreshKey={refreshKey} />
+      {/* Response Time Chart with SLO threshold */}
+      <ResponseTimeChart serviceId={serviceId!} refreshKey={refreshKey} timeout={service.timeout} />
 
-      {/* Uptime Calendar */}
-      <UptimeCalendar serviceId={serviceId!} refreshKey={refreshKey} />
+      {/* Recent Failure History */}
+      <FailureHistory serviceId={serviceId!} refreshKey={refreshKey} />
 
       {/* Delete Confirmation Dialog */}
       {isDeleteDialogOpen && service && (

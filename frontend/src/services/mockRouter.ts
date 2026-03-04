@@ -7,9 +7,9 @@
 import { mockServices } from '../mocks/dashboard/services.mock';
 import { mockIncidents as mockDashboardIncidents } from '../mocks/dashboard/incidents.mock';
 import { mockLogEntries as allMockLogs } from '../mocks/logs/logs.mock';
-import { mockResponseTimeChartData } from '../mocks/service-detail/charts.mock';
-import { mockGauges } from '../mocks/monitoring';
-import { mockResources } from '../mocks/monitoring/resourceList.mock';
+import { mockResponseTimeChartData } from '../mocks/healthcheck/charts.mock';
+import { mockGauges } from '../mocks/infra';
+import { mockResources } from '../mocks/infra/resourceList.mock';
 
 import type {
   DashboardSummary,
@@ -124,7 +124,7 @@ const mockMetricsSummary: MetricsSummary = {
 const mockMetrics: Metric[] = mockResponseTimeChartData.map((rt, i) => ({
   id: String(i + 1),
   serviceId: '1',
-  status: 'healthy' as const,
+  status: 'success' as const,
   responseTime: rt * 10,
   statusCode: 200,
   checkedAt: new Date(Date.now() - (23 - i) * 3600_000).toISOString(),

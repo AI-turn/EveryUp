@@ -168,7 +168,8 @@
             "tabs": {
                 "overview": "개요",
                 "logs": "에러 로그",
-                "integration": "연동"
+                "integration": "연동",
+                "settings": "설정"
             },
             "identity": {
                 "endpoint": "엔드포인트",
@@ -181,7 +182,22 @@
             },
             "totalIncidents": "총 인시던트",
             "mttr": "평균 복구 시간 (MTTR)",
-            "health": "서비스 상태"
+            "health": "서비스 상태",
+            "chart": {
+                "timeout": "타임아웃"
+            },
+            "checkHistory": {
+                "title": "체크 이력",
+                "desc": "최근 {{count}}회 체크 결과",
+                "successRate": "성공률",
+                "oldest": "{{count}}회 전",
+                "latest": "현재"
+            },
+            "failureHistory": {
+                "title": "최근 장애 이력",
+                "desc": "최근 실패한 체크 상세 내역",
+                "noFailures": "최근 장애 이력이 없습니다"
+            }
         },
         "addModal": {
             "idPlaceholder": "my-api-server",
@@ -860,6 +876,27 @@
                     "batchSupport": "배치 전송"
                 }
             }
+        },
+        "identity": {
+            "id": "서비스 ID",
+            "apiKey": "API 키",
+            "createdAt": "생성일",
+            "levelFilter": "로그 레벨",
+            "acceptAll": "모두 수집",
+            "levelFilterHint": "클릭하면 설정 탭으로 이동합니다"
+        },
+        "settings": {
+            "levelFilterTitle": "로그 레벨 필터",
+            "levelFilterDesc": "이 서비스에서 수집할 로그 레벨을 선택합니다. 필터링된 레벨은 수집 엔드포인트에서 조용히 무시됩니다 — 로그 에이전트에는 오류로 표시되지 않습니다.",
+            "acceptAll": "모든 레벨 수집",
+            "acceptAllDesc": "error, warn, info — 모두 수집합니다 (기본값)",
+            "custom": "선택 수집",
+            "customDesc": "선택한 레벨만 수집합니다",
+            "selectAtLeastOne": "최소 하나의 로그 레벨을 선택해야 합니다.",
+            "saved": "로그 레벨 필터가 저장되었습니다.",
+            "summaryAll": "수집 중: error · warn · info",
+            "summaryNone": "선택된 레벨 없음 — 아무것도 수집되지 않습니다",
+            "summaryCollecting": "수집 중"
         }
     }
 }

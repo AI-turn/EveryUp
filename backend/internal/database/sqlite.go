@@ -268,6 +268,11 @@ func migrate() error {
 		return fmt.Errorf("v18 migration failed: %w", err)
 	}
 
+	// Run v19 migration: add log_level_filter to services
+	if err := migrateV19(); err != nil {
+		return fmt.Errorf("v19 migration failed: %w", err)
+	}
+
 	return nil
 }
 
@@ -275,6 +280,16 @@ func migrate() error {
 // No schema change required — app_settings table exists since migrateV16.
 // The key is auto-inserted by crypto.InitJWTSecret() on first run.
 func migrateV17() error {
+	return nil
+}
+
+// migrateV19 adds log_level_filter column to services table.
+// NULL means accept all levels (default). Non-null is a JSON array like ["error","warn"].
+func migrateV19() error {
+	_, err := DB.Exec(`ALTER TABLE services ADD COLUMN log_level_filter TEXT DEFAULT NULL`)
+	if err != nil && !strings.Contains(err.Error(), "duplicate column") {
+		return err
+	}
 	return nil
 }
 

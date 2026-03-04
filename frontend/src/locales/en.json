@@ -152,7 +152,8 @@
             "tabs": {
                 "overview": "Overview",
                 "logs": "Error Logs",
-                "integration": "Integration"
+                "integration": "Integration",
+                "settings": "Settings"
             },
             "identity": {
                 "endpoint": "Endpoint",
@@ -170,6 +171,21 @@
                 "latencySubtext": "Compared to previous 24h",
                 "errorRateSubtext": "99.98% success rate",
                 "requestVolumeSubtext": "Peak: 3.2k req/min"
+            },
+            "chart": {
+                "timeout": "Timeout"
+            },
+            "checkHistory": {
+                "title": "Check History",
+                "desc": "Last {{count}} check results",
+                "successRate": "Success rate",
+                "oldest": "{{count}} checks ago",
+                "latest": "Latest"
+            },
+            "failureHistory": {
+                "title": "Recent Failures",
+                "desc": "Details of recent failed checks",
+                "noFailures": "No failures recorded recently"
             }
         },
         "addModal": {
@@ -866,6 +882,27 @@
                     "batchSupport": "Batch Support"
                 }
             }
+        },
+        "identity": {
+            "id": "Service ID",
+            "apiKey": "API Key",
+            "createdAt": "Created",
+            "levelFilter": "Log Level",
+            "acceptAll": "Accept All",
+            "levelFilterHint": "Click to go to the Settings tab"
+        },
+        "settings": {
+            "levelFilterTitle": "Log Level Filter",
+            "levelFilterDesc": "Choose which log levels this service accepts. Filtered levels are silently dropped at the ingest endpoint — your log agent won't see errors.",
+            "acceptAll": "Accept all levels",
+            "acceptAllDesc": "error, warn, info — collect everything (default)",
+            "custom": "Custom selection",
+            "customDesc": "Only collect selected levels",
+            "selectAtLeastOne": "Select at least one log level.",
+            "saved": "Log level filter saved.",
+            "summaryAll": "Collecting: error · warn · info",
+            "summaryNone": "No levels selected — nothing will be collected",
+            "summaryCollecting": "Collecting"
         }
     }
 }

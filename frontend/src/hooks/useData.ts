@@ -12,11 +12,11 @@ import {
   mockResponseTimeChartData,
   mockErrorLogs,
   mockUptimeStats,
-} from '../mocks/service-detail';
+} from '../mocks/healthcheck';
 
 // Monitoring mock imports
-import { mockGauges, mockCharts as mockTrendCharts, mockProcesses } from '../mocks/monitoring';
-import { mockResources } from '../mocks/monitoring/resourceList.mock';
+import { mockGauges, mockCharts as mockTrendCharts, mockProcesses } from '../mocks/infra';
+import { mockResources } from '../mocks/infra/resourceList.mock';
 
 // System data transform utils
 import {

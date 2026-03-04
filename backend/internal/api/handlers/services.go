@@ -309,6 +309,18 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	if req.Tags != nil {
 		service.Tags = req.Tags
 	}
+	// LogLevelFilter: nil = not provided (keep existing); []string{} = clear (accept all)
+	if req.LogLevelFilter != nil {
+		filter := make([]models.LogLevel, 0, len(req.LogLevelFilter))
+		for _, l := range req.LogLevelFilter {
+			filter = append(filter, models.LogLevel(strings.ToLower(l)))
+		}
+		service.LogLevelFilter = filter
+		// Update API key cache so the new filter takes effect immediately
+		if service.ApiKey != "" {
+			middleware.PutApiKeyCache(service.ApiKey, service)
+		}
+	}
 
 	if err := h.repo.Update(service); err != nil {
 		return c.Status(500).JSON(fiber.Map{

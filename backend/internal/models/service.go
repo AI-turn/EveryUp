@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 )
 
@@ -58,6 +59,9 @@ type Service struct {
 	ApiKey       string `json:"apiKey,omitempty"`       // hash stored in DB; plaintext only in create/regenerate response
 	ApiKeyMasked string `json:"apiKeyMasked,omitempty"` // masked version stored in DB for display
 
+	// Log level filter (log-type services only). nil/empty = accept all levels.
+	LogLevelFilter []LogLevel `json:"logLevelFilter,omitempty"`
+
 	// Computed fields (not stored in DB, populated from metrics)
 	Status       ServiceStatus `json:"status,omitempty"`
 	LastCheckAt  *time.Time    `json:"lastCheckAt,omitempty"`
@@ -101,6 +105,8 @@ type ServiceCreateRequest struct {
 	Tags           []string          `json:"tags,omitempty"`
 	ScheduleType   string            `json:"scheduleType,omitempty"`
 	CronExpression string            `json:"cronExpression,omitempty"`
+	// Log level filter (log-type services only). nil = don't update; []string{} = accept all; ["error"] = only error.
+	LogLevelFilter []string `json:"logLevelFilter,omitempty"`
 }
 
 // ToService converts request to Service model
@@ -151,6 +157,12 @@ func (r *ServiceCreateRequest) ToService() *Service {
 		url = r.Host
 	}
 
+	// Convert string log level filter to LogLevel slice
+	var logLevelFilter []LogLevel
+	for _, l := range r.LogLevelFilter {
+		logLevelFilter = append(logLevelFilter, LogLevel(strings.ToLower(l)))
+	}
+
 	now := time.Now()
 	return &Service{
 		ID:             r.ID,
@@ -168,6 +180,7 @@ func (r *ServiceCreateRequest) ToService() *Service {
 		Tags:           r.Tags,
 		ScheduleType:   scheduleType,
 		CronExpression: r.CronExpression,
+		LogLevelFilter: logLevelFilter,
 		CreatedAt:      now,
 		UpdatedAt:      now,
 		Status:         StatusUnknown,

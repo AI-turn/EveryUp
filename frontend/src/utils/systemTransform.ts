@@ -1,8 +1,8 @@
 import type { Host, SystemInfo, SystemMetricsHistory, SystemProcess } from '../services/api';
-import type { GaugeData } from '../mocks/monitoring/resources.mock';
-import type { ChartData } from '../mocks/monitoring/trends.mock';
-import type { Process } from '../mocks/monitoring/processes.mock';
-import type { Resource } from '../mocks/monitoring/resourceList.mock';
+import type { GaugeData } from '../mocks/infra/resources.mock';
+import type { ChartData } from '../mocks/infra/trends.mock';
+import type { Process } from '../mocks/infra/processes.mock';
+import type { Resource } from '../mocks/infra/resourceList.mock';
 
 // --- Host → Resource ---
 export function hostToResource(host: Host): Resource {

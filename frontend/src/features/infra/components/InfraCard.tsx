@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../../../components/common';
-import type { Resource } from '../../../mocks/monitoring/resourceList.mock';
+import type { Resource } from '../../../mocks/infra/resourceList.mock';
 
 interface InfraCardProps {
     resource: Resource;

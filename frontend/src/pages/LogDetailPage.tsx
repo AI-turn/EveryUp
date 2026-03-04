@@ -7,6 +7,8 @@ import { MaterialIcon, Toggle } from '../components/common';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 import { ErrorLogTable } from '../features/logs/components/ErrorLogTable';
 import { IntegrationPanel } from '../features/healthcheck/components/IntegrationPanel';
+import { LogServiceSettings } from '../features/logs/components/LogServiceSettings';
+import { LogServiceIdentity } from '../features/logs/components/LogServiceIdentity';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 import { api, Service } from '../services/api';
@@ -24,8 +26,12 @@ export function LogDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [activeTab, setActiveTab] = useState<'logs' | 'integration'>(
-    searchParams.get('tab') === 'integration' ? 'integration' : 'logs'
+  const [activeTab, setActiveTab] = useState<'logs' | 'integration' | 'settings'>(
+    searchParams.get('tab') === 'integration'
+      ? 'integration'
+      : searchParams.get('tab') === 'settings'
+      ? 'settings'
+      : 'logs'
   );
   const [revealedKey, setRevealedKey] = useState<string | null>(null);
   const [revealCountdown, setRevealCountdown] = useState(0);
@@ -116,9 +122,10 @@ export function LogDetailPage() {
     );
   }
 
-  const tabs: { key: 'logs' | 'integration'; label: string; icon: string }[] = [
+  const tabs: { key: 'logs' | 'integration' | 'settings'; label: string; icon: string }[] = [
     { key: 'logs', label: t('services.detail.tabs.logs'), icon: 'article' },
     { key: 'integration', label: t('services.detail.tabs.integration'), icon: 'integration_instructions' },
+    { key: 'settings', label: t('services.detail.tabs.settings', { defaultValue: 'Settings' }), icon: 'tune' },
   ];
 
   return (
@@ -157,6 +164,15 @@ export function LogDetailPage() {
         </div>
       </div>
 
+      {/* Service Identity Card */}
+      <LogServiceIdentity
+        service={service}
+        onSettingsClick={() => {
+          setActiveTab('settings');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-slate-100 dark:bg-bg-surface-dark/50 p-1 rounded-xl w-fit">
         {tabs.map((tab) => (
@@ -186,6 +202,13 @@ export function LogDetailPage() {
       {/* Integration Tab */}
       {activeTab === 'integration' && service && (
         <IntegrationPanel service={service} onApiKeyRegenerated={handleApiKeyRegenerated} />
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === 'settings' && service && (
+        <div className="max-w-lg">
+          <LogServiceSettings service={service} onSuccess={setService} />
+        </div>
       )}
 
       {/* Revealed API Key Modal — shown after service creation */}

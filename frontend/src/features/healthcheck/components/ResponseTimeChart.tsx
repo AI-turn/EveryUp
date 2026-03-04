@@ -7,6 +7,8 @@ type TimeRange = '24H' | '7D' | '30D';
 interface ResponseTimeChartProps {
   serviceId: string;
   refreshKey?: number;
+  /** Timeout threshold in milliseconds — renders a dashed SLO line on the chart */
+  timeout?: number;
 }
 
 function getTimeRangeParams(range: TimeRange): { from: string; limit: string } {
@@ -42,7 +44,7 @@ function formatTimeRangeLabel(range: TimeRange): string {
   }
 }
 
-export function ResponseTimeChart({ serviceId, refreshKey }: ResponseTimeChartProps) {
+export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTimeChartProps) {
   const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<TimeRange>('24H');
   const [metrics, setMetrics] = useState<Metric[]>([]);
@@ -151,6 +153,21 @@ export function ResponseTimeChart({ serviceId, refreshKey }: ResponseTimeChartPr
           <div className="border-b border-slate-300 dark:border-chart-border w-full h-0" />
           <div className="border-b border-slate-300 dark:border-chart-border w-full h-0" />
         </div>
+
+        {/* SLO Threshold Line */}
+        {timeout != null && maxValue > 0 && timeout <= maxValue * 1.1 && (
+          <div
+            className="absolute left-0 right-0 pointer-events-none z-10"
+            style={{ bottom: `${Math.min((timeout / maxValue) * 100, 96)}%` }}
+          >
+            <div className="relative border-t-2 border-dashed border-amber-400 dark:border-amber-500 w-full">
+              <span className="absolute right-0 bottom-1 text-[10px] font-bold text-amber-500 dark:text-amber-400 bg-white dark:bg-chart-bg px-1 rounded leading-none">
+                {t('services.detail.chart.timeout')}{' '}
+                {timeout >= 1000 ? `${timeout / 1000}s` : `${timeout}ms`}
+              </span>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex-1 flex items-center justify-center">

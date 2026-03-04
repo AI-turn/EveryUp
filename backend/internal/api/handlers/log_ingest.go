@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/url"
@@ -10,10 +11,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/aiturn/everyup/internal/alerter"
-	"github.com/aiturn/everyup/internal/config"
 	"github.com/aiturn/everyup/internal/database"
 	"github.com/aiturn/everyup/internal/models"
 )
+
+// errLogFiltered is returned by processEntry when the log level is filtered out by the service config.
+var errLogFiltered = errors.New("log level filtered")
 
 const maxMessageBytes = 10 * 1024  // 10 KB
 const maxMetadataBytes = 50 * 1024 // 50 KB
@@ -31,22 +34,6 @@ func NewLogIngestHandler() *LogIngestHandler {
 		logRepo:      database.NewLogRepository(),
 		alertManager: alerter.NewManager(),
 	}
-}
-
-// getAllowedLevels returns the configured allowed log levels
-func getAllowedLevels() map[models.LogLevel]bool {
-	cfg := config.Get()
-	allowed := make(map[models.LogLevel]bool)
-	if cfg != nil && len(cfg.System.Logging.AllowedLevels) > 0 {
-		for _, l := range cfg.System.Logging.AllowedLevels {
-			allowed[models.LogLevel(strings.ToLower(l))] = true
-		}
-	} else {
-		// Default: error and warn only
-		allowed[models.LogLevelError] = true
-		allowed[models.LogLevelWarn] = true
-	}
-	return allowed
 }
 
 // Ingest receives logs from external services authenticated by API key.
@@ -131,6 +118,13 @@ func (h *LogIngestHandler) Ingest(c *fiber.Ctx) error {
 	// Single log — return single response
 	if len(entries) == 1 {
 		logEntry, err := h.processEntry(service, &entries[0], source)
+		if errors.Is(err, errLogFiltered) {
+			// Level filtered out — acknowledge silently so agents don't retry
+			return c.Status(200).JSON(fiber.Map{
+				"success": true,
+				"data":    fiber.Map{"filtered": true},
+			})
+		}
 		if err != nil {
 			return c.Status(400).JSON(fiber.Map{
 				"success": false,
@@ -170,19 +164,24 @@ func (h *LogIngestHandler) Ingest(c *fiber.Ctx) error {
 // ingestBatch processes a batch of log entries
 func (h *LogIngestHandler) ingestBatch(c *fiber.Ctx, service *models.Service, logs []models.LogIngestEntry, source string) error {
 	processed := 0
-	errors := 0
+	filtered := 0
+	errs := 0
 
 	for i := range logs {
 		logEntry, err := h.processEntry(service, &logs[i], source)
+		if errors.Is(err, errLogFiltered) {
+			filtered++
+			continue
+		}
 		if err != nil {
 			log.Printf("Batch log #%d validation failed: %v", i, err)
-			errors++
+			errs++
 			continue
 		}
 
 		if err := h.logRepo.Create(logEntry); err != nil {
 			log.Printf("Batch log #%d DB failed: %v", i, err)
-			errors++
+			errs++
 			continue
 		}
 
@@ -194,7 +193,8 @@ func (h *LogIngestHandler) ingestBatch(c *fiber.Ctx, service *models.Service, lo
 		"success": true,
 		"data": fiber.Map{
 			"processed": processed,
-			"errors":    errors,
+			"filtered":  filtered,
+			"errors":    errs,
 			"total":     len(logs),
 		},
 	})
@@ -215,14 +215,15 @@ func (h *LogIngestHandler) processEntry(service *models.Service, entry *models.L
 		entry.Level = models.LogLevelError
 	}
 
-	// Validate against allowed levels
-	allowed := getAllowedLevels()
-	if !allowed[entry.Level] {
-		keys := make([]string, 0, len(allowed))
-		for k := range allowed {
-			keys = append(keys, string(k))
+	// Apply per-service log level filter. Empty filter = accept all levels.
+	if len(service.LogLevelFilter) > 0 {
+		allowed := make(map[models.LogLevel]bool, len(service.LogLevelFilter))
+		for _, l := range service.LogLevelFilter {
+			allowed[l] = true
 		}
-		return nil, fmt.Errorf("level '%s' is not allowed. Allowed levels: %s", entry.Level, strings.Join(keys, ", "))
+		if !allowed[entry.Level] {
+			return nil, errLogFiltered
+		}
 	}
 
 	// Generate fingerprint
