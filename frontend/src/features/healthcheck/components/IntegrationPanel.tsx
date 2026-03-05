@@ -19,6 +19,7 @@ export function IntegrationPanel({ service, onApiKeyRegenerated }: IntegrationPa
   const [revealCountdown, setRevealCountdown] = useState(0);
   const [activeCategory, setActiveCategory] = useState<'http-appender' | 'agent'>('http-appender');
   const [activeSnippet, setActiveSnippet] = useState<string>('express');
+  const [activeNginxTab, setActiveNginxTab] = useState<'nginx_conf' | 'docker_compose' | 'docker_run'>('nginx_conf');
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const maskedKey = service.apiKeyMasked || '—';
@@ -498,6 +499,137 @@ WantedBy=multi-user.target
             {t('services.integration.connectionTest.successHint', { defaultValue: 'If connected successfully, the server responds with HTTP 200. If you get a timeout or connection refused, check your firewall outbound rules and server inbound rules.' })}
           </p>
         </div>
+      </div>
+
+      {/* Nginx Reverse Proxy */}
+      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-green-100 dark:bg-green-900/30">
+            <MaterialIcon name="dns" className="text-lg text-green-600 dark:text-green-400" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+              Nginx Reverse Proxy
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+              Nginx 뒤에서 운영할 경우 Authorization 헤더 전달 설정이 필요합니다.
+            </p>
+          </div>
+        </div>
+
+        {/* Warning */}
+        <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-start gap-2">
+          <MaterialIcon name="warning" className="text-sm text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-xs text-amber-700 dark:text-amber-300">
+            Nginx 기본 설정은 <code className="font-mono bg-amber-100 dark:bg-amber-900/40 px-1 rounded">Authorization</code> 헤더를 백엔드로 전달하지 않습니다.{' '}
+            아래 <code className="font-mono bg-amber-100 dark:bg-amber-900/40 px-1 rounded">proxy_set_header</code> 설정을 반드시 추가하세요.
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 mb-3 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit">
+          {([
+            { key: 'nginx_conf', label: 'nginx.conf' },
+            { key: 'docker_compose', label: 'Docker Compose' },
+            { key: 'docker_run', label: 'Docker Run' },
+          ] as const).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveNginxTab(tab.key)}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                activeNginxTab === tab.key
+                  ? 'bg-white dark:bg-ui-active-dark text-slate-900 dark:text-white shadow-sm'
+                  : 'text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-text-secondary-dark'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Code block */}
+        {(() => {
+          const hostname = window.location.hostname;
+          const snippets = {
+            nginx_conf: `server {
+    listen 80;
+    server_name ${hostname};
+
+    location / {
+        proxy_pass http://localhost:8080;
+
+        # Authorization 헤더를 백엔드로 전달 (필수)
+        proxy_set_header Authorization $http_authorization;
+
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}`,
+            docker_compose: `# docker-compose.yml
+services:
+  everyup:
+    image: aiturn/everyup:latest
+    container_name: everyup
+    restart: unless-stopped
+    # 외부 노출 없이 nginx와 내부 통신
+    expose:
+      - "8080"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro   # HTTPS 인증서 (선택)
+    depends_on:
+      - everyup
+
+# nginx.conf (위 nginx_conf 탭 참고)
+# proxy_pass를 http://everyup:8080 으로 변경`,
+            docker_run: `# 1. 네트워크 생성
+docker network create everyup-net
+
+# 2. 앱 컨테이너 실행
+docker run -d \\
+  --name everyup \\
+  --network everyup-net \\
+  -v everyup-data:/app/data \\
+  --restart unless-stopped \\
+  aiturn/everyup:latest
+
+# 3. nginx.conf 준비 (proxy_pass: http://everyup:8080)
+# proxy_set_header Authorization $http_authorization; 포함 필수
+
+# 4. Nginx 컨테이너 실행
+docker run -d \\
+  --name nginx \\
+  --network everyup-net \\
+  -p 80:80 \\
+  -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro \\
+  --restart unless-stopped \\
+  nginx:alpine`,
+          };
+          return (
+            <div className="relative">
+              <pre className="p-4 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre">
+                {snippets[activeNginxTab]}
+              </pre>
+              <button
+                onClick={() => copy(snippets[activeNginxTab])}
+                className="absolute top-3 right-3 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
+                title={t('common.copyToClipboard')}
+              >
+                <MaterialIcon name="content_copy" className="text-sm" />
+              </button>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Code Snippets */}

@@ -372,14 +372,16 @@ func (r *ServiceRepository) GetByApiKeyHash(apiKeyHash string) (*models.Service,
 	}
 	var s models.Service
 	var isActive int
+	var url, method, body sql.NullString
+	var port, expectedStatus, interval, timeout sql.NullInt64
 	var headersJSON, tagsJSON, logLevelFilter sql.NullString
 
 	err := DB.QueryRow(`
 		SELECT id, name, type, is_active, url, port, method, headers, body,
 		       expected_status, interval, timeout, tags, log_level_filter, created_at, updated_at
 		FROM services WHERE api_key = ?
-	`, apiKeyHash).Scan(&s.ID, &s.Name, &s.Type, &isActive, &s.URL, &s.Port, &s.Method,
-		&headersJSON, &s.Body, &s.ExpectedStatus, &s.Interval, &s.Timeout,
+	`, apiKeyHash).Scan(&s.ID, &s.Name, &s.Type, &isActive, &url, &port, &method,
+		&headersJSON, &body, &expectedStatus, &interval, &timeout,
 		&tagsJSON, &logLevelFilter, &s.CreatedAt, &s.UpdatedAt)
 
 	if err == sql.ErrNoRows {
@@ -390,6 +392,27 @@ func (r *ServiceRepository) GetByApiKeyHash(apiKeyHash string) (*models.Service,
 	}
 
 	s.IsActive = isActive == 1
+	if url.Valid {
+		s.URL = url.String
+	}
+	if port.Valid {
+		s.Port = int(port.Int64)
+	}
+	if method.Valid {
+		s.Method = method.String
+	}
+	if body.Valid {
+		s.Body = body.String
+	}
+	if expectedStatus.Valid {
+		s.ExpectedStatus = int(expectedStatus.Int64)
+	}
+	if interval.Valid {
+		s.Interval = int(interval.Int64)
+	}
+	if timeout.Valid {
+		s.Timeout = int(timeout.Int64)
+	}
 	if headersJSON.Valid && headersJSON.String != "" {
 		json.Unmarshal([]byte(headersJSON.String), &s.Headers)
 	}
