@@ -18,11 +18,11 @@
 
 | Feature | Description |
 |---------|-------------|
-| **Service Monitoring** | HTTP/TCP health checks, uptime tracking, latency trends |
-| **Infrastructure Monitoring** | Real-time CPU/memory/disk/network collection (local + SSH remote) |
+| **Health Check** | HTTP/TCP health checks, uptime tracking, latency trends |
+| **Infrastructure** | Real-time CPU/memory/disk/network collection (local + SSH remote) |
 | **API Metrics** | Per-endpoint traffic, error rate, and response time analysis |
 | **Alerts** | Telegram / Discord integration, threshold-based rules |
-| **Log Management** | Unified log viewer, search, log agent collection |
+| **Logs** | Unified log viewer, search, log agent collection |
 | **Real-time Streaming** | WebSocket-based live metric updates |
 
 ---
@@ -42,44 +42,22 @@ everyup/
 
 ### Run with Docker (recommended)
 
-**1. Pull the image**
-
-Choose the image for your architecture:
-
-| Tag | Target |
-|-----|--------|
-| `aiturn/everyup:amd64` | x86-64 servers (standard cloud VMs) |
-| `aiturn/everyup:arm64` | ARM servers (AWS Graviton, Raspberry Pi, etc.) |
-
 ```bash
-docker pull aiturn/everyup:amd64   # x86-64
-# or
-docker pull aiturn/everyup:arm64   # ARM64
+docker pull aiturn/everyup:latest
 ```
 
-**2. Run**
-
 ```bash
-# x86-64 (amd64)
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
   -e TZ=UTC \
-  aiturn/everyup:amd64
-
-# ARM64
-docker run -d \
-  --name everyup \
-  -p 3001:3001 \
-  -v everyup-data:/app/data \
-  -e TZ=UTC \
-  aiturn/everyup:arm64
+  aiturn/everyup:latest
 ```
 
-**3. Open**
+The image supports both `linux/amd64` and `linux/arm64` — Docker automatically pulls the correct variant for your platform.
 
-→ Go to http://localhost:3001 and create your admin account.
+**Open → http://localhost:3001** and create your admin account.
 
 > **No pre-configuration needed.** On first launch, create your admin account directly in the browser.
 > **Encryption keys and JWT secrets are auto-generated** on first run and stored in the database.
@@ -156,17 +134,14 @@ docker cp everyup:/app/data/monitoring.db ./monitoring.db.bak
 ## Upgrading
 
 ```bash
-# Pull the latest image
-docker pull aiturn/everyup:amd64
-
-# Restart the container (volume data is preserved)
+docker pull aiturn/everyup:latest
 docker stop everyup && docker rm everyup
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
   -e TZ=UTC \
-  aiturn/everyup:amd64
+  aiturn/everyup:latest
 ```
 
 With Docker Compose:
@@ -184,25 +159,21 @@ Deploy `everyup-log-agent` on any server to collect logs from external services.
 
 **1. Get an API key**
 
-In the EveryUp dashboard, go to **Service detail → Integration** tab to generate an API key.
+In the EveryUp dashboard, go to **Health Check → Service detail → Integration** tab to generate an API key.
 
 **2. Run the agent**
 
 ```bash
-# amd64
 docker run -d \
+  --name everyup-log-agent \
   -v /var/log/myapp:/var/log/app:ro \
   -e MT_ENDPOINT=http://your-everyup-server:3001 \
   -e MT_API_KEY=mt_your_api_key \
-  aiturn/everyup-log-agent:amd64
-
-# arm64
-docker run -d \
-  -v /var/log/myapp:/var/log/app:ro \
-  -e MT_ENDPOINT=http://your-everyup-server:3001 \
-  -e MT_API_KEY=mt_your_api_key \
-  aiturn/everyup-log-agent:arm64
+  --restart unless-stopped \
+  aiturn/everyup-log-agent:latest
 ```
+
+Supports `linux/amd64` and `linux/arm64` — Docker selects the correct variant automatically.
 
 See [log-agent/README.md](log-agent/README.md) for more details.
 

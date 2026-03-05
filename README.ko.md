@@ -18,11 +18,11 @@
 
 | 기능 | 설명 |
 |------|------|
-| **서비스 모니터링** | HTTP/TCP 헬스체크, 업타임, 레이턴시 추적 |
-| **인프라 모니터링** | CPU/메모리/디스크/네트워크 실시간 수집 (로컬 + SSH 원격) |
+| **헬스체크** | HTTP/TCP 헬스체크, 업타임, 레이턴시 추적 |
+| **인프라** | CPU/메모리/디스크/네트워크 실시간 수집 (로컬 + SSH 원격) |
 | **API 메트릭** | 엔드포인트별 트래픽, 에러율, 응답시간 분석 |
 | **알림** | Telegram / Discord 채널 연동, 임계값 기반 규칙 |
-| **로그 관리** | 통합 로그 뷰어, 검색, 로그 에이전트 수집 |
+| **로그** | 통합 로그 뷰어, 검색, 로그 에이전트 수집 |
 | **실시간 스트리밍** | WebSocket 기반 메트릭 실시간 업데이트 |
 
 ---
@@ -42,44 +42,22 @@ everyup/
 
 ### Docker로 실행 (권장)
 
-**1. 이미지 받기**
-
-아키텍처에 맞는 이미지를 선택하세요:
-
-| 태그 | 대상 |
-|------|------|
-| `aiturn/everyup:amd64` | x86-64 서버 (일반 클라우드 VM) |
-| `aiturn/everyup:arm64` | ARM 서버 (AWS Graviton, Raspberry Pi 등) |
-
 ```bash
-docker pull aiturn/everyup:amd64   # x86-64
-# 또는
-docker pull aiturn/everyup:arm64   # ARM64
+docker pull aiturn/everyup:latest
 ```
 
-**2. 실행**
-
 ```bash
-# x86-64 (amd64)
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
   -e TZ=Asia/Seoul \
-  aiturn/everyup:amd64
-
-# ARM64
-docker run -d \
-  --name everyup \
-  -p 3001:3001 \
-  -v everyup-data:/app/data \
-  -e TZ=Asia/Seoul \
-  aiturn/everyup:arm64
+  aiturn/everyup:latest
 ```
 
-**3. 접속**
+`linux/amd64`와 `linux/arm64` 모두 지원합니다 — Docker가 플랫폼에 맞는 이미지를 자동으로 선택합니다.
 
-→ http://localhost:3001 접속 후 관리자 계정 생성
+**접속 → http://localhost:3001** 후 관리자 계정 생성
 
 > **별도 계정 설정이 필요 없습니다.** 처음 실행 후 브라우저에서 관리자 계정을 직접 생성합니다.
 > **암호화 키와 JWT 시크릿도 별도 설정 없이** 앱이 최초 실행 시 자동 생성하여 DB에 저장합니다.
@@ -156,17 +134,14 @@ docker cp everyup:/app/data/monitoring.db ./monitoring.db.bak
 ## 업그레이드
 
 ```bash
-# 새 이미지 받기
-docker pull aiturn/everyup:amd64
-
-# 컨테이너 재시작 (볼륨 데이터 유지)
+docker pull aiturn/everyup:latest
 docker stop everyup && docker rm everyup
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
   -e TZ=Asia/Seoul \
-  aiturn/everyup:amd64
+  aiturn/everyup:latest
 ```
 
 Docker Compose 사용 시:
@@ -184,25 +159,21 @@ docker compose up -d
 
 **1. API 키 발급**
 
-EveryUp 대시보드 → **서비스 상세 → 통합** 탭에서 API 키를 발급받습니다.
+EveryUp 대시보드 → **헬스체크 → 서비스 상세 → Integration** 탭에서 API 키를 발급받습니다.
 
 **2. 에이전트 실행**
 
 ```bash
-# amd64
 docker run -d \
+  --name everyup-log-agent \
   -v /var/log/myapp:/var/log/app:ro \
   -e MT_ENDPOINT=http://your-everyup-server:3001 \
   -e MT_API_KEY=mt_your_api_key \
-  aiturn/everyup-log-agent:amd64
-
-# arm64
-docker run -d \
-  -v /var/log/myapp:/var/log/app:ro \
-  -e MT_ENDPOINT=http://your-everyup-server:3001 \
-  -e MT_API_KEY=mt_your_api_key \
-  aiturn/everyup-log-agent:arm64
+  --restart unless-stopped \
+  aiturn/everyup-log-agent:latest
 ```
+
+`linux/amd64`와 `linux/arm64` 모두 지원합니다 — Docker가 플랫폼에 맞는 이미지를 자동으로 선택합니다.
 
 자세한 내용은 [log-agent/README.md](log-agent/README.md)를 참고하세요.
 
