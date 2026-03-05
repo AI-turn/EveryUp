@@ -1,0 +1,223 @@
+package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
+	"github.com/aiturn/everyup/internal/alerter"
+	"github.com/aiturn/everyup/internal/api"
+	"github.com/aiturn/everyup/internal/api/middleware"
+	"github.com/aiturn/everyup/internal/api/websocket"
+	"github.com/aiturn/everyup/internal/checker"
+	"github.com/aiturn/everyup/internal/collector"
+	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/crypto"
+	"github.com/aiturn/everyup/internal/database"
+	"github.com/aiturn/everyup/internal/models"
+)
+
+func main() {
+	// Parse command line flags
+	configPath := flag.String("config", "", "Path to config file")
+	flag.Parse()
+
+	// Load configuration
+	cfg, err := config.Load(*configPath)
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	log.Printf("Starting EveryUp API Server...")
+	log.Printf("Mode: %s", cfg.Server.Mode)
+
+	// Connect to database
+	if err := database.Connect(cfg.Database.Path); err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer database.Close()
+	log.Printf("Database connected: %s", cfg.Database.Path)
+
+	// Initialize encryption — auto-generates key on first run, loads from DB on subsequent runs
+	if err := crypto.InitFromDB(database.DB); err != nil {
+		log.Fatalf("Encryption init failed: %v", err)
+	}
+	log.Printf("Encryption: enabled (AES-256-GCM, key managed in DB)")
+
+	// Initialize JWT signing secret — auto-generates on first run, loads from DB on subsequent runs
+	if err := crypto.InitJWTSecret(database.DB); err != nil {
+		log.Fatalf("JWT secret init failed: %v", err)
+	}
+	log.Printf("JWT: signing secret loaded (HMAC-SHA256, key managed in DB)")
+
+	// Initialize admin account from env vars on startup
+	// Set MT_ADMIN_USERNAME + MT_ADMIN_PASSWORD to create or reset the admin account
+	if adminUser := os.Getenv("MT_ADMIN_USERNAME"); adminUser != "" {
+		if adminPass := os.Getenv("MT_ADMIN_PASSWORD"); adminPass != "" {
+			hash, err := bcrypt.GenerateFromPassword([]byte(adminPass), bcrypt.DefaultCost)
+			if err != nil {
+				log.Fatalf("Failed to hash admin password: %v", err)
+			}
+			userRepo := database.NewUserRepository()
+			if _, err := userRepo.Upsert(adminUser, string(hash), "admin"); err != nil {
+				log.Fatalf("Failed to initialize admin user: %v", err)
+			}
+			log.Printf("Admin account initialized: %s", adminUser)
+		}
+	}
+
+	// Warm up API key cache
+	serviceRepo := database.NewServiceRepository()
+	if err := middleware.WarmUpApiKeyCache(serviceRepo); err != nil {
+		log.Printf("Warning: API key cache warm-up failed: %v", err)
+	}
+
+	// Create Fiber app
+	app := fiber.New(fiber.Config{
+		AppName:               "EveryUp API",
+		DisableStartupMessage: cfg.Server.Mode == "production",
+	})
+
+	// Setup WebSocket hub
+	hub := websocket.NewHub()
+	go hub.Run()
+
+	// Add WebSocket route before other routes
+	app.Use("/ws", websocket.WebSocketUpgrade())
+	app.Get("/ws/metrics", hub.Handler())
+
+	// Initialize scheduler
+	scheduler := checker.NewScheduler()
+	scheduler.SetBroadcast(hub.GetBroadcastFunc())
+
+	// Auto-register local host
+	hostRepo := database.NewHostRepository()
+	localHosts, _ := hostRepo.GetByType(models.HostTypeLocal)
+	var localHostID string
+	if len(localHosts) == 0 {
+		hostname, _ := os.Hostname()
+		if hostname == "" {
+			hostname = "localhost"
+		}
+		now := time.Now()
+		localHost := &models.Host{
+			ID:        "local",
+			Name:      hostname,
+			Type:      models.HostTypeLocal,
+			IP:        getLocalIP(),
+			Group:     "Local",
+			IsActive:  true,
+			CreatedAt: now,
+			UpdatedAt: now,
+		}
+		if err := hostRepo.Create(localHost); err != nil {
+			log.Printf("Warning: failed to register local host: %v", err)
+		} else {
+			log.Printf("Local host registered: %s (%s)", localHost.Name, localHost.IP)
+		}
+		localHostID = localHost.ID
+	} else {
+		localHostID = localHosts[0].ID
+		// Update IP on every restart — handles dynamic (DHCP) IP changes
+		currentIP := getLocalIP()
+		if localHosts[0].IP != currentIP {
+			localHosts[0].IP = currentIP
+			localHosts[0].UpdatedAt = time.Now()
+			if err := hostRepo.Update(&localHosts[0]); err != nil {
+				log.Printf("Warning: failed to update local host IP: %v", err)
+			} else {
+				log.Printf("Local host IP updated: %s", currentIP)
+			}
+		}
+	}
+
+	// Initialize CollectorManager
+	collectorMgr := collector.NewCollectorManager(
+		cfg.System.CollectInterval,
+		cfg.System.StoreInterval,
+	)
+	collectorMgr.SetBroadcast(hub.GetBroadcastFunc())
+
+	// Register local collector
+	localCollector := collector.NewLocalCollector(localHostID)
+	collectorMgr.Register(localCollector)
+
+	// Register active remote hosts
+	remoteHosts, _ := hostRepo.GetByType(models.HostTypeRemote)
+	for i := range remoteHosts {
+		if !remoteHosts[i].IsActive {
+			continue
+		}
+		if err := collectorMgr.RegisterSSHHost(&remoteHosts[i]); err != nil {
+			log.Printf("Warning: failed to register SSH collector for %s: %v", remoteHosts[i].ID, err)
+		}
+	}
+
+	// Wire up RuleEvaluator for resource alert rules
+	alertMgr := alerter.NewManager()
+	evaluator := alerter.NewRuleEvaluator(alertMgr, cfg.System.CollectInterval)
+	collectorMgr.SetOnMetricCollected(evaluator.Evaluate)
+
+	// Wire up ServiceRuleEvaluator for endpoint alert rules
+	serviceEvaluator := alerter.NewServiceRuleEvaluator(alertMgr)
+	scheduler.SetServiceEvaluator(serviceEvaluator)
+
+	// Send server boot notification
+	go alertMgr.DispatchBootNotification()
+
+	if cfg.System.Enabled {
+		collectorMgr.Start()
+		log.Println("CollectorManager enabled")
+	}
+
+	// Setup API routes with scheduler and collector manager
+	api.SetupRoutes(app, scheduler, collectorMgr, cfg.Server.AllowOrigins)
+
+	// Start scheduler with config services
+	if err := scheduler.Start(cfg.Services); err != nil {
+		log.Fatalf("Failed to start scheduler: %v", err)
+	}
+
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-quit
+		log.Println("Shutting down server...")
+		alertMgr.Shutdown()
+		scheduler.Stop()
+		collectorMgr.Stop()
+		app.Shutdown()
+	}()
+
+	// Start server
+	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("Server listening on http://%s", addr)
+
+	if err := app.Listen(addr); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+func getLocalIP() string {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return "127.0.0.1"
+	}
+	for _, addr := range addrs {
+		if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+			if ipNet.IP.To4() != nil {
+				return ipNet.IP.String()
+			}
+		}
+	}
+	return "127.0.0.1"
+}

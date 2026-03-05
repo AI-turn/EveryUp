@@ -1,5 +1,5 @@
-# Binary
-server
+# Binary (root-only, to avoid ignoring cmd/server/ directory)
+/server
 *.exe
 *.exe~
 *.dll
