@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { MaterialIcon } from '../common';
 
 export function NetworkStatusBanner() {
   const { isOnline } = useNetworkStatus();
+  const { t } = useTranslation();
 
   if (isOnline) return null;
 
@@ -10,7 +12,7 @@ export function NetworkStatusBanner() {
     <div className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white py-2 px-4">
       <div className="flex items-center justify-center gap-2 text-sm font-medium">
         <MaterialIcon name="wifi_off" className="text-lg animate-pulse" />
-        <span>서버와 연결이 끊어졌습니다. 재연결 시도 중...</span>
+        <span>{t('network.disconnected')}</span>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 /* Tailwind v4 Variant Setup */
 @variant dark (.dark &);
@@ -140,6 +141,19 @@ body {
   100% {
     transform: scale(1);
     opacity: 0;
+  }
+}
+
+/* Reduced Motion: 접근성 — 사용자의 모션 설정 존중 */
+@media (prefers-reduced-motion: reduce) {
+  .status-pulse::after {
+    animation: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

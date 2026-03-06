@@ -95,6 +95,11 @@ export function AlertsPage() {
     return type === 'telegram' ? 'send' : 'sports_esports';
   };
 
+  const channelStyles: Record<string, { bg: string; text: string }> = {
+    telegram: { bg: 'bg-sky-500/10', text: 'text-sky-500' },
+    discord: { bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
+  };
+
   const tabs: { key: TabType; label: string; icon: string }[] = [
     { key: 'channels', label: t('alerts.channelsTitle'), icon: 'notifications' },
     { key: 'rules', label: t('alerts.rulesTitle'), icon: 'rule' },
@@ -186,17 +191,11 @@ export function AlertsPage() {
                     className={`p-4 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-ui-hover-dark/50 transition-colors ${!channel.isEnabled ? 'opacity-50' : ''}`}
                   >
                     <div
-                      className="w-12 h-12 rounded-lg flex items-center justify-center"
-                      style={{
-                        backgroundColor: channel.type === 'telegram' ? 'rgba(38, 165, 228, 0.1)' : 'rgba(88, 101, 242, 0.1)'
-                      }}
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center ${(channelStyles[channel.type] ?? channelStyles.discord).bg}`}
                     >
                       <MaterialIcon
                         name={getChannelIcon(channel.type)}
-                        className="text-2xl"
-                        style={{
-                          color: channel.type === 'telegram' ? '#26A5E4' : '#5865F2'
-                        }}
+                        className={`text-2xl ${(channelStyles[channel.type] ?? channelStyles.discord).text}`}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -208,12 +207,7 @@ export function AlertsPage() {
                           </span>
                         )}
                       </div>
-                      <p
-                        className="text-sm font-bold capitalize"
-                        style={{
-                          color: channel.type === 'telegram' ? '#26A5E4' : '#5865F2'
-                        }}
-                      >
+                      <p className={`text-sm font-bold capitalize ${(channelStyles[channel.type] ?? channelStyles.discord).text}`}>
                         {channel.type}
                       </p>
                     </div>
@@ -221,8 +215,7 @@ export function AlertsPage() {
                       <button
                         onClick={() => handleToggle(channel.id)}
                         disabled={togglingIds.has(channel.id)}
-                        className="relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        style={{ backgroundColor: channel.isEnabled ? 'var(--color-primary, #6366f1)' : '#94a3b8' }}
+                        className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${channel.isEnabled ? 'bg-primary' : 'bg-slate-400 dark:bg-slate-500'}`}
                         title={channel.isEnabled
                           ? t('alerts.disable', { defaultValue: 'Disable' })
                           : t('alerts.enable', { defaultValue: 'Enable' })

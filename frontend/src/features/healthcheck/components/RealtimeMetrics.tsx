@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../../../components/common';
-import { api, MetricsSummary } from '../../../services/api';
+import { api, MetricsSummary, Metric } from '../../../services/api';
 
 interface RealtimeMetricsProps {
   serviceId: string;
@@ -11,13 +11,18 @@ interface RealtimeMetricsProps {
 export function RealtimeMetrics({ serviceId, refreshKey }: RealtimeMetricsProps) {
   const { t } = useTranslation();
   const [summary, setSummary] = useState<MetricsSummary | null>(null);
+  const [recentFailures, setRecentFailures] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMetrics = async () => {
+    const fetchData = async () => {
       try {
-        const data = await api.getServiceMetricsSummary(serviceId);
-        setSummary(data);
+        const [summaryData, metricsData] = await Promise.all([
+          api.getServiceMetricsSummary(serviceId),
+          api.getServiceMetrics(serviceId, { limit: '100' }),
+        ]);
+        setSummary(summaryData);
+        setRecentFailures(metricsData.filter((m: Metric) => m.status === 'failure').length);
       } catch (err) {
         console.error('Failed to fetch metrics summary:', err);
       } finally {
@@ -25,7 +30,7 @@ export function RealtimeMetrics({ serviceId, refreshKey }: RealtimeMetricsProps)
       }
     };
 
-    fetchMetrics();
+    fetchData();
   }, [serviceId, refreshKey]);
 
   if (loading) {
@@ -68,11 +73,11 @@ export function RealtimeMetrics({ serviceId, refreshKey }: RealtimeMetricsProps)
         : '-',
     },
     {
-      label: t('services.detail.metrics.totalChecks'),
-      value: summary ? summary.totalChecks.toLocaleString() : '-',
-      icon: 'monitoring',
-      iconColor: 'text-blue-500',
-      subtext: t('services.detail.metrics.checksSubtext'),
+      label: t('services.detail.metrics.recentFailures', { defaultValue: 'Recent Failures' }),
+      value: summary ? String(recentFailures) : '-',
+      icon: recentFailures === 0 ? 'check_circle' : 'error',
+      iconColor: recentFailures === 0 ? 'text-green-500' : 'text-red-500',
+      subtext: t('services.detail.metrics.recentFailuresSubtext', { defaultValue: 'Out of last 100 checks' }),
     },
   ];
 

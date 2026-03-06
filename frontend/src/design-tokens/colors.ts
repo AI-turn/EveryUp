@@ -67,6 +67,37 @@ export const statusColorClasses = {
 } as const;
 
 /**
+ * Infrastructure status color mapping (healthy/warning/critical/error)
+ * Uses lime for healthy to visually distinguish from service status
+ */
+export const infraStatusColorClasses = {
+  healthy: {
+    bg: 'bg-lime-400/10',
+    text: 'text-lime-500 dark:text-lime-400',
+    dot: 'bg-lime-500 dark:bg-lime-400',
+    badge: 'bg-lime-400/10 text-lime-500',
+  },
+  warning: {
+    bg: 'bg-amber-400/10',
+    text: 'text-amber-500 dark:text-amber-400',
+    dot: 'bg-amber-500 dark:bg-amber-400',
+    badge: 'bg-amber-400/10 text-amber-500',
+  },
+  critical: {
+    bg: 'bg-red-400/10',
+    text: 'text-red-500 dark:text-red-400',
+    dot: 'bg-red-500 dark:bg-red-400',
+    badge: 'bg-red-400/10 text-red-500',
+  },
+  error: {
+    bg: 'bg-red-400/10',
+    text: 'text-red-500 dark:text-red-400',
+    dot: 'bg-red-500 dark:bg-red-400',
+    badge: 'bg-red-400/10 text-red-500',
+  },
+} as const;
+
+/**
  * Incident/Error level color classes
  */
 export const incidentColorClasses = {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { env } from '../config/env'
 import { MaterialIcon } from '../components/common'
@@ -8,6 +9,7 @@ export function LoginPage() {
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const { t } = useTranslation()
   const from = (location.state as { from?: string })?.from ?? '/'
 
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null)
@@ -23,7 +25,7 @@ export function LoginPage() {
       .then(json => {
         if (json.success) setNeedsSetup(json.data.needs_setup)
       })
-      .catch(() => setError('서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인하세요.'))
+      .catch(() => setError(t('login.error.network')))
   }, [])
 
   if (isAuthenticated) {
@@ -49,11 +51,11 @@ export function LoginPage() {
         login(json.data.token)
         navigate(from, { replace: true })
       } else {
-        setError(json.error?.message || '오류가 발생했습니다')
+        setError(json.error?.message || t('login.error.generic'))
         setLoading(false)
       }
     } catch {
-      setError('서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인하세요.')
+      setError(t('login.error.network'))
       setLoading(false)
     }
   }
@@ -68,6 +70,7 @@ export function LoginPage() {
   }
 
   const isSetup = needsSetup === true
+  const inputErrorClass = error ? 'border-red-500/50 focus:border-red-500' : 'border-slate-700 focus:border-primary'
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
@@ -78,10 +81,10 @@ export function LoginPage() {
             <MaterialIcon name="monitor_heart" className="text-3xl text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-white">
-            {isSetup ? '초기 설정' : 'EveryUp'}
+            {isSetup ? t('login.setupTitle') : t('login.loginTitle')}
           </h1>
           <p className="text-slate-400 text-sm mt-1">
-            {isSetup ? '관리자 계정을 생성하세요' : '관리자 계정으로 로그인하세요'}
+            {isSetup ? t('login.setupSubtitle') : t('login.loginSubtitle')}
           </p>
         </div>
 
@@ -96,32 +99,36 @@ export function LoginPage() {
           {isSetup && (
             <div className="flex items-start gap-2 text-blue-400 text-sm bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2.5">
               <MaterialIcon name="info" className="text-base mt-0.5 shrink-0" />
-              <span>처음 실행되었습니다. 관리자 계정을 설정하세요.</span>
+              <span>{t('login.setupNotice')}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="block text-slate-400 text-xs mb-1">사용자 이름</label>
+              <label htmlFor="login-username" className="block text-slate-400 text-xs mb-1">{t('login.username')}</label>
               <input
+                id="login-username"
                 type="text"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={e => { setUsername(e.target.value); setError(''); }}
                 required
                 autoFocus
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-primary"
+                className={`w-full bg-slate-800 border ${inputErrorClass} rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none transition-colors`}
                 placeholder="admin"
               />
             </div>
             <div>
-              <label className="block text-slate-400 text-xs mb-1">비밀번호{isSetup && ' (최소 8자)'}</label>
+              <label htmlFor="login-password" className="block text-slate-400 text-xs mb-1">
+                {t('login.password')}{isSetup && ` (${t('login.passwordMinLength')})`}
+              </label>
               <input
+                id="login-password"
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => { setPassword(e.target.value); setError(''); }}
                 required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-primary"
-                placeholder={isSetup ? '최소 8자 이상' : '비밀번호 입력'}
+                className={`w-full bg-slate-800 border ${inputErrorClass} rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none transition-colors`}
+                placeholder={isSetup ? t('login.passwordMinLength') : t('login.password')}
               />
             </div>
             <button
@@ -130,13 +137,13 @@ export function LoginPage() {
               className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg py-3 text-sm transition-colors mt-2"
             >
               {loading && <MaterialIcon name="progress_activity" className="text-base animate-spin" />}
-              {loading ? '처리 중...' : isSetup ? '계정 생성' : '로그인'}
+              {loading ? t('login.processing') : isSetup ? t('login.setupButton') : t('login.loginButton')}
             </button>
           </form>
         </div>
 
         <p className="text-center text-slate-600 text-xs mt-4">
-          이 계정으로 모니터링 시스템에 접근합니다
+          {t('login.hint')}
         </p>
       </div>
     </div>

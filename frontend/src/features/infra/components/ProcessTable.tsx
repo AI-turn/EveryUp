@@ -30,25 +30,25 @@ export function ProcessTable({ hostId }: ProcessTableProps) {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-chart-border bg-white dark:bg-bg-surface-dark/30">
-        <table className="w-full min-w-150 text-left">
+        <table className="w-full min-w-120 text-left">
           <thead className="bg-slate-50 dark:bg-chart-surface/50 border-b border-slate-200 dark:border-chart-border">
             <tr>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
+              <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
                 {t('monitoring.processes.name')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
+              <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
                 {t('monitoring.processes.pid')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
+              <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
                 {t('monitoring.processes.cpu')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
+              <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
                 {t('monitoring.processes.memory')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
+              <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
                 {t('monitoring.processes.status')}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider text-right">
+              <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider text-right">
                 {t('monitoring.processes.actions')}
               </th>
             </tr>
@@ -59,34 +59,34 @@ export function ProcessTable({ hostId }: ProcessTableProps) {
                 key={process.id}
                 className="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors"
               >
-                <td className="px-6 py-4 flex items-center gap-3">
+                <td className="px-3 py-3 sm:px-5 sm:py-4 flex items-center gap-2">
                   <MaterialIcon name={process.icon} className="text-primary" />
                   <span className="font-semibold text-slate-900 dark:text-white">
                     {process.name}
                   </span>
                 </td>
-                <td className="px-6 py-4 font-mono text-sm text-slate-500 dark:text-text-muted-dark tabular-nums">
+                <td className="px-3 py-3 sm:px-5 sm:py-4 font-mono text-sm text-slate-500 dark:text-text-muted-dark tabular-nums">
                   {process.pid}
                 </td>
                 <td
-                  className={`px-6 py-4 font-bold tabular-nums ${process.cpuHighlight
+                  className={`px-3 py-3 sm:px-5 sm:py-4 font-bold tabular-nums ${process.cpuHighlight
                     ? 'text-lime-500 dark:text-lime-400'
                     : 'text-slate-900 dark:text-white'
                     }`}
                 >
                   {process.cpu}
                 </td>
-                <td className="px-6 py-4 font-mono text-slate-900 dark:text-white tabular-nums">
+                <td className="px-3 py-3 sm:px-5 sm:py-4 font-mono text-slate-900 dark:text-white tabular-nums">
                   {process.memory}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-3 py-3 sm:px-5 sm:py-4">
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-bold ${processStatusConfig[process.status]}`}
                   >
                     {process.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-3 py-3 sm:px-5 sm:py-4 text-right">
                   <button className="text-red-400 hover:text-red-500 font-bold text-xs uppercase">
                     {t('monitoring.processes.terminate')}
                   </button>

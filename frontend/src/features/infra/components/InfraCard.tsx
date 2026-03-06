@@ -1,18 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../../../components/common';
+import { infraStatusColorClasses } from '../../../design-tokens/colors';
 import type { Resource } from '../../../mocks/infra/resourceList.mock';
 
 interface InfraCardProps {
     resource: Resource;
     onClick: () => void;
 }
-
-const statusColors: Record<Resource['status'], string> = {
-    healthy: 'bg-lime-400/10 text-lime-500',
-    warning: 'bg-amber-400/10 text-amber-500',
-    critical: 'bg-red-400/10 text-red-500',
-    error: 'bg-red-400/10 text-red-500',
-};
 
 const typeIcons: Record<Resource['type'], string> = {
     server: 'dns',
@@ -56,7 +50,7 @@ export function InfraCard({ resource, onClick }: InfraCardProps) {
                         </span>
                     )}
                     <span
-                        className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase flex items-center gap-1 ${statusColors[resource.status]}`}
+                        className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase flex items-center gap-1 ${infraStatusColorClasses[resource.status].badge}`}
                     >
                         {resource.status === 'error' && <MaterialIcon name="error_outline" className="text-xs" />}
                         {t(`common.${resource.status}`)}

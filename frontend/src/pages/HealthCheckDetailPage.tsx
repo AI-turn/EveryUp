@@ -174,7 +174,7 @@ export function HealthCheckDetailPage() {
         </div>
       </div>
 
-      {/* Service Identity */}
+      {/* ── Status ── */}
       <HealthCheckIdentity
         name={service.name}
         endpoint={service.url || service.host || '-'}
@@ -187,17 +187,27 @@ export function HealthCheckDetailPage() {
         timeout={service.timeout}
         cronExpression={service.cronExpression}
       />
-
-      {/* Check History Timeline Bar */}
       <CheckHistoryBar serviceId={serviceId!} refreshKey={refreshKey} />
 
-      {/* Real-time Metrics */}
+      {/* ── Performance ── */}
+      <div className="flex items-center gap-2 mt-2 mb-4">
+        <MaterialIcon name="analytics" className="text-base text-slate-400 dark:text-text-dim-dark" />
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-text-dim-dark">
+          {t('services.detail.section.performance', { defaultValue: 'Performance' })}
+        </h2>
+        <div className="flex-1 border-t border-slate-200 dark:border-ui-border-dark" />
+      </div>
       <RealtimeMetrics serviceId={serviceId!} refreshKey={refreshKey} />
-
-      {/* Response Time Chart with SLO threshold */}
       <ResponseTimeChart serviceId={serviceId!} refreshKey={refreshKey} timeout={service.timeout} />
 
-      {/* Recent Failure History */}
+      {/* ── Issues ── */}
+      <div className="flex items-center gap-2 mt-2 mb-4">
+        <MaterialIcon name="report" className="text-base text-slate-400 dark:text-text-dim-dark" />
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-text-dim-dark">
+          {t('services.detail.section.issues', { defaultValue: 'Issues' })}
+        </h2>
+        <div className="flex-1 border-t border-slate-200 dark:border-ui-border-dark" />
+      </div>
       <FailureHistory serviceId={serviceId!} refreshKey={refreshKey} />
 
       {/* Delete Confirmation Dialog */}

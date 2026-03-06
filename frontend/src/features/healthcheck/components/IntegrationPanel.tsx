@@ -20,6 +20,7 @@ export function IntegrationPanel({ service, onApiKeyRegenerated }: IntegrationPa
   const [activeCategory, setActiveCategory] = useState<'http-appender' | 'agent'>('http-appender');
   const [activeSnippet, setActiveSnippet] = useState<string>('express');
   const [activeNginxTab, setActiveNginxTab] = useState<'nginx_conf' | 'docker_compose' | 'docker_run'>('nginx_conf');
+  const [showNginx, setShowNginx] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const maskedKey = service.apiKeyMasked || '—';
@@ -35,7 +36,6 @@ export function IntegrationPanel({ service, onApiKeyRegenerated }: IntegrationPa
     }
   }, []);
 
-  // Auto-close countdown for revealed key
   useEffect(() => {
     if (!revealedKey) return;
     setRevealCountdown(10);
@@ -325,11 +325,6 @@ WantedBy=multi-user.target
 # sudo systemctl start mt-fluent-bit`,
   };
 
-  const categoryTabs = [
-    { key: 'http-appender' as const, label: t('services.integration.snippets.httpAppender'), icon: 'http' },
-    { key: 'agent' as const, label: t('services.integration.snippets.agent'), icon: 'smart_toy' },
-  ];
-
   const httpAppenderTabs = [
     { key: 'express', label: 'Express / Node.js' },
     { key: 'springboot', label: 'Spring Boot' },
@@ -347,17 +342,110 @@ WantedBy=multi-user.target
   const currentTabs = activeCategory === 'http-appender' ? httpAppenderTabs : agentTabs;
   const currentSnippets = activeCategory === 'http-appender' ? httpAppenderSnippets : agentSnippets;
 
-  // Reset snippet tab when switching category
   const handleCategoryChange = (cat: 'http-appender' | 'agent') => {
     setActiveCategory(cat);
     setActiveSnippet(cat === 'http-appender' ? 'express' : 'config');
   };
 
+  const hostname = window.location.hostname;
+  const nginxSnippets = {
+    nginx_conf: `server {
+    listen 80;
+    server_name ${hostname};
+
+    location / {
+        proxy_pass http://localhost:8080;
+
+        # Authorization 헤더를 백엔드로 전달 (필수)
+        proxy_set_header Authorization $http_authorization;
+
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}`,
+    docker_compose: `# docker-compose.yml
+services:
+  everyup:
+    image: aiturn/everyup:latest
+    container_name: everyup
+    restart: unless-stopped
+    # 외부 노출 없이 nginx와 내부 통신
+    expose:
+      - "8080"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro   # HTTPS 인증서 (선택)
+    depends_on:
+      - everyup
+
+# nginx.conf (위 nginx_conf 탭 참고)
+# proxy_pass를 http://everyup:8080 으로 변경`,
+    docker_run: `# 1. 네트워크 생성
+docker network create everyup-net
+
+# 2. 앱 컨테이너 실행
+docker run -d \\
+  --name everyup \\
+  --network everyup-net \\
+  -v everyup-data:/app/data \\
+  --restart unless-stopped \\
+  aiturn/everyup:latest
+
+# 3. nginx.conf 준비 (proxy_pass: http://everyup:8080)
+# proxy_set_header Authorization $http_authorization; 포함 필수
+
+# 4. Nginx 컨테이너 실행
+docker run -d \\
+  --name nginx \\
+  --network everyup-net \\
+  -p 80:80 \\
+  -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro \\
+  --restart unless-stopped \\
+  nginx:alpine`,
+  };
+
   return (
-    <div className="space-y-6">
-      {/* API Key Card */}
+    <div className="space-y-4">
+
+      {/* ── Step flow indicator ── */}
+      <div className="flex items-center gap-0 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4 overflow-x-auto">
+        {[
+          { num: 1, label: 'API Key', icon: 'key' },
+          { num: 2, label: 'Endpoint', icon: 'upload' },
+          { num: 3, label: 'Test', icon: 'cable' },
+          { num: 4, label: 'Integrate', icon: 'code' },
+        ].map((step, i) => (
+          <div key={step.num} className="flex items-center gap-0 shrink-0">
+            <div className="flex items-center gap-2 px-3 py-1.5">
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold shrink-0">
+                {step.num}
+              </span>
+              <MaterialIcon name={step.icon} className="text-sm text-slate-500 dark:text-text-muted-dark" />
+              <span className="text-sm font-medium text-slate-700 dark:text-text-secondary-dark whitespace-nowrap">
+                {step.label}
+              </span>
+            </div>
+            {i < 3 && (
+              <MaterialIcon name="chevron_right" className="text-slate-300 dark:text-ui-border-dark mx-1 shrink-0" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* ── Step 1: API Key ── */}
       <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
         <div className="flex items-center gap-3 mb-5">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold shrink-0">1</span>
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10">
             <MaterialIcon name="key" className="text-lg text-primary" />
           </div>
@@ -371,14 +459,12 @@ WantedBy=multi-user.target
           </div>
         </div>
 
-        {/* Key Display */}
         <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-ui-hover-dark rounded-lg font-mono text-sm mb-4">
           <span className="flex-1 text-slate-700 dark:text-text-base-dark truncate">
             {maskedKey}
           </span>
         </div>
 
-        {/* Warning + Regenerate */}
         <div className="flex items-center justify-between">
           <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
             <MaterialIcon name="warning" className="text-sm" />
@@ -399,9 +485,10 @@ WantedBy=multi-user.target
         </div>
       </div>
 
-      {/* Ingest Endpoint Info */}
+      {/* ── Step 2: Ingest Endpoint ── */}
       <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold shrink-0">2</span>
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-green-100 dark:bg-green-900/30">
             <MaterialIcon name="upload" className="text-lg text-green-600 dark:text-green-400" />
           </div>
@@ -415,55 +502,43 @@ WantedBy=multi-user.target
           </div>
         </div>
 
-        {/* Log Ingest Endpoint */}
-        <div className="mb-4">
-          <p className="text-xs font-semibold text-slate-500 dark:text-text-muted-dark mb-1.5">
-            {t('services.integration.endpoint.logIngest', { defaultValue: 'Log Ingestion' })}
-          </p>
-          <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-ui-hover-dark rounded-lg font-mono text-sm">
-            <span className="text-xs font-bold text-white bg-green-600 px-2 py-0.5 rounded">POST</span>
-            <span className="flex-1 text-slate-700 dark:text-text-base-dark truncate">{ingestUrl}</span>
-            <button
-              onClick={() => copy(ingestUrl)}
-              className="flex-shrink-0 p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-ui-active-dark transition-colors text-slate-500 dark:text-text-muted-dark"
-            >
-              <MaterialIcon name="content_copy" className="text-base" />
-            </button>
-          </div>
+        {/* Ingest URL — prominent */}
+        <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-ui-hover-dark rounded-lg font-mono text-sm mb-3">
+          <span className="text-xs font-bold text-white bg-green-600 px-2 py-0.5 rounded shrink-0">POST</span>
+          <span className="flex-1 text-slate-700 dark:text-text-base-dark truncate">{ingestUrl}</span>
+          <button
+            onClick={() => copy(ingestUrl)}
+            className="shrink-0 p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-ui-active-dark transition-colors text-slate-500 dark:text-text-muted-dark"
+          >
+            <MaterialIcon name="content_copy" className="text-base" />
+          </button>
         </div>
 
-        {/* Level guide */}
-        <div className="grid grid-cols-2 gap-3">
-          {(['error', 'warn'] as const).map((level) => (
-            <div key={level} className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-ui-hover-dark">
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                level === 'error' ? 'bg-red-500' : 'bg-amber-500'
-              }`} />
-              <span className="text-xs font-mono font-semibold text-slate-700 dark:text-text-secondary-dark">{level}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Format auto-detection info */}
-        <div className="mt-3 space-y-2">
-          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-xs text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
-              <MaterialIcon name="auto_awesome" className="text-sm" />
-              {t('services.integration.endpoint.formatInfo', { defaultValue: 'Send logs as-is from your logging library. No format conversion needed — the server recognizes all major formats automatically.' })}
-            </p>
-          </div>
-          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-xs text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
-              <MaterialIcon name="info" className="text-sm" />
-              {t('services.integration.endpoint.batchInfo', { defaultValue: 'Supports batch ingestion: send up to 100 logs per request.' })}
-            </p>
-          </div>
+        {/* Compact secondary info row */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-1">
+          <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-text-muted-dark">
+            <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+            error
+            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 ml-2" />
+            warn
+          </span>
+          <span className="text-slate-300 dark:text-ui-border-dark select-none">·</span>
+          <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-text-muted-dark">
+            <MaterialIcon name="auto_awesome" className="text-sm text-blue-400" />
+            {t('services.integration.endpoint.formatInfo', { defaultValue: 'Formats auto-detected' })}
+          </span>
+          <span className="text-slate-300 dark:text-ui-border-dark select-none">·</span>
+          <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-text-muted-dark">
+            <MaterialIcon name="layers" className="text-sm text-blue-400" />
+            {t('services.integration.endpoint.batchInfo', { defaultValue: 'Batch up to 100 logs/req' })}
+          </span>
         </div>
       </div>
 
-      {/* Connection Test */}
+      {/* ── Step 3: Connection Test ── */}
       <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold shrink-0">3</span>
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
             <MaterialIcon name="cable" className="text-lg text-emerald-600 dark:text-emerald-400" />
           </div>
@@ -501,140 +576,10 @@ WantedBy=multi-user.target
         </div>
       </div>
 
-      {/* Nginx Reverse Proxy */}
+      {/* ── Step 4: Code Snippets (2-column) ── */}
       <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-green-100 dark:bg-green-900/30">
-            <MaterialIcon name="dns" className="text-lg text-green-600 dark:text-green-400" />
-          </div>
-          <div>
-            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              Nginx Reverse Proxy
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-              Nginx 뒤에서 운영할 경우 Authorization 헤더 전달 설정이 필요합니다.
-            </p>
-          </div>
-        </div>
-
-        {/* Warning */}
-        <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-start gap-2">
-          <MaterialIcon name="warning" className="text-sm text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-          <p className="text-xs text-amber-700 dark:text-amber-300">
-            Nginx 기본 설정은 <code className="font-mono bg-amber-100 dark:bg-amber-900/40 px-1 rounded">Authorization</code> 헤더를 백엔드로 전달하지 않습니다.{' '}
-            아래 <code className="font-mono bg-amber-100 dark:bg-amber-900/40 px-1 rounded">proxy_set_header</code> 설정을 반드시 추가하세요.
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-1 mb-3 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit">
-          {([
-            { key: 'nginx_conf', label: 'nginx.conf' },
-            { key: 'docker_compose', label: 'Docker Compose' },
-            { key: 'docker_run', label: 'Docker Run' },
-          ] as const).map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveNginxTab(tab.key)}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                activeNginxTab === tab.key
-                  ? 'bg-white dark:bg-ui-active-dark text-slate-900 dark:text-white shadow-sm'
-                  : 'text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-text-secondary-dark'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Code block */}
-        {(() => {
-          const hostname = window.location.hostname;
-          const snippets = {
-            nginx_conf: `server {
-    listen 80;
-    server_name ${hostname};
-
-    location / {
-        proxy_pass http://localhost:8080;
-
-        # Authorization 헤더를 백엔드로 전달 (필수)
-        proxy_set_header Authorization $http_authorization;
-
-        proxy_set_header Host              $host;
-        proxy_set_header X-Real-IP         $remote_addr;
-        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}`,
-            docker_compose: `# docker-compose.yml
-services:
-  everyup:
-    image: aiturn/everyup:latest
-    container_name: everyup
-    restart: unless-stopped
-    # 외부 노출 없이 nginx와 내부 통신
-    expose:
-      - "8080"
-
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./certs:/etc/nginx/certs:ro   # HTTPS 인증서 (선택)
-    depends_on:
-      - everyup
-
-# nginx.conf (위 nginx_conf 탭 참고)
-# proxy_pass를 http://everyup:8080 으로 변경`,
-            docker_run: `# 1. 네트워크 생성
-docker network create everyup-net
-
-# 2. 앱 컨테이너 실행
-docker run -d \\
-  --name everyup \\
-  --network everyup-net \\
-  -v everyup-data:/app/data \\
-  --restart unless-stopped \\
-  aiturn/everyup:latest
-
-# 3. nginx.conf 준비 (proxy_pass: http://everyup:8080)
-# proxy_set_header Authorization $http_authorization; 포함 필수
-
-# 4. Nginx 컨테이너 실행
-docker run -d \\
-  --name nginx \\
-  --network everyup-net \\
-  -p 80:80 \\
-  -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro \\
-  --restart unless-stopped \\
-  nginx:alpine`,
-          };
-          return (
-            <div className="relative">
-              <pre className="p-4 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre">
-                {snippets[activeNginxTab]}
-              </pre>
-              <button
-                onClick={() => copy(snippets[activeNginxTab])}
-                className="absolute top-3 right-3 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
-                title={t('common.copyToClipboard')}
-              >
-                <MaterialIcon name="content_copy" className="text-sm" />
-              </button>
-            </div>
-          );
-        })()}
-      </div>
-
-      {/* Code Snippets */}
-      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-5">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold shrink-0">4</span>
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-900/30">
             <MaterialIcon name="code" className="text-lg text-purple-600 dark:text-purple-400" />
           </div>
@@ -643,9 +588,12 @@ docker run -d \\
           </h3>
         </div>
 
-        {/* Category tabs */}
-        <div className="flex gap-1 mb-4 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit">
-          {categoryTabs.map((cat) => (
+        {/* Category toggle */}
+        <div className="flex gap-1 mb-5 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit">
+          {[
+            { key: 'http-appender' as const, label: t('services.integration.snippets.httpAppender'), icon: 'http' },
+            { key: 'agent' as const, label: t('services.integration.snippets.agent'), icon: 'smart_toy' },
+          ].map((cat) => (
             <button
               key={cat.key}
               onClick={() => handleCategoryChange(cat.key)}
@@ -661,20 +609,9 @@ docker run -d \\
           ))}
         </div>
 
-        {/* Method description hint */}
-        <div className="mb-4 p-3 bg-slate-50 dark:bg-ui-hover-dark/50 rounded-lg">
-          <p className="text-xs text-slate-600 dark:text-text-secondary-dark flex items-center gap-1.5">
-            <MaterialIcon name="info" className="text-sm text-slate-400 dark:text-text-dim-dark" />
-            {activeCategory === 'http-appender'
-              ? t('services.integration.snippets.httpAppenderDesc', { defaultValue: 'Add a logging transport to your app code. Logs are sent directly to the API — best for applications where you control the source code.' })
-              : t('services.integration.snippets.agentDesc', { defaultValue: 'Deploy a Fluent Bit agent that tails log files and forwards them. Best for servers, containers, or apps that write logs to files or stdout.' })
-            }
-          </p>
-        </div>
-
-        {/* Agent Quick Start — Docker install command */}
+        {/* Agent Quick Start */}
         {activeCategory === 'agent' && (
-          <div className="mb-4 border border-cyan-200 dark:border-cyan-800/50 bg-cyan-50 dark:bg-cyan-900/20 rounded-xl p-4">
+          <div className="mb-5 border border-cyan-200 dark:border-cyan-800/50 bg-cyan-50 dark:bg-cyan-900/20 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-cyan-100 dark:bg-cyan-800/40">
                 <MaterialIcon name="deployed_code" className="text-base text-cyan-600 dark:text-cyan-400" />
@@ -707,39 +644,128 @@ docker run -d \\
           </div>
         )}
 
-        {/* Language/variant tabs */}
-        <div className="flex gap-1 mb-3 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit flex-wrap">
-          {currentTabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveSnippet(tab.key)}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                activeSnippet === tab.key
-                  ? 'bg-white dark:bg-ui-active-dark text-slate-900 dark:text-white shadow-sm'
-                  : 'text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-text-secondary-dark'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* 2-column: sidebar tabs + code */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Left: language/variant tabs (horizontal scroll on mobile, vertical on sm+) */}
+          <div className="sm:shrink-0 sm:w-36">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-text-dim-dark mb-2 px-2 hidden sm:block">
+              {activeCategory === 'http-appender' ? 'Framework' : 'Deploy'}
+            </p>
+            <div className="flex sm:flex-col gap-1 overflow-x-auto pb-1 sm:pb-0">
+            {currentTabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveSnippet(tab.key)}
+                className={`shrink-0 sm:w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                  activeSnippet === tab.key
+                    ? 'bg-primary/10 text-primary dark:text-primary font-semibold'
+                    : 'text-slate-500 dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-ui-hover-dark hover:text-slate-700 dark:hover:text-text-secondary-dark'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+            </div>
 
-        {/* Code block */}
-        <div className="relative">
-          <pre className="p-4 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre">
-            {currentSnippets[activeSnippet]}
-          </pre>
-          <button
-            onClick={() => copy(currentSnippets[activeSnippet])}
-            className="absolute top-3 right-3 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
-            title={t('services.integration.snippets.copy')}
-          >
-            <MaterialIcon name="content_copy" className="text-sm" />
-          </button>
+            {/* Method description hint */}
+            <div className="pt-3 hidden sm:block">
+              <p className="text-[10px] text-slate-400 dark:text-text-dim-dark leading-relaxed px-2">
+                {activeCategory === 'http-appender'
+                  ? t('services.integration.snippets.httpAppenderDesc', { defaultValue: 'Add a transport to your app code. Best when you control the source.' })
+                  : t('services.integration.snippets.agentDesc', { defaultValue: 'Tail log files and forward. Best for servers or containers.' })
+                }
+              </p>
+            </div>
+          </div>
+
+          {/* Right: code block */}
+          <div className="flex-1 min-w-0">
+            <div className="relative h-full">
+              <pre className="p-4 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre h-full min-h-50">
+                {currentSnippets[activeSnippet]}
+              </pre>
+              <button
+                onClick={() => copy(currentSnippets[activeSnippet])}
+                className="absolute top-3 right-3 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
+                title={t('services.integration.snippets.copy')}
+              >
+                <MaterialIcon name="content_copy" className="text-sm" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Regenerate Confirm Dialog */}
+      {/* ── Optional: Nginx Reverse Proxy (collapsible) ── */}
+      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl overflow-hidden">
+        <button
+          onClick={() => setShowNginx((v) => !v)}
+          className="w-full flex items-center gap-3 p-5 hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-colors text-left"
+        >
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-ui-hover-dark shrink-0">
+            <MaterialIcon name="dns" className="text-base text-slate-500 dark:text-text-muted-dark" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-text-secondary-dark">
+              Nginx Reverse Proxy
+            </h3>
+            <p className="text-xs text-slate-400 dark:text-text-dim-dark">
+              Nginx 뒤에서 운영 시 Authorization 헤더 전달 설정 · 선택 사항
+            </p>
+          </div>
+          <MaterialIcon
+            name={showNginx ? 'expand_less' : 'expand_more'}
+            className="text-slate-400 dark:text-text-dim-dark shrink-0"
+          />
+        </button>
+
+        {showNginx && (
+          <div className="px-5 pb-5 border-t border-slate-100 dark:border-ui-border-dark pt-4">
+            <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-start gap-2">
+              <MaterialIcon name="warning" className="text-sm text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-700 dark:text-amber-300">
+                Nginx 기본 설정은 <code className="font-mono bg-amber-100 dark:bg-amber-900/40 px-1 rounded">Authorization</code> 헤더를 백엔드로 전달하지 않습니다.{' '}
+                아래 <code className="font-mono bg-amber-100 dark:bg-amber-900/40 px-1 rounded">proxy_set_header</code> 설정을 반드시 추가하세요.
+              </p>
+            </div>
+
+            <div className="flex gap-1 mb-3 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit">
+              {([
+                { key: 'nginx_conf', label: 'nginx.conf' },
+                { key: 'docker_compose', label: 'Docker Compose' },
+                { key: 'docker_run', label: 'Docker Run' },
+              ] as const).map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveNginxTab(tab.key)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    activeNginxTab === tab.key
+                      ? 'bg-white dark:bg-ui-active-dark text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-text-secondary-dark'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative">
+              <pre className="p-4 bg-slate-900 dark:bg-slate-950 rounded-lg text-xs text-slate-300 overflow-x-auto leading-relaxed whitespace-pre">
+                {nginxSnippets[activeNginxTab]}
+              </pre>
+              <button
+                onClick={() => copy(nginxSnippets[activeNginxTab])}
+                className="absolute top-3 right-3 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
+                title={t('common.copyToClipboard')}
+              >
+                <MaterialIcon name="content_copy" className="text-sm" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Regenerate Confirm Dialog ── */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white dark:bg-bg-surface-dark rounded-xl shadow-2xl max-w-sm w-full p-6">
@@ -774,7 +800,7 @@ docker run -d \\
         </div>
       )}
 
-      {/* Revealed Key Modal — shown after regeneration */}
+      {/* ── Revealed Key Modal ── */}
       {revealedKey && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white dark:bg-bg-surface-dark rounded-xl shadow-2xl max-w-md w-full p-6">
@@ -792,7 +818,6 @@ docker run -d \\
               </div>
             </div>
 
-            {/* Key display with copy */}
             <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-ui-hover-dark rounded-lg font-mono text-sm mb-4">
               <span className="flex-1 text-slate-700 dark:text-text-base-dark break-all select-all">
                 {revealedKey}

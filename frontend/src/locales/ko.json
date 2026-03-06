@@ -6,13 +6,25 @@
         "loginSubtitle": "관리자 계정으로 로그인하세요",
         "username": "사용자 이름",
         "password": "비밀번호",
+        "passwordMinLength": "최소 8자 이상",
         "setupButton": "계정 생성",
         "loginButton": "로그인",
         "processing": "처리 중...",
         "hint": "이 계정으로 모니터링 시스템에 접근합니다",
+        "setupNotice": "처음 실행되었습니다. 관리자 계정을 설정하세요.",
         "error": {
-            "network": "서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인하세요."
+            "network": "서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인하세요.",
+            "generic": "오류가 발생했습니다"
         }
+    },
+    "network": {
+        "disconnected": "서버와 연결이 끊어졌습니다. 재연결 시도 중..."
+    },
+    "errorFallback": {
+        "title": "문제가 발생했습니다",
+        "description": "예기치 않은 오류가 발생했습니다. 페이지를 새로고침하거나 홈으로 돌아가세요.",
+        "retry": "다시 시도",
+        "goHome": "홈으로 돌아가기"
     },
     "common": {
         "save": "저장",

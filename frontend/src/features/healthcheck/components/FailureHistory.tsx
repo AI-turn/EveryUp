@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
 import { ko, enUS } from 'date-fns/locale';
@@ -16,6 +16,7 @@ export function FailureHistory({ serviceId, refreshKey }: FailureHistoryProps) {
   const { t, i18n } = useTranslation();
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState(true);
+  const initialLoadDone = useRef(false);
 
   const dateLocale = useMemo(
     () => (i18n.language.startsWith('ko') ? ko : enUS),
@@ -24,7 +25,9 @@ export function FailureHistory({ serviceId, refreshKey }: FailureHistoryProps) {
 
   useEffect(() => {
     const fetchMetrics = async () => {
-      setLoading(true);
+      if (!initialLoadDone.current) {
+        setLoading(true);
+      }
       try {
         const data = await api.getServiceMetrics(serviceId, { limit: '100' });
         const failures = data
@@ -36,6 +39,7 @@ export function FailureHistory({ serviceId, refreshKey }: FailureHistoryProps) {
         console.error('Failed to fetch failure history:', err);
       } finally {
         setLoading(false);
+        initialLoadDone.current = true;
       }
     };
     fetchMetrics();

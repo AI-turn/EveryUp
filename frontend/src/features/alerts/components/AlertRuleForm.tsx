@@ -386,10 +386,10 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
 
             <section>
                 <SectionHeader icon="rule" label={t('alerts.rules.sectionCondition')} />
-                <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="grid grid-cols-3 gap-2 mb-6">
                     {(['normal', 'error', 'custom'] as const).map(p => (
                         <button key={p} type="button" onClick={() => handleConditionPreset(p)}
-                            className={`flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all ${conditionPreset === p ? 'border-primary bg-primary/10 text-primary' : 'border-slate-100 dark:border-ui-border-dark text-slate-500'
+                            className={`flex flex-col items-center gap-1.5 p-2 sm:p-3 border-2 rounded-xl transition-all ${conditionPreset === p ? 'border-primary bg-primary/10 text-primary' : 'border-slate-100 dark:border-ui-border-dark text-slate-500'
                                 }`}>
                             <MaterialIcon name={p === 'normal' ? 'check_circle' : p === 'error' ? 'warning' : 'tune'} />
                             <span className="text-[10px] font-bold uppercase">{p}</span>
@@ -504,7 +504,7 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
                                 <span className="text-[10px] text-slate-500 font-mono ml-1">notification_payload.json</span>
                             </div>
                             {/* JSON body */}
-                            <div className="bg-[#1E1E2E] px-4 py-3 font-mono text-[11px] leading-6 select-none">
+                            <div className="bg-[#1E1E2E] px-4 py-3 font-mono text-[11px] leading-6 select-none overflow-x-auto">
                                 <span className="text-[#6272A4]">{'{'}</span>
                                 <div className="pl-4 space-y-px">
                                     <div>

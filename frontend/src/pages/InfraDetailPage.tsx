@@ -8,6 +8,7 @@ import { InfraGauges, InfraTrends, ProcessTable, InfraForm, DeleteConfirmDialog 
 import { useHost } from '../hooks/useData';
 import { api } from '../services/api';
 import { useSidePanel } from '../contexts/SidePanelContext';
+import { infraStatusColorClasses } from '../design-tokens/colors';
 
 export function InfraDetailPage() {
   const { resourceId } = useParams();
@@ -32,13 +33,7 @@ export function InfraDetailPage() {
   };
   const status = hostStatusMap[host?.status || 'unknown'] || 'healthy';
 
-  const statusConfig: Record<string, { bg: string; text: string; dot: string }> = {
-    healthy: { bg: 'bg-lime-400/10', text: 'text-lime-500 dark:text-lime-400', dot: 'bg-lime-500 dark:bg-lime-400' },
-    warning: { bg: 'bg-amber-400/10', text: 'text-amber-500 dark:text-amber-400', dot: 'bg-amber-500 dark:bg-amber-400' },
-    critical: { bg: 'bg-red-400/10', text: 'text-red-500 dark:text-red-400', dot: 'bg-red-500 dark:bg-red-400' },
-    error: { bg: 'bg-red-400/10', text: 'text-red-500 dark:text-red-400', dot: 'bg-red-500 dark:bg-red-400' },
-  };
-  const sc = statusConfig[status] || statusConfig.healthy;
+  const sc = infraStatusColorClasses[status as keyof typeof infraStatusColorClasses] || infraStatusColorClasses.healthy;
 
   const handlePauseResume = async () => {
     if (!host) return;

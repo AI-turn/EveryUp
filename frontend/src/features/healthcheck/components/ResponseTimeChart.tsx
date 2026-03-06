@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, Metric } from '../../../services/api';
 
@@ -49,10 +49,13 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
   const [timeRange, setTimeRange] = useState<TimeRange>('24H');
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState(true);
+  const initialLoadDone = useRef(false);
 
   useEffect(() => {
     const fetchMetrics = async () => {
-      setLoading(true);
+      if (!initialLoadDone.current) {
+        setLoading(true);
+      }
       try {
         const params = getTimeRangeParams(timeRange);
         const data = await api.getServiceMetrics(serviceId, params);
@@ -61,6 +64,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
         console.error('Failed to fetch metrics:', err);
       } finally {
         setLoading(false);
+        initialLoadDone.current = true;
       }
     };
 
@@ -116,7 +120,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
   return (
     <div className="mb-8 p-6 rounded-xl border border-slate-200 dark:border-ui-border-dark bg-white dark:bg-chart-bg">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
         <div>
           <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
             {t('services.detail.metrics.responseTime')}
@@ -127,7 +131,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
             })}
           </p>
         </div>
-        <div className="flex bg-slate-100 dark:bg-chart-surface p-1 rounded-lg">
+        <div className="flex bg-slate-100 dark:bg-chart-surface p-1 rounded-lg self-start sm:self-auto">
           {(['24H', '7D', '30D'] as const).map((range) => (
             <button
               key={range}
@@ -145,61 +149,76 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
       </div>
 
       {/* Chart */}
-      <div className="relative h-64 w-full flex items-end gap-1">
-        {/* Grid Lines */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
-          <div className="border-b border-slate-300 dark:border-chart-border w-full h-0" />
-          <div className="border-b border-slate-300 dark:border-chart-border w-full h-0" />
-          <div className="border-b border-slate-300 dark:border-chart-border w-full h-0" />
-          <div className="border-b border-slate-300 dark:border-chart-border w-full h-0" />
+      <div className="flex">
+        {/* Y-Axis Labels */}
+        <div className="flex flex-col justify-between h-64 pr-3 shrink-0 text-right">
+          <span className="text-[10px] tabular-nums text-slate-400 dark:text-text-dim-dark font-medium leading-none">
+            {maxValue >= 1000 ? `${(maxValue / 1000).toFixed(1)}s` : `${Math.round(maxValue)}ms`}
+          </span>
+          <span className="text-[10px] tabular-nums text-slate-400 dark:text-text-dim-dark font-medium leading-none">
+            {maxValue >= 2000 ? `${(maxValue / 2000).toFixed(1)}s` : `${Math.round(maxValue / 2)}ms`}
+          </span>
+          <span className="text-[10px] tabular-nums text-slate-400 dark:text-text-dim-dark font-medium leading-none">
+            0
+          </span>
         </div>
 
-        {/* SLO Threshold Line */}
-        {timeout != null && maxValue > 0 && timeout <= maxValue * 1.1 && (
-          <div
-            className="absolute left-0 right-0 pointer-events-none z-10"
-            style={{ bottom: `${Math.min((timeout / maxValue) * 100, 96)}%` }}
-          >
-            <div className="relative border-t-2 border-dashed border-amber-400 dark:border-amber-500 w-full">
-              <span className="absolute right-0 bottom-1 text-[10px] font-bold text-amber-500 dark:text-amber-400 bg-white dark:bg-chart-bg px-1 rounded leading-none">
-                {t('services.detail.chart.timeout')}{' '}
-                {timeout >= 1000 ? `${timeout / 1000}s` : `${timeout}ms`}
-              </span>
-            </div>
+        {/* Chart area */}
+        <div className="relative h-64 flex-1 flex items-end gap-0.5">
+          {/* Grid Lines */}
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+            <div className="border-b border-slate-200 dark:border-chart-border/30 w-full h-0" />
+            <div className="border-b border-slate-200 dark:border-chart-border/30 w-full h-0" />
+            <div className="border-b border-slate-200 dark:border-chart-border/30 w-full h-0" />
           </div>
-        )}
 
-        {loading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <span className="text-slate-400 dark:text-text-dim-dark text-sm">
-              {t('common.loading')}
-            </span>
-          </div>
-        ) : normalizedData.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center">
-            <span className="text-slate-400 dark:text-text-dim-dark text-sm">
-              {t('common.noData')}
-            </span>
-          </div>
-        ) : (
-          /* Bars */
-          normalizedData.map((data, index) => (
+          {/* SLO Threshold Line */}
+          {timeout != null && maxValue > 0 && timeout <= maxValue * 1.1 && (
             <div
-              key={index}
-              className="flex-1 bg-primary/30 hover:bg-primary/50 rounded-t transition-all duration-300 group relative"
-              style={{ height: `${Math.max(data.percentage, 2)}%` }}
+              className="absolute left-0 right-0 pointer-events-none z-10"
+              style={{ bottom: `${Math.min((timeout / maxValue) * 100, 96)}%` }}
             >
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                {Math.round(data.value)}ms
+              <div className="relative border-t-2 border-dashed border-amber-400 dark:border-amber-500 w-full">
+                <span className="absolute right-0 bottom-1 text-[10px] font-bold text-amber-500 dark:text-amber-400 bg-white dark:bg-chart-bg px-1 rounded leading-none">
+                  {t('services.detail.chart.timeout')}{' '}
+                  {timeout >= 1000 ? `${timeout / 1000}s` : `${timeout}ms`}
+                </span>
               </div>
             </div>
-          ))
-        )}
+          )}
+
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <span className="text-slate-400 dark:text-text-dim-dark text-sm">
+                {t('common.loading')}
+              </span>
+            </div>
+          ) : normalizedData.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center">
+              <span className="text-slate-400 dark:text-text-dim-dark text-sm">
+                {t('common.noData')}
+              </span>
+            </div>
+          ) : (
+            /* Bars */
+            normalizedData.map((data, index) => (
+              <div
+                key={index}
+                className="flex-1 bg-primary/60 hover:bg-primary/80 rounded-t transition-all duration-200 group relative"
+                style={{ height: `${Math.max(data.percentage, 2)}%` }}
+              >
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                  {Math.round(data.value)}ms
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* X-Axis Labels */}
-      <div className="flex justify-between mt-4 text-slate-400 dark:text-text-chart-dim text-xs font-medium">
+      <div className="flex justify-between mt-3 pl-10 text-slate-400 dark:text-text-chart-dim text-xs font-medium">
         {xAxisLabels.map((label, index) => (
           <span key={index}>{label}</span>
         ))}

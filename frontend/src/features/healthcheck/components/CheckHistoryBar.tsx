@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, Metric, UptimeData } from '../../../services/api';
 
@@ -15,9 +15,12 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [uptimeData, setUptimeData] = useState<UptimeData | null>(null);
   const [loading, setLoading] = useState(true);
+  const initialLoadDone = useRef(false);
 
   useEffect(() => {
-    setLoading(true);
+    if (!initialLoadDone.current) {
+      setLoading(true);
+    }
     Promise.all([
       api.getServiceMetrics(serviceId, { limit: String(SLOT_COUNT) }),
       api.getServiceUptime(serviceId, { days: '90' }),
@@ -29,7 +32,10 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
         setUptimeData(uptime);
       })
       .catch((err) => console.error('Failed to fetch check history:', err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        initialLoadDone.current = true;
+      });
   }, [serviceId, refreshKey]);
 
   // ── Per-check stats ───────────────────────────────────────────────────────
@@ -125,37 +131,39 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
           <div className="h-4 bg-slate-200 dark:bg-ui-active-dark rounded w-32" />
         </div>
       ) : (
-        <div className="space-y-3">
-          {/* Uptime % + progress bar */}
-          <div className="flex items-center justify-between text-sm mb-1">
-            <span className="text-slate-500 dark:text-text-muted-dark font-medium">
-              {t('services.detail.uptime')} <span className="text-slate-400 dark:text-text-dim-dark font-normal text-xs">(90{t('common.days')})</span>
-            </span>
-            <span className={`font-bold tabular-nums ${
+        <div className="flex items-center gap-6">
+          {/* Uptime percentage — large */}
+          <div className="shrink-0">
+            <p className={`text-3xl font-bold tabular-nums leading-none ${
               (uptimeData?.percentage ?? 0) >= 99 ? 'text-green-500'
               : (uptimeData?.percentage ?? 0) >= 95 ? 'text-amber-500'
               : 'text-red-500'
             }`}>
               {uptimeData ? `${uptimeData.percentage.toFixed(2)}%` : '-'}
-            </span>
-          </div>
-          <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-ui-hover-dark overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                (uptimeData?.percentage ?? 0) >= 99 ? 'bg-green-500'
-                : (uptimeData?.percentage ?? 0) >= 95 ? 'bg-amber-500'
-                : 'bg-red-500'
-              }`}
-              style={{ width: `${uptimeData?.percentage ?? 0}%` }}
-            />
+            </p>
+            <p className="text-xs text-slate-400 dark:text-text-dim-dark mt-1">
+              {t('services.detail.uptime')} (90{t('common.days')})
+            </p>
           </div>
 
-          {/* Incident days */}
-          <div className="flex items-center justify-between text-sm pt-1">
-            <span className="text-slate-500 dark:text-text-muted-dark">{t('services.detail.totalIncidents')}</span>
-            <span className={`font-medium ${incidentDays > 0 ? 'text-amber-500' : 'text-slate-900 dark:text-white'}`}>
-              {incidentDays > 0 ? `${incidentDays}${t('common.days')}` : t('common.none', { defaultValue: '-' })}
-            </span>
+          {/* Progress bar + incident count */}
+          <div className="flex-1 space-y-2.5">
+            <div className="w-full h-2.5 rounded-full bg-slate-100 dark:bg-ui-hover-dark overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  (uptimeData?.percentage ?? 0) >= 99 ? 'bg-green-500'
+                  : (uptimeData?.percentage ?? 0) >= 95 ? 'bg-amber-500'
+                  : 'bg-red-500'
+                }`}
+                style={{ width: `${uptimeData?.percentage ?? 0}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-400 dark:text-text-muted-dark">{t('services.detail.totalIncidents')}</span>
+              <span className={`font-semibold ${incidentDays > 0 ? 'text-amber-500' : 'text-slate-900 dark:text-white'}`}>
+                {incidentDays > 0 ? `${incidentDays}${t('common.days')}` : t('common.none', { defaultValue: '-' })}
+              </span>
+            </div>
           </div>
         </div>
       )}

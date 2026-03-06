@@ -52,6 +52,8 @@ function useDataFetch<T>(
   const fetchFnRef = useRef(fetchFn);
   fetchFnRef.current = fetchFn;
 
+  const initialLoadDone = useRef(false);
+
   const fetch = useCallback(async () => {
     if (env.useMock) {
       setData(mockData);
@@ -59,7 +61,9 @@ function useDataFetch<T>(
       return;
     }
 
-    setLoading(true);
+    if (!initialLoadDone.current) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -69,6 +73,7 @@ function useDataFetch<T>(
       setError(err instanceof Error ? err : new Error('Unknown error'));
     } finally {
       setLoading(false);
+      initialLoadDone.current = true;
     }
   }, [mockData]);
 
