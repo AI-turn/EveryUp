@@ -33,16 +33,11 @@ function getTimeRangeParams(range: TimeRange): { from: string; limit: string } {
   };
 }
 
-function formatTimeRangeLabel(range: TimeRange): string {
-  switch (range) {
-    case '24H':
-      return 'Last 24 hours';
-    case '7D':
-      return 'Last 7 days';
-    case '30D':
-      return 'Last 30 days';
-  }
-}
+const TIME_RANGE_KEYS: Record<TimeRange, string> = {
+  '24H': 'services.detail.chart.range24h',
+  '7D':  'services.detail.chart.range7d',
+  '30D': 'services.detail.chart.range30d',
+};
 
 export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTimeChartProps) {
   const { t } = useTranslation();
@@ -127,7 +122,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
           </h2>
           <p className="text-slate-400 dark:text-text-chart-dim text-sm">
             {t('detail.responseTimeChartDesc', {
-              range: formatTimeRangeLabel(timeRange).toLowerCase(),
+              range: t(TIME_RANGE_KEYS[timeRange]),
             })}
           </p>
         </div>

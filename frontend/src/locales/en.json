@@ -185,7 +185,10 @@
                 "requestVolumeSubtext": "Peak: 3.2k req/min"
             },
             "chart": {
-                "timeout": "Timeout"
+                "timeout": "Timeout",
+                "range24h": "last 24 hours",
+                "range7d": "last 7 days",
+                "range30d": "last 30 days"
             },
             "checkHistory": {
                 "title": "Check History",

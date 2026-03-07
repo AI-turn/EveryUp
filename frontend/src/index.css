@@ -161,3 +161,21 @@ body {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Custom Scrollbar: 사이드패널 등 스크롤 영역 */
+@layer utilities {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ui-border-dark) transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--color-ui-border-dark);
+    border-radius: 9999px;
+  }
+}

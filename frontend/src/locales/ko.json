@@ -196,7 +196,10 @@
             "mttr": "평균 복구 시간 (MTTR)",
             "health": "서비스 상태",
             "chart": {
-                "timeout": "타임아웃"
+                "timeout": "타임아웃",
+                "range24h": "최근 24시간",
+                "range7d": "최근 7일",
+                "range30d": "최근 30일"
             },
             "checkHistory": {
                 "title": "체크 이력",

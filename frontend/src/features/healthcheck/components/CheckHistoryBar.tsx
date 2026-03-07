@@ -15,6 +15,7 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [uptimeData, setUptimeData] = useState<UptimeData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeMetric, setActiveMetric] = useState<Metric | null>(null);
   const initialLoadDone = useRef(false);
 
   useEffect(() => {
@@ -94,12 +95,13 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
             {metrics.map((m, i) => (
               <div
                 key={m.id || i}
-                className={`flex-1 rounded-sm relative group cursor-default transition-opacity hover:opacity-75 ${
+                onClick={() => setActiveMetric(prev => prev?.id === m.id ? null : m)}
+                className={`flex-1 rounded-sm relative group cursor-pointer transition-opacity hover:opacity-75 ${
                   m.status === 'success' ? 'bg-green-500' : 'bg-red-500'
-                }`}
+                } ${activeMetric?.id === m.id ? 'ring-2 ring-white ring-offset-1 opacity-90' : ''}`}
               >
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {/* Desktop hover tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block">
                   <div className="bg-slate-900 dark:bg-slate-700 text-white rounded-lg shadow-xl px-2.5 py-1.5 whitespace-nowrap text-xs">
                     <div className={`font-bold mb-0.5 ${m.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
                       {m.status === 'success' ? t('common.online') : t('common.offline')}
@@ -117,6 +119,20 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
             <span>{t('services.detail.checkHistory.oldest', { count: SLOT_COUNT })}</span>
             <span>{t('services.detail.checkHistory.latest')}</span>
           </div>
+
+          {/* Mobile tap detail card */}
+          {activeMetric && (
+            <div className="mt-2 flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-900 dark:bg-slate-800 text-xs sm:hidden">
+              <span className={`font-bold shrink-0 ${activeMetric.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                {activeMetric.status === 'success' ? t('common.online') : t('common.offline')}
+              </span>
+              <span className="text-slate-300 tabular-nums">{Math.round(activeMetric.responseTime)}ms</span>
+              {activeMetric.statusCode && (
+                <span className="text-slate-400">HTTP {activeMetric.statusCode}</span>
+              )}
+              <span className="text-slate-500 ml-auto truncate">{new Date(activeMetric.checkedAt).toLocaleString()}</span>
+            </div>
+          )}
         </>
       )}
 
