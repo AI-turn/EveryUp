@@ -225,6 +225,9 @@ func (s *Scheduler) checkService(svc *models.Service) {
 		result = s.httpChecker.Check(service.GetHTTPConfig())
 	case models.ServiceTypeTCP:
 		result = s.tcpChecker.Check(service.GetTCPConfig())
+	case models.ServiceTypeLog:
+		// Log services receive data via ingest API — no polling needed
+		return
 	default:
 		log.Printf("Unknown service type: %s", service.Type)
 		return

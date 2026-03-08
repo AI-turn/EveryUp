@@ -48,6 +48,16 @@ func (h *ServiceHandler) GetAll(c *fiber.Ctx) error {
 
 	// Enrich with metrics and compute status
 	for i := range services {
+		// Log services have no metrics — derive status from isActive
+		if services[i].Type == models.ServiceTypeLog {
+			if services[i].IsActive {
+				services[i].Status = models.StatusHealthy
+			} else {
+				services[i].Status = models.StatusUnknown
+			}
+			continue
+		}
+
 		// Get latest metric for status
 		metrics, _ := h.metricRepo.GetByServiceID(services[i].ID, 1)
 		if len(metrics) > 0 {
@@ -105,17 +115,26 @@ func (h *ServiceHandler) GetByID(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get latest metric for status
-	metrics, _ := h.metricRepo.GetByServiceID(service.ID, 1)
-	if len(metrics) > 0 {
-		if metrics[0].Status == "success" {
+	// Log services have no metrics — derive status from isActive
+	if service.Type == models.ServiceTypeLog {
+		if service.IsActive {
 			service.Status = models.StatusHealthy
 		} else {
-			service.Status = models.StatusUnhealthy
+			service.Status = models.StatusUnknown
 		}
-		service.LastCheckAt = &metrics[0].CheckedAt
 	} else {
-		service.Status = models.StatusUnknown
+		// Get latest metric for status
+		metrics, _ := h.metricRepo.GetByServiceID(service.ID, 1)
+		if len(metrics) > 0 {
+			if metrics[0].Status == "success" {
+				service.Status = models.StatusHealthy
+			} else {
+				service.Status = models.StatusUnhealthy
+			}
+			service.LastCheckAt = &metrics[0].CheckedAt
+		} else {
+			service.Status = models.StatusUnknown
+		}
 	}
 
 	// Enrich with metrics summary

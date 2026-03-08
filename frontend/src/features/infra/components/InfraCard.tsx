@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { MaterialIcon } from '../../../components/common';
-import { infraStatusColorClasses } from '../../../design-tokens/colors';
+import { MaterialIcon, StatusBadge } from '../../../components/common';
 import type { Resource } from '../../../mocks/infra/resourceList.mock';
 
 interface InfraCardProps {
@@ -49,12 +48,7 @@ export function InfraCard({ resource, onClick }: InfraCardProps) {
                             {t('common.pause')}
                         </span>
                     )}
-                    <span
-                        className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase flex items-center gap-1 ${infraStatusColorClasses[resource.status].badge}`}
-                    >
-                        {resource.status === 'error' && <MaterialIcon name="error_outline" className="text-xs" />}
-                        {t(`common.${resource.status}`)}
-                    </span>
+                    <StatusBadge status={resource.status} />
                 </div>
             </div>
 

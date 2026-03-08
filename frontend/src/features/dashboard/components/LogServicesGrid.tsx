@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, EmptyState } from '../../../components/common';
 import { LogServiceCard } from '../../logs';
-import { api, Service } from '../../../services/api';
+import { api, Service, LogEntry } from '../../../services/api';
 
 const MAX_ITEMS = 3;
 
@@ -12,6 +12,7 @@ export function LogServicesGrid() {
   const { t } = useTranslation();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [latestLogs, setLatestLogs] = useState<Record<string, LogEntry | null>>({});
 
   const fetchServices = useCallback(async () => {
     try {
@@ -27,6 +28,18 @@ export function LogServicesGrid() {
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
+
+  useEffect(() => {
+    if (services.length === 0) return;
+    services.slice(0, MAX_ITEMS).forEach(async (svc) => {
+      try {
+        const logs = await api.getServiceLogs(svc.id, { limit: '1' });
+        setLatestLogs(prev => ({ ...prev, [svc.id]: logs[0] ?? null }));
+      } catch {
+        setLatestLogs(prev => ({ ...prev, [svc.id]: null }));
+      }
+    });
+  }, [services]);
 
   const displayItems = services.slice(0, MAX_ITEMS);
   const hasMore = services.length > MAX_ITEMS;
@@ -84,6 +97,7 @@ export function LogServicesGrid() {
             <LogServiceCard
               key={service.id}
               service={service}
+              latestLog={latestLogs[service.id] ?? null}
               onClick={() => navigate(`/logs/${service.id}`)}
             />
           ))}

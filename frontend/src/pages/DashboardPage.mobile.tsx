@@ -1,26 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MaterialIcon } from '../components/common';
+import { MaterialIcon, StatusBadge } from '../components/common';
 import { useDashboardKPI, useDashboardServices, useDashboardIncidents, useMonitoringResources, useNotificationChannels } from '../hooks/useData';
 import { api, type Service, type LogEntry } from '../services/api';
 import { incidentTypeConfig } from '../mocks/configs';
+import { relativeTime } from '../utils/formatters';
 
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
-}
-
-const levelChipColor: Record<string, string> = {
-  error: 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400',
-  warn:  'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400',
-  info:  'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400',
-};
 
 const logLevelBadge: Record<string, string> = {
   error:   'bg-red-500 text-white',
@@ -198,12 +184,6 @@ export function DashboardMobile() {
           </div>
           <div className="px-3 pb-3 space-y-2">
             {logServices.slice(0, 4).map(svc => {
-              const svcStatus = svc.status === 'healthy' ? statusColors.healthy
-                : svc.status === 'unhealthy' ? statusColors.offline
-                : statusColors.warning;
-              const filters = svc.logLevelFilter && svc.logLevelFilter.length > 0
-                ? svc.logLevelFilter
-                : null;
               const latest = latestLogs[svc.id];
               return (
                 <button
@@ -211,23 +191,12 @@ export function DashboardMobile() {
                   onClick={() => navigate(`/logs/${svc.id}`)}
                   className="w-full flex flex-col gap-1.5 p-3 rounded-lg bg-slate-50 dark:bg-ui-hover-dark hover:bg-slate-100 dark:hover:bg-ui-active-dark active:scale-[0.99] transition-all text-left"
                 >
-                  {/* Service name + filter level chips */}
+                  {/* Service name + status badge */}
                   <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${svcStatus.dot}`} />
                     <span className="text-sm font-semibold text-slate-800 dark:text-text-base-dark flex-1 truncate">
                       {svc.name}
                     </span>
-                    <div className="flex gap-1 shrink-0">
-                      {filters ? filters.map(lvl => (
-                        <span key={lvl} className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${levelChipColor[lvl]}`}>
-                          {lvl}
-                        </span>
-                      )) : (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase bg-slate-200 dark:bg-ui-active-dark text-slate-500 dark:text-text-muted-dark">
-                          ALL
-                        </span>
-                      )}
-                    </div>
+                    <StatusBadge status={svc.status} />
                   </div>
                   {/* Latest log */}
                   <div className="flex items-center gap-2 pl-4">

@@ -1,13 +1,21 @@
 import { useTranslation } from 'react-i18next';
-import { MaterialIcon } from '../../../components/common';
-import { Service } from '../../../services/api';
+import { MaterialIcon, StatusBadge } from '../../../components/common';
+import { Service, LogEntry } from '../../../services/api';
+import { relativeTime } from '../../../utils/formatters';
 
 interface LogServiceCardProps {
   service: Service;
+  latestLog?: LogEntry | null;
   onClick?: () => void;
 }
 
-export function LogServiceCard({ service, onClick }: LogServiceCardProps) {
+const levelBadge: Record<string, string> = {
+  error:   'bg-red-500 text-white',
+  warning: 'bg-amber-500 text-white',
+  info:    'bg-blue-500 text-white',
+};
+
+export function LogServiceCard({ service, latestLog, onClick }: LogServiceCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -15,21 +23,39 @@ export function LogServiceCard({ service, onClick }: LogServiceCardProps) {
       className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 hover:border-primary/50 transition-colors ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}`}
       onClick={onClick}
     >
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center">
-            <MaterialIcon name="article" className="text-primary" />
-          </div>
-          <div>
-            <h3 className="font-bold text-sm">{service.name}</h3>
-            <p className="text-xs text-slate-500">{service.tags?.[0] || 'default'}</p>
-          </div>
+      {/* Header: icon + name + status badge */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center shrink-0">
+          <MaterialIcon name="article" className="text-primary" />
         </div>
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 dark:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark">
-          <MaterialIcon name="arrow_forward" className="text-xs" />
-          {t('logServices.viewLogs', { defaultValue: 'View Logs' })}
-        </span>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-sm truncate text-slate-900 dark:text-white">{service.name}</h3>
+          <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">{service.tags?.[0] || 'default'}</p>
+        </div>
+        <StatusBadge status={service.status} />
+      </div>
+
+      {/* Latest log row */}
+      <div className="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-ui-border-dark/50">
+        {latestLog ? (
+          <>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase shrink-0 ${levelBadge[latestLog.level] ?? 'bg-slate-400 text-white'}`}>
+              {latestLog.level === 'warning' ? 'WARN' : latestLog.level.toUpperCase()}
+            </span>
+            <span className="text-xs text-slate-500 dark:text-text-muted-dark flex-1 truncate">
+              {latestLog.message}
+            </span>
+            <span className="text-[10px] text-slate-400 dark:text-text-dim-dark shrink-0">
+              {relativeTime(latestLog.createdAt)}
+            </span>
+          </>
+        ) : latestLog === null ? (
+          <span className="text-xs text-slate-400 dark:text-text-dim-dark italic">
+            {t('dashboard.logServices.noLogs', { defaultValue: 'No logs yet' })}
+          </span>
+        ) : (
+          <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
+        )}
       </div>
     </div>
   );
