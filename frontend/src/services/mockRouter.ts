@@ -79,6 +79,7 @@ const mockLogServices: Service[] = [
     responseTime: 0,
     tags: ['prod'],
     scheduleType: 'interval' as const,
+    logLevelFilter: ['error', 'warn'],
   },
   {
     id: '2',
@@ -92,6 +93,7 @@ const mockLogServices: Service[] = [
     responseTime: 0,
     tags: ['prod'],
     scheduleType: 'interval' as const,
+    logLevelFilter: ['error'],
   },
   {
     id: '5',
@@ -105,6 +107,7 @@ const mockLogServices: Service[] = [
     responseTime: 0,
     tags: ['prod'],
     scheduleType: 'interval' as const,
+    logLevelFilter: ['error', 'warn', 'info'],
   },
 ];
 
