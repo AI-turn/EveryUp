@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MaterialIcon, StatusBadge } from '../components/common';
+import { MaterialIcon } from '../components/common';
 import { useDashboardKPI, useDashboardServices, useDashboardIncidents, useMonitoringResources, useNotificationChannels } from '../hooks/useData';
 import { api, type Service, type LogEntry } from '../services/api';
 import { incidentTypeConfig } from '../mocks/configs';
@@ -15,10 +15,12 @@ const logLevelBadge: Record<string, string> = {
 };
 
 const statusColors: Record<string, { dot: string; text: string }> = {
-  healthy: { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
-  degraded: { dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' },
-  warning: { dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' },
-  offline: { dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400' },
+  healthy:   { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
+  degraded:  { dot: 'bg-amber-500',   text: 'text-amber-600 dark:text-amber-400' },
+  warning:   { dot: 'bg-amber-500',   text: 'text-amber-600 dark:text-amber-400' },
+  offline:   { dot: 'bg-red-500',     text: 'text-red-600 dark:text-red-400' },
+  unhealthy: { dot: 'bg-red-500',     text: 'text-red-600 dark:text-red-400' },
+  unknown:   { dot: 'bg-slate-400',   text: 'text-slate-400 dark:text-text-dim-dark' },
 };
 
 const resourceStatusDot: Record<string, string> = {
@@ -184,6 +186,7 @@ export function DashboardMobile() {
           </div>
           <div className="px-3 pb-3 space-y-2">
             {logServices.slice(0, 4).map(svc => {
+              const sc = statusColors[svc.status] ?? statusColors.unknown;
               const latest = latestLogs[svc.id];
               return (
                 <button
@@ -191,12 +194,12 @@ export function DashboardMobile() {
                   onClick={() => navigate(`/logs/${svc.id}`)}
                   className="w-full flex flex-col gap-1.5 p-3 rounded-lg bg-slate-50 dark:bg-ui-hover-dark hover:bg-slate-100 dark:hover:bg-ui-active-dark active:scale-[0.99] transition-all text-left"
                 >
-                  {/* Service name + status badge */}
+                  {/* Service name + dot */}
                   <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${sc.dot}`} />
                     <span className="text-sm font-semibold text-slate-800 dark:text-text-base-dark flex-1 truncate">
                       {svc.name}
                     </span>
-                    <StatusBadge status={svc.status} />
                   </div>
                   {/* Latest log */}
                   <div className="flex items-center gap-2 pl-4">

@@ -46,32 +46,25 @@ func (h *ServiceHandler) GetAll(c *fiber.Ctx) error {
 		})
 	}
 
-	// Enrich with metrics and compute status
+	// Enrich services: status from isActive (live monitoring on/off), metrics for uptime/latency
 	for i := range services {
-		// Log services have no metrics — derive status from isActive
-		if services[i].Type == models.ServiceTypeLog {
-			if services[i].IsActive {
-				services[i].Status = models.StatusHealthy
-			} else {
-				services[i].Status = models.StatusUnknown
-			}
-			continue
-		}
-
-		// Get latest metric for status
-		metrics, _ := h.metricRepo.GetByServiceID(services[i].ID, 1)
-		if len(metrics) > 0 {
-			if metrics[0].Status == "success" {
-				services[i].Status = models.StatusHealthy
-			} else {
-				services[i].Status = models.StatusUnhealthy
-			}
-			services[i].LastCheckAt = &metrics[0].CheckedAt
+		// Status = is monitoring live?
+		if services[i].IsActive {
+			services[i].Status = models.StatusHealthy
 		} else {
 			services[i].Status = models.StatusUnknown
 		}
 
-		// Get summary for uptime and response time
+		// Log services have no metrics — skip metric enrichment
+		if services[i].Type == models.ServiceTypeLog {
+			continue
+		}
+
+		// Populate last check time and uptime/response time from metrics
+		metrics, _ := h.metricRepo.GetByServiceID(services[i].ID, 1)
+		if len(metrics) > 0 {
+			services[i].LastCheckAt = &metrics[0].CheckedAt
+		}
 		summary, _ := h.metricRepo.GetSummary(services[i].ID, 24*time.Hour)
 		if summary != nil {
 			services[i].Uptime = summary.Uptime
@@ -115,25 +108,18 @@ func (h *ServiceHandler) GetByID(c *fiber.Ctx) error {
 		})
 	}
 
-	// Log services have no metrics — derive status from isActive
-	if service.Type == models.ServiceTypeLog {
-		if service.IsActive {
-			service.Status = models.StatusHealthy
-		} else {
-			service.Status = models.StatusUnknown
-		}
+	// Status = is monitoring live?
+	if service.IsActive {
+		service.Status = models.StatusHealthy
 	} else {
-		// Get latest metric for status
+		service.Status = models.StatusUnknown
+	}
+
+	// Log services have no metrics — skip metric enrichment
+	if service.Type != models.ServiceTypeLog {
 		metrics, _ := h.metricRepo.GetByServiceID(service.ID, 1)
 		if len(metrics) > 0 {
-			if metrics[0].Status == "success" {
-				service.Status = models.StatusHealthy
-			} else {
-				service.Status = models.StatusUnhealthy
-			}
 			service.LastCheckAt = &metrics[0].CheckedAt
-		} else {
-			service.Status = models.StatusUnknown
 		}
 	}
 
