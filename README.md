@@ -71,6 +71,7 @@ If you've cloned this repository, you can use Docker Compose:
 ```bash
 git clone https://github.com/AI-turn/EveryUp.git
 cd EveryUp
+cp .env.example .env   # set MT_ADMIN_PASSWORD and other options
 docker compose up -d
 ```
 
@@ -88,6 +89,7 @@ docker compose logs -f
 **Backend**
 ```bash
 cd backend
+cp .env.example .env   # edit MT_ADMIN_PASSWORD before first run
 go run ./cmd/server
 # → http://localhost:3001
 ```
@@ -108,7 +110,11 @@ All `config.json` values can be overridden with `MT_`-prefixed environment varia
 
 | Environment Variable | Default | Description |
 |----------------------|---------|-------------|
+| `MT_SERVER_MODE` | `production` | Run mode: `development` or `production` |
 | `MT_SERVER_PORT` | `3001` | Server port |
+| `MT_SERVER_ALLOWORIGINS` | *(same-origin)* | Allowed CORS origins (e.g. `https://your-domain.com`) |
+| `MT_ADMIN_USERNAME` | *(unset)* | Creates or resets an admin account on startup |
+| `MT_ADMIN_PASSWORD` | *(unset)* | Password for the admin account above |
 | `MT_DATABASE_PATH` | `./data/monitoring.db` | SQLite file path |
 | `TZ` | System default | Timezone (e.g. `America/New_York`) |
 

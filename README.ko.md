@@ -71,6 +71,7 @@ docker run -d \
 ```bash
 git clone https://github.com/AI-turn/EveryUp.git
 cd EveryUp
+cp .env.example .env   # MT_ADMIN_PASSWORD 등 설정 후
 docker compose up -d
 ```
 
@@ -88,6 +89,7 @@ docker compose logs -f
 **백엔드**
 ```bash
 cd backend
+cp .env.example .env   # 최초 실행 전 MT_ADMIN_PASSWORD 수정
 go run ./cmd/server
 # → http://localhost:3001
 ```
@@ -108,7 +110,11 @@ pnpm dev
 
 | 환경 변수 | 기본값 | 설명 |
 |-----------|--------|------|
+| `MT_SERVER_MODE` | `production` | 실행 모드: `development` 또는 `production` |
 | `MT_SERVER_PORT` | `3001` | 서버 포트 |
+| `MT_SERVER_ALLOWORIGINS` | *(동일 오리진)* | 허용할 CORS 오리진 (예: `https://your-domain.com`) |
+| `MT_ADMIN_USERNAME` | *(미설정)* | 시작 시 관리자 계정 생성 또는 비밀번호 초기화 |
+| `MT_ADMIN_PASSWORD` | *(미설정)* | 위 계정의 비밀번호 |
 | `MT_DATABASE_PATH` | `./data/monitoring.db` | SQLite 파일 경로 |
 | `TZ` | 시스템 기본값 | 타임존 (예: `Asia/Seoul`) |
 
