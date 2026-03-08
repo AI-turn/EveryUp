@@ -3,8 +3,30 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../components/common';
 import { useDashboardKPI, useDashboardServices, useDashboardIncidents, useMonitoringResources, useNotificationChannels } from '../hooks/useData';
-import { api, type Service } from '../services/api';
+import { api, type Service, type LogEntry } from '../services/api';
 import { incidentTypeConfig } from '../mocks/configs';
+
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
+const levelChipColor: Record<string, string> = {
+  error: 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400',
+  warn:  'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400',
+  info:  'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400',
+};
+
+const logLevelBadge: Record<string, string> = {
+  error:   'bg-red-500 text-white',
+  warning: 'bg-amber-500 text-white',
+  info:    'bg-blue-500 text-white',
+};
 
 const statusColors: Record<string, { dot: string; text: string }> = {
   healthy: { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
@@ -36,6 +58,7 @@ export function DashboardMobile() {
   const { data: resources } = useMonitoringResources();
   const { data: channels } = useNotificationChannels();
   const [logServices, setLogServices] = useState<Service[]>([]);
+  const [latestLogs, setLatestLogs] = useState<Record<string, LogEntry | null>>({});
 
   const fetchLogServices = useCallback(async () => {
     try {
@@ -49,6 +72,18 @@ export function DashboardMobile() {
   useEffect(() => {
     fetchLogServices();
   }, [fetchLogServices]);
+
+  useEffect(() => {
+    if (logServices.length === 0) return;
+    logServices.forEach(async (svc) => {
+      try {
+        const logs = await api.getServiceLogs(svc.id, { limit: '1' });
+        setLatestLogs(prev => ({ ...prev, [svc.id]: logs[0] ?? null }));
+      } catch {
+        setLatestLogs(prev => ({ ...prev, [svc.id]: null }));
+      }
+    });
+  }, [logServices]);
 
   const kpiColors: Record<string, string> = {
     primary: 'text-primary',
@@ -155,45 +190,68 @@ export function DashboardMobile() {
       {/* Log Services */}
       {logServices.length > 0 && (
         <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
-          <div className="flex items-center justify-between p-4 pb-0">
-            <div className="flex items-center gap-2">
-              <MaterialIcon name="article" className="text-lg text-primary" />
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-                {t('dashboard.logServices.title', { defaultValue: 'Log Services' })}
-              </h2>
-            </div>
-            <button
-              onClick={() => navigate('/logs')}
-              className="text-xs font-semibold text-primary"
-            >
-              {t('common.viewMore', { defaultValue: 'View More' })}
-            </button>
+          <div className="flex items-center gap-2 p-4 pb-3">
+            <MaterialIcon name="article" className="text-lg text-primary" />
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+              {t('dashboard.logServices.title', { defaultValue: 'Log Services' })}
+            </h2>
           </div>
-          <div className="p-3">
-            <div className="space-y-1.5">
-              {logServices.slice(0, 4).map(svc => {
-                const svcStatus = svc.status === 'healthy' ? statusColors.healthy
-                  : svc.status === 'unhealthy' ? statusColors.offline
-                  : statusColors.warning;
-                return (
-                  <button
-                    key={svc.id}
-                    onClick={() => navigate(`/logs/${svc.id}`)}
-                    className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-ui-hover-dark active:bg-slate-100 dark:active:bg-ui-active-dark transition-colors text-left"
-                  >
+          <div className="px-3 pb-3 space-y-2">
+            {logServices.slice(0, 4).map(svc => {
+              const svcStatus = svc.status === 'healthy' ? statusColors.healthy
+                : svc.status === 'unhealthy' ? statusColors.offline
+                : statusColors.warning;
+              const filters = svc.logLevelFilter && svc.logLevelFilter.length > 0
+                ? svc.logLevelFilter
+                : null;
+              const latest = latestLogs[svc.id];
+              return (
+                <button
+                  key={svc.id}
+                  onClick={() => navigate(`/logs/${svc.id}`)}
+                  className="w-full flex flex-col gap-1.5 p-3 rounded-lg bg-slate-50 dark:bg-ui-hover-dark hover:bg-slate-100 dark:hover:bg-ui-active-dark active:scale-[0.99] transition-all text-left"
+                >
+                  {/* Service name + filter level chips */}
+                  <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full shrink-0 ${svcStatus.dot}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 dark:text-text-base-dark truncate">
-                        {svc.name}
-                      </p>
-                    </div>
-                    <span className="text-[11px] font-mono text-slate-500 dark:text-text-muted-dark shrink-0">
-                      {svc.tags?.[0] || svc.type}
+                    <span className="text-sm font-semibold text-slate-800 dark:text-text-base-dark flex-1 truncate">
+                      {svc.name}
                     </span>
-                  </button>
-                );
-              })}
-            </div>
+                    <div className="flex gap-1 shrink-0">
+                      {filters ? filters.map(lvl => (
+                        <span key={lvl} className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${levelChipColor[lvl]}`}>
+                          {lvl}
+                        </span>
+                      )) : (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase bg-slate-200 dark:bg-ui-active-dark text-slate-500 dark:text-text-muted-dark">
+                          ALL
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {/* Latest log */}
+                  <div className="flex items-center gap-2 pl-4">
+                    {latest ? (
+                      <>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase shrink-0 ${logLevelBadge[latest.level]}`}>
+                          {latest.level === 'warning' ? 'WARN' : latest.level.toUpperCase()}
+                        </span>
+                        <span className="text-[11px] text-slate-500 dark:text-text-muted-dark flex-1 truncate">
+                          {latest.message}
+                        </span>
+                        <span className="text-[10px] text-slate-400 dark:text-text-dim-dark shrink-0">
+                          {relativeTime(latest.createdAt)}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-[11px] text-slate-400 dark:text-text-dim-dark italic">
+                        {t('dashboard.logServices.noLogs', { defaultValue: 'No logs yet' })}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </section>
       )}
