@@ -85,6 +85,17 @@ func (h *NotificationHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate webhook URL for SSRF protection
+	if err := validateChannelWebhookURL(req.Type, configJSON); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "SSRF_BLOCKED",
+				"message": err.Error(),
+			},
+		})
+	}
+
 	channel := &models.NotificationChannel{
 		ID:        uuid.New().String(),
 		Name:      req.Name,
@@ -249,6 +260,17 @@ func (h *NotificationHandler) Update(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate webhook URL for SSRF protection
+	if err := validateChannelWebhookURL(req.Type, configJSON); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "SSRF_BLOCKED",
+				"message": err.Error(),
+			},
+		})
+	}
+
 	channel.Name = req.Name
 	channel.Type = req.Type
 	channel.Config = string(configJSON)
@@ -332,4 +354,28 @@ func (h *NotificationHandler) Delete(c *fiber.Ctx) error {
 		"success": true,
 		"message": "Notification channel deleted successfully",
 	})
+}
+
+// validateChannelWebhookURL extracts and validates webhook URLs from channel config JSON.
+func validateChannelWebhookURL(channelType string, configJSON []byte) error {
+	switch channelType {
+	case "discord":
+		var cfg models.DiscordConfig
+		if err := json.Unmarshal(configJSON, &cfg); err != nil {
+			return nil // config parse errors are handled elsewhere
+		}
+		return alerter.ValidateWebhookURL("discord", cfg.WebhookURL)
+	case "slack":
+		// Slack support future-proofing
+		var cfg struct {
+			WebhookURL string `json:"webhookUrl"`
+		}
+		if err := json.Unmarshal(configJSON, &cfg); err != nil {
+			return nil
+		}
+		if cfg.WebhookURL != "" {
+			return alerter.ValidateWebhookURL("slack", cfg.WebhookURL)
+		}
+	}
+	return nil
 }

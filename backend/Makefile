@@ -7,7 +7,7 @@ DOCKER_REPO ?= aiturn/everyup
 VERSION ?= $(shell date +%Y%m%d)
 PLATFORMS ?= linux/amd64,linux/arm64
 
-.PHONY: help build run test docker-build docker-push docker-buildx clean
+.PHONY: help setup build run test docker-build docker-push docker-buildx clean reset-password
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -16,10 +16,18 @@ help: ## Show this help
 # Local Development
 # =============================================================================
 
+setup: ## Copy .env.example → .env (skips if .env already exists)
+	@if [ ! -f .env ]; then \
+		cp .env.example .env; \
+		echo "Created .env from .env.example — edit it before running."; \
+	else \
+		echo ".env already exists, skipping."; \
+	fi
+
 build: ## Build binary for current platform
 	CGO_ENABLED=0 go build -ldflags="-w -s" -o bin/server ./cmd/server
 
-run: ## Run server locally
+run: ## Run server (auto-loads .env if present)
 	go run ./cmd/server
 
 test: ## Run tests
@@ -27,6 +35,13 @@ test: ## Run tests
 
 clean: ## Clean build artifacts
 	rm -rf bin/ tmp/ data/*.db
+
+reset-password: ## Reset admin password: make reset-password USER=admin PASS=newpassword
+	@if [ -z "$(USER)" ] || [ -z "$(PASS)" ]; then \
+		echo "Usage: make reset-password USER=admin PASS=newpassword"; exit 1; \
+	fi
+	MT_ADMIN_USERNAME=$(USER) MT_ADMIN_PASSWORD=$(PASS) go run ./cmd/server &
+	@sleep 3 && kill %1 2>/dev/null; echo "Password reset for user: $(USER)"
 
 # =============================================================================
 # Docker - Single Platform

@@ -29,13 +29,7 @@ func (h *MetricHandler) GetByServiceID(c *fiber.Ctx) error {
 	// Check if service exists
 	service, err := h.serviceRepo.GetByID(serviceID)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {
@@ -58,13 +52,7 @@ func (h *MetricHandler) GetByServiceID(c *fiber.Ctx) error {
 
 	metrics, err := h.repo.GetByServiceID(serviceID, limit)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{
@@ -96,13 +84,7 @@ func (h *MetricHandler) GetSummary(c *fiber.Ctx) error {
 
 	summary, err := h.repo.GetSummary(serviceID, duration)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{
@@ -125,13 +107,7 @@ func (h *MetricHandler) GetUptime(c *fiber.Ctx) error {
 
 	data, err := h.repo.GetUptimeData(serviceID, days)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Transform to frontend expected format

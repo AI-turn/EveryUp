@@ -2,12 +2,39 @@ package handlers
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/aiturn/everyup/internal/crypto"
 	"github.com/aiturn/everyup/internal/database"
 	"golang.org/x/crypto/bcrypt"
 )
+
+// setAuthCookie sets a secure httpOnly JWT cookie on the response.
+func setAuthCookie(c *fiber.Ctx, token string) {
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt_token",
+		Value:    token,
+		HTTPOnly: true,
+		Secure:   c.Protocol() == "https",
+		SameSite: "Lax",
+		Path:     "/",
+		MaxAge:   int((7 * 24 * time.Hour).Seconds()),
+	})
+}
+
+// clearAuthCookie clears the JWT cookie.
+func clearAuthCookie(c *fiber.Ctx) {
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt_token",
+		Value:    "",
+		HTTPOnly: true,
+		Secure:   c.Protocol() == "https",
+		SameSite: "Lax",
+		Path:     "/",
+		MaxAge:   -1,
+	})
+}
 
 // AuthHandler handles authentication endpoints.
 type AuthHandler struct{}
@@ -20,10 +47,7 @@ func (h *AuthHandler) SetupStatus(c *fiber.Ctx) error {
 	repo := database.NewUserRepository()
 	count, err := repo.Count()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error":   fiber.Map{"code": "DB_ERROR", "message": err.Error()},
-		})
+		return internalError(c, "DB_ERROR", err)
 	}
 	return c.JSON(fiber.Map{
 		"success": true,
@@ -38,10 +62,7 @@ func (h *AuthHandler) Setup(c *fiber.Ctx) error {
 
 	count, err := repo.Count()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error":   fiber.Map{"code": "DB_ERROR", "message": err.Error()},
-		})
+		return internalError(c, "DB_ERROR", err)
 	}
 	if count > 0 {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
@@ -77,10 +98,7 @@ func (h *AuthHandler) Setup(c *fiber.Ctx) error {
 
 	user, err := repo.Create(body.Username, string(hash), "admin")
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error":   fiber.Map{"code": "DB_ERROR", "message": err.Error()},
-		})
+		return internalError(c, "DB_ERROR", err)
 	}
 
 	token, err := crypto.SignToken(crypto.UserClaims{
@@ -95,9 +113,14 @@ func (h *AuthHandler) Setup(c *fiber.Ctx) error {
 		})
 	}
 
+	setAuthCookie(c, token)
 	return c.JSON(fiber.Map{
 		"success": true,
-		"data":    fiber.Map{"token": token},
+		"data": fiber.Map{
+			"user_id":  user.ID,
+			"username": user.Username,
+			"role":     user.Role,
+		},
 	})
 }
 
@@ -124,10 +147,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error":   fiber.Map{"code": "DB_ERROR", "message": err.Error()},
-		})
+		return internalError(c, "DB_ERROR", err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(body.Password)); err != nil {
@@ -149,10 +169,22 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 
+	setAuthCookie(c, token)
 	return c.JSON(fiber.Map{
 		"success": true,
-		"data":    fiber.Map{"token": token},
+		"data": fiber.Map{
+			"user_id":  user.ID,
+			"username": user.Username,
+			"role":     user.Role,
+		},
 	})
+}
+
+// Logout clears the JWT cookie.
+// POST /auth/logout  (public)
+func (h *AuthHandler) Logout(c *fiber.Ctx) error {
+	clearAuthCookie(c)
+	return c.JSON(fiber.Map{"success": true})
 }
 
 // Verify confirms the JWT is valid.
@@ -180,17 +212,11 @@ func (h *AuthHandler) Me(c *fiber.Ctx) error {
 func (h *AuthHandler) Reset(c *fiber.Ctx) error {
 	repo := database.NewUserRepository()
 	if err := repo.DeleteAll(); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error":   fiber.Map{"code": "DB_ERROR", "message": err.Error()},
-		})
+		return internalError(c, "DB_ERROR", err)
 	}
 
 	if err := crypto.RotateSecret(database.DB); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error":   fiber.Map{"code": "SECRET_ERROR", "message": err.Error()},
-		})
+		return internalError(c, "SECRET_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{"success": true})

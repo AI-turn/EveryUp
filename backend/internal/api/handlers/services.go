@@ -37,13 +37,7 @@ func (h *ServiceHandler) GetAll(c *fiber.Ctx) error {
 
 	services, err := h.repo.GetAll(typeFilter...)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Enrich services: status from isActive (live monitoring on/off), metrics for uptime/latency
@@ -89,13 +83,7 @@ func (h *ServiceHandler) GetByID(c *fiber.Ctx) error {
 
 	service, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {
@@ -143,13 +131,7 @@ func (h *ServiceHandler) GetByID(c *fiber.Ctx) error {
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 	var req models.ServiceCreateRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "INVALID_REQUEST",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "INVALID_REQUEST", err)
 	}
 
 	// Validate required fields
@@ -174,6 +156,13 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 				"message": "url is required for HTTP services",
 			},
 		})
+	}
+
+	// SSRF protection: validate HTTP service URLs do not point to private/internal networks
+	if req.Type == models.ServiceTypeHTTP && req.URL != "" {
+		if err := checker.ValidateURLForSSRF(req.URL); err != nil {
+			return internalError(c, "SSRF_BLOCKED", err)
+		}
 	}
 	if req.Type == models.ServiceTypeTCP && (req.URL == "" && req.Host == "") {
 		return c.Status(400).JSON(fiber.Map{
@@ -212,13 +201,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 	service.ApiKeyMasked = crypto.MaskApiKey(plainKey)
 
 	if err := h.repo.Create(service); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Register in API key cache
@@ -244,13 +227,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 
 	service, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {
@@ -265,13 +242,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 
 	var req models.ServiceCreateRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "INVALID_REQUEST",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "INVALID_REQUEST", err)
 	}
 
 	// Update fields if provided
@@ -328,13 +299,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.Update(service); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Update in scheduler
@@ -352,13 +317,7 @@ func (h *ServiceHandler) Delete(c *fiber.Ctx) error {
 
 	service, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {
@@ -377,13 +336,7 @@ func (h *ServiceHandler) Delete(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.Delete(id); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Remove from scheduler
@@ -401,13 +354,7 @@ func (h *ServiceHandler) Pause(c *fiber.Ctx) error {
 
 	service, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {
@@ -421,13 +368,7 @@ func (h *ServiceHandler) Pause(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.SetActive(id, false); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Update scheduler (will remove the entry)
@@ -446,13 +387,7 @@ func (h *ServiceHandler) Resume(c *fiber.Ctx) error {
 
 	service, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {
@@ -466,13 +401,7 @@ func (h *ServiceHandler) Resume(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.SetActive(id, true); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Update scheduler (will add the entry)
@@ -491,13 +420,7 @@ func (h *ServiceHandler) RegenerateKey(c *fiber.Ctx) error {
 
 	service, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if service == nil {

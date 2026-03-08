@@ -54,6 +54,9 @@ func (h *NotificationHistoryHandler) GetAll(c *fiber.Ctx) error {
 			limit = l
 		}
 	}
+	if limit > 1000 {
+		limit = 1000
+	}
 	filter.Limit = limit
 
 	offset := 0

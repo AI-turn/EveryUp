@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/aiturn/everyup/internal/alerter"
 	"github.com/aiturn/everyup/internal/api"
@@ -25,6 +26,9 @@ import (
 )
 
 func main() {
+	// Load .env file if present (silent if not found — env vars take precedence)
+	_ = godotenv.Load()
+
 	// Parse command line flags
 	configPath := flag.String("config", "", "Path to config file")
 	flag.Parse()
@@ -45,11 +49,10 @@ func main() {
 	defer database.Close()
 	log.Printf("Database connected: %s", cfg.Database.Path)
 
-	// Initialize encryption — auto-generates key on first run, loads from DB on subsequent runs
+	// Initialize encryption — loads key from env var, file, or DB (in priority order)
 	if err := crypto.InitFromDB(database.DB); err != nil {
 		log.Fatalf("Encryption init failed: %v", err)
 	}
-	log.Printf("Encryption: enabled (AES-256-GCM, key managed in DB)")
 
 	// Initialize JWT signing secret — auto-generates on first run, loads from DB on subsequent runs
 	if err := crypto.InitJWTSecret(database.DB); err != nil {
@@ -61,6 +64,11 @@ func main() {
 	// Set MT_ADMIN_USERNAME + MT_ADMIN_PASSWORD to create or reset the admin account
 	if adminUser := os.Getenv("MT_ADMIN_USERNAME"); adminUser != "" {
 		if adminPass := os.Getenv("MT_ADMIN_PASSWORD"); adminPass != "" {
+			// Block weak default passwords in production mode
+			if cfg.Server.Mode == "production" && (adminPass == "admin" || adminPass == "password" || adminPass == "changeme" || len(adminPass) < 8) {
+				log.Fatalf("[SECURITY] Default or weak admin password is not allowed in production mode. "+
+					"Set MT_ADMIN_PASSWORD to a strong password (at least 8 characters).")
+			}
 			hash, err := bcrypt.GenerateFromPassword([]byte(adminPass), bcrypt.DefaultCost)
 			if err != nil {
 				log.Fatalf("Failed to hash admin password: %v", err)
@@ -178,7 +186,7 @@ func main() {
 	}
 
 	// Setup API routes with scheduler and collector manager
-	api.SetupRoutes(app, scheduler, collectorMgr, cfg.Server.AllowOrigins)
+	api.SetupRoutes(app, scheduler, collectorMgr, cfg.Server.AllowOrigins, cfg.Server.Mode)
 
 	// Start scheduler with config services
 	if err := scheduler.Start(cfg.Services); err != nil {

@@ -13,7 +13,7 @@ export function MainLayout() {
   const { isOpen: isPanelOpen } = useSidePanel();
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background-light dark:bg-bg-main-dark">
+    <div className="flex flex-col h-dvh overflow-hidden bg-background-light dark:bg-bg-main-dark">
       {/* 0. Demo Banner (only in demo mode) */}
       <DemoBanner />
 
@@ -42,9 +42,8 @@ export function MainLayout() {
           </div>
 
           <div className="flex-1 overflow-y-auto scroll-smooth">
-            <div className="flex flex-col min-h-full">
-              {/* 모바일: BottomNav(4rem) + safe-area-inset-bottom, 데스크톱: 2rem */}
-              <div className="p-4 sm:p-6 md:p-8 pb-safe-bottom lg:pb-8! space-y-8 flex-1">
+            <div className="flex flex-col min-h-full pb-safe-bottom lg:pb-0">
+              <div className="p-4 sm:p-6 md:p-8 space-y-8 flex-1">
                 <Outlet />
               </div>
               <Footer />

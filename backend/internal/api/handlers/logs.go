@@ -37,6 +37,9 @@ func (h *LogHandler) GetAll(c *fiber.Ctx) error {
 	if filter.Limit <= 0 {
 		filter.Limit = 50
 	}
+	if filter.Limit > 1000 {
+		filter.Limit = 1000
+	}
 
 	if offset := c.Query("offset"); offset != "" {
 		if parsed, err := strconv.Atoi(offset); err == nil {
@@ -53,13 +56,7 @@ func (h *LogHandler) GetAll(c *fiber.Ctx) error {
 
 	logs, total, err := h.repo.GetAll(filter)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Calculate pagination info
@@ -99,13 +96,7 @@ func (h *LogHandler) GetByServiceID(c *fiber.Ctx) error {
 
 	logs, total, err := h.repo.GetAll(filter)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{

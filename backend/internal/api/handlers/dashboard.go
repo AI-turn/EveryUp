@@ -28,13 +28,7 @@ func NewDashboardHandler() *DashboardHandler {
 func (h *DashboardHandler) GetSummary(c *fiber.Ctx) error {
 	services, err := h.serviceRepo.GetAll()
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	summary := models.DashboardSummary{
@@ -87,13 +81,7 @@ func (h *DashboardHandler) GetTimeline(c *fiber.Ctx) error {
 
 	events, err := h.incidentRepo.GetTimeline(limit)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{
@@ -106,13 +94,7 @@ func (h *DashboardHandler) GetTimeline(c *fiber.Ctx) error {
 func (h *DashboardHandler) GetIncidents(c *fiber.Ctx) error {
 	incidents, err := h.incidentRepo.GetActive()
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{

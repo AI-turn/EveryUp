@@ -30,13 +30,7 @@ func NewHostHandler(collectorMgr *collector.CollectorManager) *HostHandler {
 func (h *HostHandler) GetAll(c *fiber.Ctx) error {
 	hosts, err := h.repo.GetAll()
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Enrich with computed status based on recent metrics
@@ -69,13 +63,7 @@ func (h *HostHandler) GetByID(c *fiber.Ctx) error {
 
 	host, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if host == nil {
@@ -148,13 +136,7 @@ func (h *HostHandler) Create(c *fiber.Ctx) error {
 	host := req.ToHost()
 
 	if err := h.repo.Create(host); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Auto-register SSH collector for active remote hosts
@@ -177,13 +159,7 @@ func (h *HostHandler) Update(c *fiber.Ctx) error {
 
 	host, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if host == nil {
@@ -249,13 +225,7 @@ func (h *HostHandler) Update(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.Update(host); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	host.MaskSecrets()
@@ -271,13 +241,7 @@ func (h *HostHandler) Delete(c *fiber.Ctx) error {
 
 	host, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if host == nil {
@@ -307,13 +271,7 @@ func (h *HostHandler) Delete(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.Delete(id); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{
@@ -328,13 +286,7 @@ func (h *HostHandler) Pause(c *fiber.Ctx) error {
 
 	host, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if host == nil {
@@ -348,13 +300,7 @@ func (h *HostHandler) Pause(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.SetActive(id, false); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Unregister collector when paused (for remote hosts)
@@ -374,13 +320,7 @@ func (h *HostHandler) Resume(c *fiber.Ctx) error {
 
 	host, err := h.repo.GetByID(id)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	if host == nil {
@@ -394,13 +334,7 @@ func (h *HostHandler) Resume(c *fiber.Ctx) error {
 	}
 
 	if err := h.repo.SetActive(id, true); err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	// Re-register collector when resumed (for remote hosts)

@@ -7,15 +7,22 @@ import (
 	"github.com/aiturn/everyup/internal/crypto"
 )
 
-// JWTAuth validates the JWT from the Authorization: Bearer <token> header.
+// JWTAuth validates the JWT from the Authorization header or httpOnly cookie.
+// Priority: Authorization: Bearer <token> header > jwt_token cookie.
 // On success, stores parsed claims in c.Locals("claims").
 func JWTAuth() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var tokenStr string
 
+		// Priority 1: Authorization header
 		auth := c.Get("Authorization")
 		if strings.HasPrefix(auth, "Bearer ") {
 			tokenStr = auth[7:]
+		}
+
+		// Priority 2: httpOnly cookie
+		if tokenStr == "" {
+			tokenStr = c.Cookies("jwt_token")
 		}
 
 		if tokenStr == "" {

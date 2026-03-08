@@ -152,6 +152,10 @@ func (m *Manager) sendToChannel(ch models.NotificationChannel, notification Noti
 			log.Printf("Failed to parse Discord config for channel %s: %v", ch.Name, err)
 			return
 		}
+		if err := ValidateWebhookURL("discord", config.WebhookURL); err != nil {
+			log.Printf("[SECURITY] Blocked Discord webhook for channel %s: %v", ch.Name, err)
+			return
+		}
 		provider = NewDiscordProvider(config.WebhookURL)
 
 	case "telegram":

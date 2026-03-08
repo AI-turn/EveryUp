@@ -26,6 +26,12 @@ data/
 config.json
 !config.example.json
 
+# Encryption key and SSH known_hosts (must never be committed)
+.encryption_key
+**/.encryption_key
+known_hosts
+**/known_hosts
+
 # IDE
 .idea/
 .vscode/

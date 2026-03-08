@@ -14,7 +14,8 @@ type HTTPChecker struct {
 	client *http.Client
 }
 
-// NewHTTPChecker creates a new HTTP checker
+// NewHTTPChecker creates a new HTTP checker with SSRF protection.
+// The transport uses a safe dialer that blocks connections to private/internal IP addresses.
 func NewHTTPChecker() *HTTPChecker {
 	return &HTTPChecker{
 		client: &http.Client{
@@ -23,6 +24,7 @@ func NewHTTPChecker() *HTTPChecker {
 					InsecureSkipVerify: true, // Allow self-signed certs
 				},
 				DisableKeepAlives: true,
+				DialContext:       safeDialContext(),
 			},
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				if len(via) >= 10 {

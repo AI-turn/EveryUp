@@ -10,7 +10,9 @@ export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { t } = useTranslation()
-  const from = (location.state as { from?: string })?.from ?? '/'
+  // Validate redirect path to prevent open redirect attacks
+  const rawFrom = (location.state as { from?: string })?.from
+  const from = rawFrom && rawFrom.startsWith('/') && !rawFrom.startsWith('//') ? rawFrom : '/'
 
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null)
   const [username, setUsername] = useState('')
@@ -44,11 +46,12 @@ export function LoginPage() {
       const res = await fetch(`${env.apiBaseUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ username, password }),
       })
       const json = await res.json()
       if (json.success) {
-        login(json.data.token)
+        login(json.data)
         navigate(from, { replace: true })
       } else {
         setError(json.error?.message || t('login.error.generic'))

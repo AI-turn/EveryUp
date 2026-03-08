@@ -50,13 +50,7 @@ func (h *SystemHandler) GetInfo(c *fiber.Ctx) error {
 	if coll != nil {
 		liveInfo, err := coll.GetSystemInfo()
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"success": false,
-				"error": fiber.Map{
-					"code":    "COLLECT_FAILED",
-					"message": err.Error(),
-				},
-			})
+			return internalError(c, "COLLECT_FAILED", err)
 		}
 		return c.JSON(fiber.Map{
 			"success": true,
@@ -81,13 +75,7 @@ func (h *SystemHandler) GetMetricsHistory(c *fiber.Ctx) error {
 
 	history, err := h.manager.GetHistory(hostID, rangeStr)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "HISTORY_FETCH_FAILED",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "HISTORY_FETCH_FAILED", err)
 	}
 
 	return c.JSON(fiber.Map{
@@ -116,13 +104,7 @@ func (h *SystemHandler) GetProcesses(c *fiber.Ctx) error {
 
 	processes, err := coll.GetProcesses(limit, sortBy)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "PROCESS_FETCH_FAILED",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "PROCESS_FETCH_FAILED", err)
 	}
 
 	return c.JSON(fiber.Map{

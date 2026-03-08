@@ -22,18 +22,17 @@ class ApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     if (env.useMock) return mockRouter<T>(endpoint, options?.method);
 
-    const token = localStorage.getItem('everyup_jwt_token');
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      credentials: 'include', // Send httpOnly cookies automatically
       headers: {
         'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options?.headers,
       },
       ...options,
     });
 
     if (response.status === 401) {
-      localStorage.removeItem('everyup_jwt_token');
+      localStorage.removeItem('everyup_user');
       window.location.href = '/login';
       throw new Error('Unauthorized');
     }

@@ -21,13 +21,7 @@ func NewIncidentHandler() *IncidentHandler {
 func (h *IncidentHandler) GetAll(c *fiber.Ctx) error {
 	incidents, err := h.repo.GetActive()
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"success": false,
-			"error": fiber.Map{
-				"code":    "DATABASE_ERROR",
-				"message": err.Error(),
-			},
-		})
+		return internalError(c, "DATABASE_ERROR", err)
 	}
 
 	return c.JSON(fiber.Map{

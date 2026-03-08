@@ -1,6 +1,9 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
+import { env } from '../config/env'
 
-const STORAGE_KEY = 'everyup_jwt_token'
+const USER_STORAGE_KEY = 'everyup_user'
+// Legacy key — cleaned up on login/logout to remove any old tokens from localStorage
+const LEGACY_TOKEN_KEY = 'everyup_jwt_token'
 
 interface User {
   user_id: number
@@ -9,52 +12,44 @@ interface User {
 }
 
 interface AuthContextType {
-  token: string | null
   user: User | null
-  login: (token: string) => void
+  login: (user: User) => void
   logout: () => void
   isAuthenticated: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-function parseJWTUser(token: string): User | null {
-  try {
-    const payload = token.split('.')[1]
-    const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')))
-    return {
-      user_id: decoded.user_id,
-      username: decoded.username,
-      role: decoded.role,
-    }
-  } catch {
-    return null
-  }
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() =>
-    localStorage.getItem(STORAGE_KEY)
-  )
   const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? parseJWTUser(stored) : null
+    try {
+      const stored = localStorage.getItem(USER_STORAGE_KEY)
+      return stored ? JSON.parse(stored) : null
+    } catch {
+      return null
+    }
   })
 
-  function login(newToken: string) {
-    localStorage.setItem(STORAGE_KEY, newToken)
-    setToken(newToken)
-    setUser(parseJWTUser(newToken))
+  function login(newUser: User) {
+    // JWT token is now stored in httpOnly cookie by the backend — not in localStorage
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
+    localStorage.removeItem(LEGACY_TOKEN_KEY) // Clean up legacy token
+    setUser(newUser)
   }
 
   function logout() {
-    localStorage.removeItem(STORAGE_KEY)
-    setToken(null)
+    localStorage.removeItem(USER_STORAGE_KEY)
+    localStorage.removeItem(LEGACY_TOKEN_KEY)
+    // Call backend to clear the httpOnly cookie
+    fetch(`${env.apiBaseUrl}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => {}) // Best-effort
     setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   )

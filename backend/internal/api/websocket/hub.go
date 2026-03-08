@@ -3,11 +3,13 @@ package websocket
 import (
 	"encoding/json"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
+	"github.com/aiturn/everyup/internal/crypto"
 )
 
 // Client represents a WebSocket client
@@ -96,14 +98,47 @@ func (h *Hub) ClientCount() int {
 	return len(h.clients)
 }
 
-// WebSocketUpgrade returns middleware to check if request can be upgraded
+// WebSocketUpgrade returns middleware to check if request can be upgraded.
+// It validates JWT from the ?token= query parameter or Authorization header.
 func WebSocketUpgrade() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		if websocket.IsWebSocketUpgrade(c) {
-			c.Locals("allowed", true)
-			return c.Next()
+		if !websocket.IsWebSocketUpgrade(c) {
+			return fiber.ErrUpgradeRequired
 		}
-		return fiber.ErrUpgradeRequired
+
+		// Extract JWT from query param or Authorization header
+		token := c.Query("token")
+		if token == "" {
+			auth := c.Get("Authorization")
+			if strings.HasPrefix(auth, "Bearer ") {
+				token = auth[7:]
+			}
+		}
+
+		if token == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"success": false,
+				"error": fiber.Map{
+					"code":    "UNAUTHORIZED",
+					"message": "WebSocket connection requires authentication. Provide ?token=<jwt> query parameter.",
+				},
+			})
+		}
+
+		claims, err := crypto.VerifyToken(token)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"success": false,
+				"error": fiber.Map{
+					"code":    "UNAUTHORIZED",
+					"message": "Token is expired or invalid",
+				},
+			})
+		}
+
+		c.Locals("allowed", true)
+		c.Locals("claims", claims)
+		return c.Next()
 	}
 }
 

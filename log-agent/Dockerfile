@@ -16,6 +16,7 @@ ENV MT_FILE=/var/log/app/*.log
 ENV MT_HOST=localhost
 ENV MT_PORT=3001
 ENV MT_TLS=off
+ENV MT_TLS_VERIFY=on
 ENV MT_API_KEY=changeme
 
 ENTRYPOINT ["/entrypoint.sh"]

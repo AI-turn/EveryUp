@@ -12,6 +12,7 @@ import (
 
 	"github.com/aiturn/everyup/internal/collector/parser"
 	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/crypto"
 	"github.com/aiturn/everyup/internal/models"
 )
 
@@ -64,7 +65,7 @@ func NewSSHCollector(host *models.Host) (*SSHCollector, error) {
 	sshConfig := &ssh.ClientConfig{
 		User:            host.SSHUser,
 		Auth:            authMethods,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback: crypto.HostKeyCallback(),
 		Timeout:         connTimeout,
 	}
 
@@ -349,6 +350,9 @@ func buildSSHAuth(host *models.Host) ([]ssh.AuthMethod, error) {
 	case models.SSHAuthKeyFile:
 		if host.SSHKeyPath == "" {
 			return nil, fmt.Errorf("SSH key file path not configured")
+		}
+		if err := crypto.ValidateSSHKeyPath(host.SSHKeyPath); err != nil {
+			return nil, fmt.Errorf("invalid SSH key path: %w", err)
 		}
 		keyBytes, err := os.ReadFile(host.SSHKeyPath)
 		if err != nil {

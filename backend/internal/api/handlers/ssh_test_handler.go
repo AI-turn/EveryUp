@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/aiturn/everyup/internal/config"
+	"github.com/aiturn/everyup/internal/crypto"
 	"github.com/aiturn/everyup/internal/models"
 	"golang.org/x/crypto/ssh"
 )
@@ -88,7 +89,7 @@ func (h *SSHTestHandler) TestConnection(c *fiber.Ctx) error {
 	sshConfig := &ssh.ClientConfig{
 		User:            req.SSHUser,
 		Auth:            authMethods,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback: crypto.HostKeyCallback(),
 		Timeout:         timeout,
 	}
 
@@ -171,9 +172,12 @@ func buildAuthMethods(authType models.SSHAuthType, password, keyContent, keyPath
 		if keyPath == "" {
 			return nil, fmt.Errorf("SSH key file path is required for key_file auth")
 		}
+		if err := crypto.ValidateSSHKeyPath(keyPath); err != nil {
+			return nil, fmt.Errorf("invalid SSH key path: %w", err)
+		}
 		keyBytes, err := os.ReadFile(keyPath)
 		if err != nil {
-			return nil, fmt.Errorf("failed to read SSH key file %s: %w", keyPath, err)
+			return nil, fmt.Errorf("failed to read SSH key file: %w", err)
 		}
 		signer, err := ssh.ParsePrivateKey(keyBytes)
 		if err != nil {

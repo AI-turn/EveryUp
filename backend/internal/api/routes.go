@@ -12,11 +12,12 @@ import (
 )
 
 // SetupRoutes configures all API routes
-func SetupRoutes(app *fiber.App, scheduler *checker.Scheduler, collectorMgr *collector.CollectorManager, allowOrigins string) {
+func SetupRoutes(app *fiber.App, scheduler *checker.Scheduler, collectorMgr *collector.CollectorManager, allowOrigins string, serverMode string) {
 	// Apply global middleware
 	app.Use(middleware.Recovery())
 	app.Use(middleware.Logger())
-	app.Use(middleware.CORS(allowOrigins))
+	app.Use(middleware.CORS(allowOrigins, serverMode))
+	app.Use(middleware.SecurityHeaders(serverMode))
 
 	// API routes
 	api := app.Group("/api/v1")
@@ -26,15 +27,17 @@ func SetupRoutes(app *fiber.App, scheduler *checker.Scheduler, collectorMgr *col
 	api.Get("/health", healthHandler.Health)
 	api.Get("/version", healthHandler.Version)
 
-	// Auth endpoints — public (no token required)
+	// Auth endpoints — public (no token required, rate-limited)
 	authHandler := handlers.NewAuthHandler()
+	authLimiter := middleware.AuthRateLimiter()
 	api.Get("/auth/setup/status", authHandler.SetupStatus)
-	api.Post("/auth/setup", authHandler.Setup)
-	api.Post("/auth/login", authHandler.Login)
+	api.Post("/auth/setup", authLimiter, authHandler.Setup)
+	api.Post("/auth/login", authLimiter, authHandler.Login)
+	api.Post("/auth/logout", authHandler.Logout)
 
-	// Ingest routes — API Key auth, registered BEFORE JWT group to avoid interception
+	// Ingest routes — API Key auth + rate limited, registered BEFORE JWT group to avoid interception
 	logIngestHandler := handlers.NewLogIngestHandler()
-	ingest := api.Group("/logs", middleware.ApiKeyAuth())
+	ingest := api.Group("/logs", middleware.IngestRateLimiter(), middleware.ApiKeyAuth())
 	ingest.Post("/ingest", logIngestHandler.Ingest)
 
 	// JWT-protected management routes
