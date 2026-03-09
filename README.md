@@ -1,6 +1,6 @@
 # EveryUp
 
-> Self-hosted unified monitoring platform — manage service health checks, infrastructure resources, and alerts from a single dashboard.
+> Monitor your services, servers, and APIs from a single self-hosted dashboard. Get real-time alerts on Telegram or Discord when something goes down.
 
 [한국어](README.ko.md) | **English**
 
@@ -89,14 +89,15 @@ docker compose logs -f
 
 ### Local Development
 
+**Prerequisites:** [Go 1.24+](https://go.dev/dl/), [Node.js 22+](https://nodejs.org/), [pnpm](https://pnpm.io/installation)
+
 **Backend**
 ```bash
 cd backend
+cp .env.example .env   # includes CORS config for local dev (port 5173)
 go run ./cmd/server
 # → http://localhost:3001
 ```
-
-> Optionally copy `backend/.env.example` to `backend/.env` to pre-configure port, timezone, or admin credentials.
 
 **Frontend**
 ```bash
@@ -153,6 +154,8 @@ docker run -d \
   -e TZ=UTC \
   aiturn/everyup:latest
 ```
+
+> Your data is stored in the `everyup-data` volume and is preserved across upgrades.
 
 With Docker Compose:
 

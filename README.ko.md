@@ -1,6 +1,6 @@
 # EveryUp
 
-> 셀프 호스팅 통합 모니터링 플랫폼 — 서비스 헬스체크, 인프라 리소스, 알림을 하나의 대시보드에서 관리합니다.
+> 서비스, 서버, API를 하나의 셀프 호스팅 대시보드에서 모니터링하세요. 장애 발생 시 Telegram 또는 Discord로 실시간 알림을 받을 수 있습니다.
 
 [English](README.md) | **한국어**
 
@@ -89,14 +89,15 @@ docker compose logs -f
 
 ### 로컬 개발
 
+**사전 준비:** [Go 1.24+](https://go.dev/dl/), [Node.js 22+](https://nodejs.org/), [pnpm](https://pnpm.io/installation)
+
 **백엔드**
 ```bash
 cd backend
+cp .env.example .env   # 로컬 개발용 CORS 설정(:5173) 포함
 go run ./cmd/server
 # → http://localhost:3001
 ```
-
-> 포트, 타임존, 관리자 계정을 미리 지정하려면 `backend/.env.example`을 `backend/.env`로 복사하세요.
 
 **프론트엔드**
 ```bash
@@ -153,6 +154,8 @@ docker run -d \
   -e TZ=Asia/Seoul \
   aiturn/everyup:latest
 ```
+
+> 데이터는 `everyup-data` 볼륨에 저장되며 업그레이드 시에도 유지됩니다.
 
 Docker Compose 사용 시:
 
