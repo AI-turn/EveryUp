@@ -93,6 +93,9 @@ body {
   font-family: 'Pretendard Variable', system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
 }
 
 /* Global Focus Ring: 사용자 경험(UX) 개선 */
