@@ -158,7 +158,7 @@ export function DashboardMobile() {
             </div>
           ) : (
             <div className="space-y-1.5">
-              {services.slice(0, 5).map(svc => {
+              {services.slice(0, 3).map(svc => {
                 const sc = statusColors[svc.status] || statusColors.healthy;
                 return (
                   <button
@@ -189,14 +189,22 @@ export function DashboardMobile() {
       {/* Log Services */}
       {logServices.length > 0 && (
         <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
-          <div className="flex items-center gap-2 p-4 pb-3">
-            <MaterialIcon name="article" className="text-lg text-primary" />
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-              {t('dashboard.logServices.title', { defaultValue: 'Log Services' })}
-            </h2>
+          <div className="flex items-center justify-between p-4 pb-3">
+            <div className="flex items-center gap-2">
+              <MaterialIcon name="article" className="text-lg text-primary" />
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+                {t('dashboard.logServices.title', { defaultValue: 'Log Services' })}
+              </h2>
+            </div>
+            <button
+              onClick={() => navigate('/logs')}
+              className="text-xs font-semibold text-primary"
+            >
+              {t('common.viewMore', { defaultValue: 'View More' })}
+            </button>
           </div>
           <div className="px-3 pb-3 space-y-2">
-            {logServices.slice(0, 4).map(svc => {
+            {logServices.slice(0, 3).map(svc => {
               const sc = statusColors[svc.status] ?? statusColors.unknown;
               const latest = latestLogs[svc.id];
               return (
@@ -258,7 +266,7 @@ export function DashboardMobile() {
           </div>
           <div className="p-3">
             <div className="space-y-1.5">
-              {resources.slice(0, 4).map(res => (
+              {resources.slice(0, 3).map(res => (
                 <button
                   key={res.id}
                   onClick={() => navigate(`/infra/${res.id}`)}
