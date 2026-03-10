@@ -8,6 +8,7 @@ import { ServiceCardSkeleton } from '../../../components/skeleton';
 
 interface ServiceHealthGridProps {
   hideHeader?: boolean;
+  bare?: boolean;
   searchQuery?: string;
   statusFilter?: string;
   refreshKey?: number;
@@ -17,6 +18,7 @@ interface ServiceHealthGridProps {
 
 export function ServiceHealthGrid({
   hideHeader = false,
+  bare = false,
   searchQuery = '',
   statusFilter = '',
   refreshKey = 0,
@@ -45,7 +47,7 @@ export function ServiceHealthGrid({
   const hasMore = maxItems ? filteredServices.length > maxItems : false;
 
   return (
-    <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
+    <div className={bare ? '' : 'bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6'}>
       {/* Header */}
       {!hideHeader && (
         <div className="flex items-center justify-between mb-6">

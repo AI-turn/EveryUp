@@ -184,57 +184,55 @@ export function LogListPage() {
       </div>
 
       {/* Content */}
-      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
-        {/* Loading */}
-        {loading && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-40 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
-            ))}
-          </div>
-        )}
+      {/* Loading */}
+      {loading && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-40 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
+          ))}
+        </div>
+      )}
 
-        {/* Error */}
-        {!loading && error && (
-          <div className="text-red-500 p-4">
-            {t('common.error')}: {error}
-          </div>
-        )}
+      {/* Error */}
+      {!loading && error && (
+        <div className="text-red-500 p-4">
+          {t('common.error')}: {error}
+        </div>
+      )}
 
-        {/* Empty State */}
-        {!loading && !error && services.length === 0 && (
-          <EmptyState
-            icon="article"
-            title={t('logServices.empty', { defaultValue: 'No log services yet' })}
-            description={t('logServices.emptyDesc')}
-            action={{
-              label: t('logServices.add.submit', { defaultValue: 'Add Log Service' }),
-              onClick: handleAddService,
-            }}
-          />
-        )}
+      {/* Empty State */}
+      {!loading && !error && services.length === 0 && (
+        <EmptyState
+          icon="article"
+          title={t('logServices.empty', { defaultValue: 'No log services yet' })}
+          description={t('logServices.emptyDesc')}
+          action={{
+            label: t('logServices.add.submit', { defaultValue: 'Add Log Service' }),
+            onClick: handleAddService,
+          }}
+        />
+      )}
 
-        {/* Grid */}
-        {!loading && !error && filteredServices.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredServices.map((service) => (
-              <LogServiceCard
-                key={service.id}
-                service={service}
-                onClick={() => navigate(`/logs/${service.id}`)}
-              />
-            ))}
-          </div>
-        )}
+      {/* Grid */}
+      {!loading && !error && filteredServices.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredServices.map((service) => (
+            <LogServiceCard
+              key={service.id}
+              service={service}
+              onClick={() => navigate(`/logs/${service.id}`)}
+            />
+          ))}
+        </div>
+      )}
 
-        {/* No search results */}
-        {!loading && !error && services.length > 0 && filteredServices.length === 0 && (
-          <div className="py-20 text-center">
-            <MaterialIcon name="search_off" className="text-5xl text-slate-300 mb-4" />
-            <p className="text-slate-500 dark:text-text-muted-dark">{t('logs.noResults')}</p>
-          </div>
-        )}
-      </div>
+      {/* No search results */}
+      {!loading && !error && services.length > 0 && filteredServices.length === 0 && (
+        <div className="py-20 text-center">
+          <MaterialIcon name="search_off" className="text-5xl text-slate-300 mb-4" />
+          <p className="text-slate-500 dark:text-text-muted-dark">{t('logs.noResults')}</p>
+        </div>
+      )}
     </>
   );
 }

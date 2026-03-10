@@ -82,6 +82,7 @@ export function HealthCheckPage() {
 
       <ServiceHealthGrid
         hideHeader
+        bare
         searchQuery={searchQuery}
         statusFilter={statusFilter}
         refreshKey={refreshKey}
