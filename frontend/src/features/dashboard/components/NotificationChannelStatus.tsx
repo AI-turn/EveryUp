@@ -22,7 +22,6 @@ export function NotificationChannelStatus() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <IconAlerts size={20} className="text-primary" />
           <h2 className="text-base font-bold text-slate-900 dark:text-white">
             {t('dashboard.notifications.title')}
           </h2>

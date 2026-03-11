@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { MaterialIcon } from '../../../components/common';
-import { IconAlerts } from '../../../components/icons/SidebarIcons';
 import { api, type AlertRule } from '../../../services/api';
 
 const SEVERITY_COLOR: Record<string, { text: string; bg: string; dot: string }> = {
@@ -41,7 +40,6 @@ export function AlertRulesStatus() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <IconAlerts size={20} className="text-primary" />
           <h2 className="text-base font-bold text-slate-900 dark:text-white">
             {t('dashboard.alertRules.title')}
           </h2>

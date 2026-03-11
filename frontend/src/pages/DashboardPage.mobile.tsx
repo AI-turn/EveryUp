@@ -59,6 +59,7 @@ export function DashboardMobile() {
   const { data: channels } = useNotificationChannels();
   const [logServices, setLogServices] = useState<Service[]>([]);
   const [latestLogs, setLatestLogs] = useState<Record<string, LogEntry | null>>({});
+  const [logLoading, setLogLoading] = useState(true);
 
   const fetchLogServices = useCallback(async () => {
     try {
@@ -66,6 +67,8 @@ export function DashboardMobile() {
       setLogServices(data.filter(s => s.type === 'log'));
     } catch {
       // non-critical
+    } finally {
+      setLogLoading(false);
     }
   }, []);
 
@@ -188,65 +191,86 @@ export function DashboardMobile() {
       </section>
 
       {/* Log Services */}
-      {logServices.length > 0 && (
-        <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
-          <div className="flex items-center justify-between p-4 pb-3">
-            <div className="flex items-center gap-2">
-              <IconLogs size={18} className="text-primary" />
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-                {t('dashboard.logServices.title', { defaultValue: 'Log Services' })}
-              </h2>
-            </div>
+      <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
+        <div className="flex items-center justify-between p-4 pb-3">
+          <div className="flex items-center gap-2">
+            <IconLogs size={18} className="text-primary" />
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+              {t('dashboard.logServices.title', { defaultValue: 'Log Services' })}
+            </h2>
+          </div>
+          {logServices.length > 0 && (
             <button
               onClick={() => navigate('/logs')}
               className="text-xs font-semibold text-primary"
             >
               {t('common.viewMore', { defaultValue: 'View More' })}
             </button>
-          </div>
-          <div className="px-3 pb-3 space-y-2">
-            {logServices.slice(0, 3).map(svc => {
-              const sc = statusColors[svc.status] ?? statusColors.unknown;
-              const latest = latestLogs[svc.id];
-              return (
-                <button
-                  key={svc.id}
-                  onClick={() => navigate(`/logs/${svc.id}`)}
-                  className="w-full flex flex-col gap-1.5 p-3 rounded-lg bg-slate-50 dark:bg-ui-hover-dark hover:bg-slate-100 dark:hover:bg-ui-active-dark active:scale-[0.99] transition-all text-left"
-                >
-                  {/* Service name + dot */}
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${sc.dot}`} />
-                    <span className="text-sm font-semibold text-slate-800 dark:text-text-base-dark flex-1 truncate">
-                      {svc.name}
-                    </span>
-                  </div>
-                  {/* Latest log */}
-                  <div className="flex items-center gap-2 pl-4">
-                    {latest ? (
-                      <>
-                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded uppercase shrink-0 ${logLevelBadge[latest.level]}`}>
-                          {latest.level === 'warning' ? 'WARN' : latest.level.toUpperCase()}
-                        </span>
-                        <span className="text-xs text-slate-500 dark:text-text-muted-dark flex-1 truncate">
-                          {latest.message}
-                        </span>
-                        <span className="text-xs text-slate-400 dark:text-text-dim-dark shrink-0">
-                          {relativeTime(latest.createdAt)}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-xs text-slate-400 dark:text-text-dim-dark italic">
-                        {t('dashboard.logServices.noLogs', { defaultValue: 'No logs yet' })}
+          )}
+        </div>
+        <div className="px-3 pb-3">
+          {logLoading ? (
+            <div className="space-y-2">
+              {[1, 2].map(i => (
+                <div key={i} className="h-14 rounded-lg bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
+              ))}
+            </div>
+          ) : logServices.length === 0 ? (
+            <div className="py-6 text-center">
+              <IconLogs size={28} className="text-slate-300 dark:text-text-dim-dark mx-auto" />
+              <p className="text-xs text-slate-400 dark:text-text-muted-dark mt-1">
+                {t('dashboard.logServices.empty', { defaultValue: 'No log services yet' })}
+              </p>
+              <button
+                onClick={() => navigate('/logs')}
+                className="mt-2 text-xs font-semibold text-primary"
+              >
+                {t('dashboard.logServices.add', { defaultValue: 'Add log service' })} →
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {logServices.slice(0, 3).map(svc => {
+                const sc = statusColors[svc.status] ?? statusColors.unknown;
+                const latest = latestLogs[svc.id];
+                return (
+                  <button
+                    key={svc.id}
+                    onClick={() => navigate(`/logs/${svc.id}`)}
+                    className="w-full flex flex-col gap-1.5 p-3 rounded-lg bg-slate-50 dark:bg-ui-hover-dark hover:bg-slate-100 dark:hover:bg-ui-active-dark active:scale-[0.99] transition-all text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${sc.dot}`} />
+                      <span className="text-sm font-semibold text-slate-800 dark:text-text-base-dark flex-1 truncate">
+                        {svc.name}
                       </span>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      )}
+                    </div>
+                    <div className="flex items-center gap-2 pl-4">
+                      {latest ? (
+                        <>
+                          <span className={`text-xs font-bold px-1.5 py-0.5 rounded uppercase shrink-0 ${logLevelBadge[latest.level]}`}>
+                            {latest.level === 'warning' ? 'WARN' : latest.level.toUpperCase()}
+                          </span>
+                          <span className="text-xs text-slate-500 dark:text-text-muted-dark flex-1 truncate">
+                            {latest.message}
+                          </span>
+                          <span className="text-xs text-slate-400 dark:text-text-dim-dark shrink-0">
+                            {relativeTime(latest.createdAt)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-xs text-slate-400 dark:text-text-dim-dark italic">
+                          {t('dashboard.logServices.noLogs', { defaultValue: 'No logs yet' })}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Infrastructure Quick Status */}
       {resources && resources.length > 0 && (

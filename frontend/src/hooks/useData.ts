@@ -126,10 +126,6 @@ export function useDashboardServices() {
   return useDataFetch(mockServices, async () => {
     const services = await api.getServices(['http', 'tcp', 'icmp']);
     // Transform API response to match Service structure
-    const iconMap: Record<string, string> = {
-      http: 'api',
-      tcp: 'dns',
-    };
     const statusMap: Record<string, 'healthy' | 'degraded' | 'warning' | 'offline'> = {
       healthy: 'healthy',
       unhealthy: 'degraded',
@@ -142,7 +138,7 @@ export function useDashboardServices() {
       status: statusMap[service.status] || 'warning',
       latency: `${service.responseTime || 0}ms`,
       uptime: `${(service.uptime || 0).toFixed(1)}%`,
-      icon: iconMap[service.type] || 'dns',
+      icon: '',
       type: service.type as 'http' | 'tcp' | undefined,
       interval: service.interval,
       isActive: service.isActive,

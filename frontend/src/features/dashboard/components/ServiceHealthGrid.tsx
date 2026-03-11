@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, EmptyState } from '../../../components/common';
-import { IconHealthCheck } from '../../../components/icons/SidebarIcons';
 import { ServiceCard } from './ServiceCard';
 import { useDashboardServices } from '../../../hooks/useData';
 import { ServiceCardSkeleton } from '../../../components/skeleton';
@@ -55,7 +54,6 @@ export function ServiceHealthGrid({
       {!hideHeader && (
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <IconHealthCheck size={20} className="text-primary" />
             <h2 className="text-base font-bold text-slate-900 dark:text-white">
               {t('dashboard.healthCheck.title')}
             </h2>
