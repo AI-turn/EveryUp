@@ -36,6 +36,8 @@ export function AlertsMobile() {
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [rulesLoading, setRulesLoading] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(true);
 
   const dateLocale = i18n.language === 'ko' ? ko : enUS;
 
@@ -55,7 +57,9 @@ export function AlertsMobile() {
       const data = await api.getAlertRules();
       setRules(data);
     } catch {
-      // silent
+      toast.error(t('alerts.loadFailed'));
+    } finally {
+      setRulesLoading(false);
     }
   };
 
@@ -64,7 +68,9 @@ export function AlertsMobile() {
       const response = await api.getNotificationHistory({ limit: 30, offset: 0 });
       setHistory(response.items || []);
     } catch {
-      // silent
+      toast.error(t('alerts.loadFailed'));
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
@@ -73,7 +79,7 @@ export function AlertsMobile() {
       const data = await api.getNotificationHistoryStats(7);
       setStats(data);
     } catch {
-      // silent
+      // stats are non-critical, failure is acceptable
     }
   };
 
@@ -197,6 +203,12 @@ export function AlertsMobile() {
               <p className="text-sm text-slate-400 dark:text-text-muted-dark mt-2">
                 {t('alerts.noChannels')}
               </p>
+              <button
+                onClick={handleAddChannel}
+                className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              >
+                {t('dashboard.notifications.addChannel', { defaultValue: 'Add Channel' })} →
+              </button>
             </div>
           ) : (
             channels.map(channel => {
@@ -252,12 +264,22 @@ export function AlertsMobile() {
       {/* Rules Tab */}
       {activeTab === 'rules' && (
         <div className="space-y-2">
-          {rules.length === 0 ? (
+          {rulesLoading ? (
+            [1, 2].map(i => (
+              <div key={i} className="h-16 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
+            ))
+          ) : rules.length === 0 ? (
             <div className="py-8 text-center">
               <MaterialIcon name="rule" className="text-4xl text-slate-300 dark:text-text-dim-dark" />
               <p className="text-sm text-slate-400 dark:text-text-muted-dark mt-2">
                 {t('alerts.rules.empty', { defaultValue: 'No alert rules configured' })}
               </p>
+              <button
+                onClick={() => navigate('/alerts?tab=rules')}
+                className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              >
+                {t('dashboard.alertRules.addRule', { defaultValue: 'Add Rule' })} →
+              </button>
             </div>
           ) : (
             rules.map(rule => {
@@ -295,7 +317,11 @@ export function AlertsMobile() {
       {/* History Tab */}
       {activeTab === 'history' && (
         <div className="space-y-2">
-          {history.length === 0 ? (
+          {historyLoading ? (
+            [1, 2, 3].map(i => (
+              <div key={i} className="h-16 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
+            ))
+          ) : history.length === 0 ? (
             <div className="py-8 text-center">
               <MaterialIcon name="history" className="text-4xl text-slate-300 dark:text-text-dim-dark" />
               <p className="text-sm text-slate-400 dark:text-text-muted-dark mt-2">

@@ -18,7 +18,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { openPanel } = useSidePanel();
-  const { data: host, refetch } = useHost(hostId);
+  const { data: host, loading: hostLoading, refetch } = useHost(hostId);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPausing, setIsPausing] = useState(false);
@@ -94,22 +94,31 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
         {/* Header */}
         <div className="flex flex-wrap justify-between items-end gap-4">
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-slate-900 dark:text-white text-2xl sm:text-4xl font-black tracking-tight">
-                {name}
-              </h1>
-              <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
-                <span className="relative flex h-2 w-2">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
-                  <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
-                </span>
-                {t(`common.${status}`)}
-              </span>
-            </div>
-            <p className="text-slate-500 dark:text-text-muted-dark text-base">
-              {ip && `IP: ${ip}`}
-              {host?.type === 'local' && ' (Local)'}
-            </p>
+            {hostLoading ? (
+              <div className="animate-pulse space-y-2">
+                <div className="h-10 w-56 bg-slate-200 dark:bg-ui-hover-dark rounded-lg" />
+                <div className="h-4 w-36 bg-slate-100 dark:bg-ui-active-dark rounded" />
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-slate-900 dark:text-white text-2xl sm:text-4xl font-black tracking-tight">
+                    {name}
+                  </h1>
+                  <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
+                    <span className="relative flex h-2 w-2">
+                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
+                      <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
+                    </span>
+                    {t(`common.${status}`)}
+                  </span>
+                </div>
+                <p className="text-slate-500 dark:text-text-muted-dark text-base">
+                  {ip && `IP: ${ip}`}
+                  {host?.type === 'local' && ' (Local)'}
+                </p>
+              </>
+            )}
           </div>
 
           {/* Error Banner */}

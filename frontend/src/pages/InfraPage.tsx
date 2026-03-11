@@ -14,7 +14,7 @@ export function InfraPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const { data: resources, loading, refetch } = useMonitoringResources();
+  const { data: resources, loading, error, refetch } = useMonitoringResources();
 
   const handleAddResource = () => {
     openPanel(
@@ -92,6 +92,17 @@ export function InfraPage() {
         </div>
       </div>
 
+      {/* Error Banner */}
+      {error && (
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+          <MaterialIcon name="error_outline" className="text-xl shrink-0" />
+          <p className="text-sm font-medium flex-1">{t('common.loadError', { defaultValue: 'Failed to load hosts. Please try again.' })}</p>
+          <button onClick={refetch} className="text-sm font-bold hover:underline cursor-pointer shrink-0">
+            {t('common.retry', { defaultValue: 'Retry' })}
+          </button>
+        </div>
+      )}
+
       {/* Resource Grid */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -112,7 +123,13 @@ export function InfraPage() {
       ) : (
         <div className="py-20 text-center border border-dashed border-slate-200 dark:border-ui-border-dark rounded-2xl bg-slate-50/50 dark:bg-bg-surface-dark/50">
           <MaterialIcon name="search_off" className="text-5xl text-slate-300 mb-4" />
-          <p className="text-slate-500 dark:text-text-muted-dark font-medium">{t('logs.noResults')}</p>
+          <p className="text-slate-500 dark:text-text-muted-dark font-medium">{t('monitoring.noResults', { defaultValue: 'No hosts match your filters' })}</p>
+          <button
+            onClick={() => { setSearchQuery(''); setTypeFilter(''); setStatusFilter(''); }}
+            className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+          >
+            {t('common.clearFilters', { defaultValue: 'Clear Filters' })}
+          </button>
         </div>
       )}
     </>

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { MaterialIcon } from '../../../components/common';
+import { IconAlerts } from '../../../components/icons/SidebarIcons';
 import { api, type AlertRule } from '../../../services/api';
 
 const SEVERITY_COLOR: Record<string, { text: string; bg: string; dot: string }> = {
@@ -51,7 +52,7 @@ export function AlertRulesStatus() {
         </div>
         <button
           onClick={() => navigate('/alerts?tab=rules')}
-          className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+          className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
         >
           {t('dashboard.alertRules.manage')}
           <MaterialIcon name="arrow_forward" className="text-sm" />
@@ -78,12 +79,15 @@ export function AlertRulesStatus() {
         <div className="space-y-2">
           {rules.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-6 text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center mb-3">
+                <IconAlerts size={24} className="text-slate-400" />
+              </div>
               <p className="text-sm font-medium text-slate-500 dark:text-text-muted-dark">
                 {t('dashboard.alertRules.empty')}
               </p>
               <button
                 onClick={() => navigate('/alerts?tab=rules')}
-                className="mt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                className="mt-3 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
                 {t('dashboard.alertRules.addRule')} →
               </button>

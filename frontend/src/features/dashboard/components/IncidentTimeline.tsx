@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Timeline } from '../../../components/common';
 import { useDashboardIncidents } from '../../../hooks/useData';
 import { incidentTypeConfig } from '../../../mocks/configs';
@@ -6,6 +7,7 @@ import { TableSkeleton } from '../../../components/skeleton';
 
 export function IncidentTimeline() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { data: incidents, loading, error } = useDashboardIncidents();
 
   if (loading) {
@@ -44,7 +46,7 @@ export function IncidentTimeline() {
       emptyMessage={t('dashboard.timeline.empty')}
       action={{
         label: t('dashboard.timeline.history'),
-        onClick: () => console.log('View history clicked')
+        onClick: () => navigate('/alerts?tab=history')
       }}
     />
   );

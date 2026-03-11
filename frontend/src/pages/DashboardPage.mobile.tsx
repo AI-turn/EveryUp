@@ -55,7 +55,7 @@ export function DashboardMobile() {
   const { data: kpiData, loading: kpiLoading } = useDashboardKPI();
   const { data: services, loading: svcLoading } = useDashboardServices();
   const { data: incidents } = useDashboardIncidents();
-  const { data: resources } = useMonitoringResources();
+  const { data: resources, loading: resourceLoading } = useMonitoringResources();
   const { data: channels } = useNotificationChannels();
   const [logServices, setLogServices] = useState<Service[]>([]);
   const [latestLogs, setLatestLogs] = useState<Record<string, LogEntry | null>>({});
@@ -273,29 +273,54 @@ export function DashboardMobile() {
       </section>
 
       {/* Infrastructure Quick Status */}
-      {resources && resources.length > 0 && (
-        <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
-          <div className="flex items-center justify-between p-4 pb-0">
-            <div className="flex items-center gap-2">
-              <IconInfra size={18} className="text-primary" />
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-                {t('dashboard.infrastructure.title', { defaultValue: 'Infrastructure' })}
-              </h2>
-            </div>
-            <button
-              onClick={() => navigate('/infra')}
-              className="text-xs font-semibold text-primary"
-            >
-              {t('common.viewMore', { defaultValue: 'View More' })}
-            </button>
+      <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
+        <div className="flex items-center justify-between p-4 pb-3">
+          <div className="flex items-center gap-2">
+            <IconInfra size={18} className="text-primary" />
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+              {t('dashboard.infrastructure.title', { defaultValue: 'Infrastructure' })}
+            </h2>
           </div>
-          <div className="p-3">
+          <button
+            onClick={() => navigate('/infra')}
+            className="text-xs font-semibold text-primary cursor-pointer"
+          >
+            {t('common.viewMore', { defaultValue: 'View More' })}
+          </button>
+        </div>
+        <div className="px-3 pb-3">
+          {resourceLoading ? (
+            <div className="space-y-1.5">
+              {[1, 2].map(i => (
+                <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-50 dark:bg-ui-hover-dark animate-pulse">
+                  <div className="w-2 h-2 rounded-full bg-slate-200 dark:bg-ui-active-dark shrink-0" />
+                  <div className="flex-1 h-3 bg-slate-200 dark:bg-ui-active-dark rounded" />
+                  <div className="w-12 h-3 bg-slate-200 dark:bg-ui-active-dark rounded" />
+                </div>
+              ))}
+            </div>
+          ) : !resources || resources.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-6 text-center">
+              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center mb-2">
+                <IconInfra size={20} className="text-slate-400" />
+              </div>
+              <p className="text-xs font-medium text-slate-400 dark:text-text-dim-dark">
+                {t('dashboard.infrastructure.empty', { defaultValue: 'No hosts registered' })}
+              </p>
+              <button
+                onClick={() => navigate('/infra')}
+                className="mt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              >
+                {t('dashboard.infrastructure.addHost', { defaultValue: 'Add Host' })} →
+              </button>
+            </div>
+          ) : (
             <div className="space-y-1.5">
               {resources.slice(0, 3).map(res => (
                 <button
                   key={res.id}
                   onClick={() => navigate(`/infra/${res.id}`)}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-ui-hover-dark active:bg-slate-100 dark:active:bg-ui-active-dark transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-ui-hover-dark active:bg-slate-100 dark:active:bg-ui-active-dark transition-colors text-left cursor-pointer"
                 >
                   <span className={`w-2 h-2 rounded-full shrink-0 ${resourceStatusDot[res.status] || 'bg-slate-400'}`} />
                   <div className="flex-1 min-w-0">
@@ -309,9 +334,9 @@ export function DashboardMobile() {
                 </button>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">

@@ -9,7 +9,7 @@ const MAX_ITEMS = 3;
 export function ResourceStatusGrid() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { data: resources, loading } = useMonitoringResources();
+  const { data: resources, loading, error, refetch } = useMonitoringResources();
 
   const items = resources || [];
   const displayItems = items.slice(0, MAX_ITEMS);
@@ -37,6 +37,17 @@ export function ResourceStatusGrid() {
           {t('monitoring.addResource')}
         </button>
       </div>
+
+      {/* Error */}
+      {!loading && error && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+          <MaterialIcon name="error_outline" className="text-lg text-red-500 shrink-0" />
+          <p className="text-sm text-red-700 dark:text-red-400 flex-1">{t('common.loadError', { defaultValue: 'Failed to load' })}</p>
+          <button onClick={refetch} className="text-xs font-bold text-red-600 dark:text-red-400 hover:underline cursor-pointer shrink-0">
+            {t('common.retry', { defaultValue: 'Retry' })}
+          </button>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (

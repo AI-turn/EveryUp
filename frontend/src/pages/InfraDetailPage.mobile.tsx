@@ -20,7 +20,7 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { openPanel } = useSidePanel();
-  const { data: host, refetch } = useHost(hostId);
+  const { data: host, loading: hostLoading, refetch } = useHost(hostId);
   const { data: gauges, loading: gaugesLoading } = useMonitoringGauges(hostId);
   const { data: processes, loading: processesLoading } = useMonitoringProcesses(hostId);
   const [activeTab, setActiveTab] = useState<MobileTab>('overview');
@@ -92,19 +92,30 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
       {/* Header Card */}
       <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <button onClick={() => navigate('/infra')} className="p-1 -ml-1">
+          <button onClick={() => navigate('/infra')} className="p-1 -ml-1 cursor-pointer">
             <MaterialIcon name="arrow_back" className="text-xl text-slate-500 dark:text-text-muted-dark" />
           </button>
-          <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
-            <span className="relative flex h-2 w-2">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
+          {!hostLoading && (
+            <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
+              <span className="relative flex h-2 w-2">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
+              </span>
+              {t(`common.${status}`)}
             </span>
-            {t(`common.${status}`)}
-          </span>
+          )}
         </div>
-        <h1 className="text-xl font-black text-slate-900 dark:text-white">{name}</h1>
-        {ip && <p className="text-sm text-slate-500 dark:text-text-muted-dark">IP: {ip} {isLocal && '(Local)'}</p>}
+        {hostLoading ? (
+          <div className="animate-pulse space-y-2">
+            <div className="h-7 w-40 bg-slate-200 dark:bg-ui-hover-dark rounded-lg" />
+            <div className="h-4 w-28 bg-slate-100 dark:bg-ui-active-dark rounded" />
+          </div>
+        ) : (
+          <>
+            <h1 className="text-xl font-black text-slate-900 dark:text-white">{name}</h1>
+            {ip && <p className="text-sm text-slate-500 dark:text-text-muted-dark">IP: {ip} {isLocal && '(Local)'}</p>}
+          </>
+        )}
 
         {/* Error Banner */}
         {host?.status === 'error' && host.lastError && (
@@ -132,14 +143,14 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
             <>
               <button
                 onClick={handleEdit}
-                className="p-2.5 rounded-lg bg-primary text-white active:scale-95 transition-transform"
+                className="p-2.5 rounded-lg bg-primary text-white active:scale-95 transition-transform cursor-pointer"
               >
                 <MaterialIcon name="edit" className="text-lg" />
               </button>
               {!isLocal && (
                 <button
                   onClick={() => setIsDeleteDialogOpen(true)}
-                  className="p-2.5 rounded-lg bg-red-500 text-white active:scale-95 transition-transform"
+                  className="p-2.5 rounded-lg bg-red-500 text-white active:scale-95 transition-transform cursor-pointer"
                 >
                   <MaterialIcon name="delete" className="text-lg" />
                 </button>
