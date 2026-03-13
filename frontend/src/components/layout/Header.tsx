@@ -61,7 +61,7 @@ export function Header() {
                         className="p-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark dark:hover:text-white transition-colors"
                         aria-label="Toggle theme"
                     >
-                        <MaterialIcon name={theme === 'light' ? 'dark_mode' : 'light_mode'} />
+                        <MaterialIcon name={theme === 'light' ? 'dark_mode' : 'light_mode'} className="text-xl" />
                     </button>
                     <NotificationDropdown
                         open={notifOpen}

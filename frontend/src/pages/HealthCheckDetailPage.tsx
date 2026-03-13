@@ -95,7 +95,7 @@ export function HealthCheckDetailPage() {
   if (error || !service) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <MaterialIcon name="error_outline" className="text-5xl text-red-500" />
+        <MaterialIcon name="error_outline" className="text-3xl text-red-500" />
         <p className="text-slate-600 dark:text-text-muted-dark">
           {error || t('services.detail.notFound')}
         </p>

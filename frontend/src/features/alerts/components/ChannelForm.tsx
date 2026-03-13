@@ -14,7 +14,7 @@ const channelSchema = z.object({
     type: z.enum(['telegram', 'discord']),
     botToken: z.string().optional(),
     chatId: z.string().optional(),
-    webhookUrl: z.string().url('Invalid URL').optional(),
+    webhookUrl: z.preprocess(v => v === '' ? undefined : v, z.string().url('Invalid URL').optional()),
 }).refine(data => {
     if (data.type === 'telegram' && (!data.botToken || !data.chatId)) return false;
     if (data.type === 'discord' && !data.webhookUrl) return false;

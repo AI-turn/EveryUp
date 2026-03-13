@@ -163,7 +163,7 @@ export function NotificationDropdown({ open, onClose, onToggle }: NotificationDr
         aria-expanded={open}
         aria-haspopup="true"
       >
-        <MaterialIcon name="notifications" />
+        <MaterialIcon name="notifications" className="text-xl" />
         <Badge count={unreadCount} />
       </button>
 

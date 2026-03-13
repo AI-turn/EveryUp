@@ -217,9 +217,9 @@ export function SettingsPage() {
                 className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 {savingRetention ? (
-                  <MaterialIcon name="sync" className="text-base animate-spin" />
+                  <MaterialIcon name="sync" className="text-lg animate-spin" />
                 ) : (
-                  <MaterialIcon name="save" className="text-base" />
+                  <MaterialIcon name="save" className="text-lg" />
                 )}
                 {t('common.saveChanges')}
               </button>
@@ -249,7 +249,7 @@ export function SettingsPage() {
             disabled={env.useMock}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 dark:border-red-800 text-sm font-semibold text-red-600 dark:text-red-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20"
           >
-            <MaterialIcon name="restart_alt" className="text-base" />
+            <MaterialIcon name="restart_alt" className="text-lg" />
             {t('settings.accountReset.button')}
           </button>
         </SettingRow>
@@ -262,8 +262,8 @@ export function SettingsPage() {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div className="bg-white dark:bg-bg-surface-dark rounded-xl shadow-2xl max-w-sm w-full p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-11 h-11 rounded-full bg-red-100 dark:bg-red-900/30 shrink-0">
-              <MaterialIcon name="warning" className="text-xl text-red-600 dark:text-red-400" />
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 shrink-0">
+              <MaterialIcon name="warning" className="text-2xl text-red-600 dark:text-red-400" />
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
               {t('settings.accountReset.confirmTitle')}
@@ -285,7 +285,7 @@ export function SettingsPage() {
               disabled={resetting}
               className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
             >
-              {resetting && <MaterialIcon name="sync" className="text-base animate-spin" />}
+              {resetting && <MaterialIcon name="sync" className="text-lg animate-spin" />}
               {t('settings.accountReset.confirmButton')}
             </button>
           </div>

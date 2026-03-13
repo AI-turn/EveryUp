@@ -6,6 +6,7 @@ node_modules/
 
 # Claude Code
 .claude/
+CLAUDE.md
 
 # Agent skills
 .agent/
