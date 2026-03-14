@@ -9,7 +9,7 @@ import { useSidePanel } from '../contexts/SidePanelContext';
 
 export function InfraPage() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['infra', 'common']);
   const { openPanel } = useSidePanel();
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
@@ -18,7 +18,7 @@ export function InfraPage() {
 
   const handleAddResource = () => {
     openPanel(
-      t('monitoring.addResource'),
+      t('infra.addResource'),
       <InfraForm onSuccess={refetch} />
     );
   };
@@ -36,14 +36,14 @@ export function InfraPage() {
   return (
     <>
       <PageHeader
-        title={t('monitoring.title')}
-        subtitle={t('monitoring.subtitle')}
+        title={t('infra.title')}
+        subtitle={t('infra.subtitle')}
         features={[
-          { icon: 'memory', label: t('monitoring.features.cpuMemDisk') },
-          { icon: 'terminal', label: t('monitoring.features.sshRemote') },
-          { icon: 'insights', label: t('monitoring.features.liveCharts') },
-          { icon: 'notifications_active', label: t('monitoring.features.alerting') },
-          { icon: 'list_alt', label: t('monitoring.features.processList') },
+          { icon: 'memory', label: t('infra.features.cpuMemDisk') },
+          { icon: 'terminal', label: t('infra.features.sshRemote') },
+          { icon: 'insights', label: t('infra.features.liveCharts') },
+          { icon: 'notifications_active', label: t('infra.features.alerting') },
+          { icon: 'list_alt', label: t('infra.features.processList') },
         ]}
       >
         <button
@@ -51,7 +51,7 @@ export function InfraPage() {
           className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm font-bold text-white transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-95"
         >
           <MaterialIcon name="add" className="text-lg" />
-          {t('monitoring.addResource')}
+          {t('infra.addResource')}
         </button>
       </PageHeader>
 
@@ -61,7 +61,7 @@ export function InfraPage() {
           <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder={t('monitoring.searchPlaceholder')}
+            placeholder={t('infra.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -74,9 +74,9 @@ export function InfraPage() {
             className="px-3 py-2 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg text-sm font-medium text-slate-700 dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-colors outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
           >
             <option value="">{t('common.type')}: {t('common.all')}</option>
-            <option value="server">{t('monitoring.resourceTypes.server')}</option>
-            <option value="database">{t('monitoring.resourceTypes.database')}</option>
-            <option value="container">{t('monitoring.resourceTypes.container')}</option>
+            <option value="server">{t('infra.resourceTypes.server')}</option>
+            <option value="database">{t('infra.resourceTypes.database')}</option>
+            <option value="container">{t('infra.resourceTypes.container')}</option>
           </select>
           <select
             value={statusFilter}
@@ -123,7 +123,7 @@ export function InfraPage() {
       ) : (
         <div className="py-20 text-center border border-dashed border-slate-200 dark:border-ui-border-dark rounded-2xl bg-slate-50/50 dark:bg-bg-surface-dark/50">
           <MaterialIcon name="search_off" className="text-5xl text-slate-300 mb-4" />
-          <p className="text-slate-500 dark:text-text-muted-dark font-medium">{t('monitoring.noResults', { defaultValue: 'No hosts match your filters' })}</p>
+          <p className="text-slate-500 dark:text-text-muted-dark font-medium">{t('infra.noResults', { defaultValue: 'No hosts match your filters' })}</p>
           <button
             onClick={() => { setSearchQuery(''); setTypeFilter(''); setStatusFilter(''); }}
             className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"

@@ -6,74 +6,65 @@ interface KPICardProps {
     subValue?: string;
     icon: string;
     color: 'primary' | 'red' | 'emerald' | 'amber';
-    subValueColor?: string;
     onClick?: () => void;
 }
 
 const colorConfig = {
     primary: {
-        bg: 'bg-primary/10',
-        text: 'text-primary',
+        iconBg: 'bg-primary/10',
+        iconText: 'text-primary',
+        valueText: 'text-primary',
+        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
     },
     red: {
-        bg: 'bg-red-500/10',
-        text: 'text-red-500',
+        iconBg: 'bg-red-500/10',
+        iconText: 'text-red-500',
+        valueText: 'text-red-600 dark:text-red-400',
+        cardBg: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900/40',
     },
     emerald: {
-        bg: 'bg-emerald-500/10',
-        text: 'text-emerald-500',
+        iconBg: 'bg-emerald-500/10',
+        iconText: 'text-emerald-500',
+        valueText: 'text-emerald-600 dark:text-emerald-400',
+        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
     },
     amber: {
-        bg: 'bg-amber-500/10',
-        text: 'text-amber-500',
+        iconBg: 'bg-amber-500/10',
+        iconText: 'text-amber-500',
+        valueText: 'text-amber-600 dark:text-amber-400',
+        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
     },
 };
 
-export function KPICard({
-    label,
-    value,
-    subValue,
-    icon,
-    color,
-    subValueColor,
-    onClick,
-}: KPICardProps) {
+export function KPICard({ label, value, subValue, icon, color, onClick }: KPICardProps) {
     const config = colorConfig[color] || colorConfig.primary;
-
-    // Default subValue color based on color prop if not explicitly provided
-    const resolvedSubValueColor = subValueColor || (
-        color === 'red' ? 'text-red-500' :
-            color === 'emerald' ? 'text-emerald-500' :
-                color === 'amber' ? 'text-amber-500' :
-                    'text-slate-500'
-    );
-
     const isClickable = !!onClick;
 
     return (
         <div
             onClick={onClick}
             className={[
-                'bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6 flex items-center gap-4 transition-all duration-150',
+                'border rounded-xl p-5 transition-all duration-150',
+                config.cardBg,
                 isClickable
-                    ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
+                    ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
                     : '',
             ].join(' ')}
         >
-            <div className={`w-12 h-12 rounded-lg ${config.bg} flex items-center justify-center ${config.text}`}>
-                <MaterialIcon name={icon} className="text-3xl" />
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-500 dark:text-text-muted-dark">{label}</p>
-                <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-slate-900 dark:text-white">{value}</span>
-                    {subValue && (
-                        <span className={`text-xs ${resolvedSubValueColor} font-medium`}>{subValue}</span>
-                    )}
+            {/* Top row: Label + Icon */}
+            <div className="flex items-start justify-between mb-4">
+                <p className="text-sm font-medium text-slate-500 dark:text-text-muted-dark leading-tight">{label}</p>
+                <div className={`w-8 h-8 rounded-lg ${config.iconBg} flex items-center justify-center ${config.iconText} shrink-0 ml-2`}>
+                    <MaterialIcon name={icon} className="text-lg" />
                 </div>
             </div>
-            {isClickable && (
-                <MaterialIcon name="chevron_right" className="text-slate-400 dark:text-text-dim-dark shrink-0" />
+
+            {/* Value */}
+            <p className={`text-3xl font-bold leading-none tabular-nums ${config.valueText}`}>{value}</p>
+
+            {/* SubValue — always neutral */}
+            {subValue && (
+                <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-2">{subValue}</p>
             )}
         </div>
     );

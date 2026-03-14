@@ -34,13 +34,13 @@ function getTimeRangeParams(range: TimeRange): { from: string; limit: string } {
 }
 
 const TIME_RANGE_KEYS: Record<TimeRange, string> = {
-  '24H': 'services.detail.chart.range24h',
-  '7D':  'services.detail.chart.range7d',
-  '30D': 'services.detail.chart.range30d',
+  '24H': 'healthcheck.detail.chart.range24h',
+  '7D':  'healthcheck.detail.chart.range7d',
+  '30D': 'healthcheck.detail.chart.range30d',
 };
 
 export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTimeChartProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
   const [timeRange, setTimeRange] = useState<TimeRange>('24H');
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +118,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
         <div>
           <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
-            {t('services.detail.metrics.responseTime')}
+            {t('healthcheck.detail.metrics.responseTime')}
           </h2>
           <p className="text-slate-400 dark:text-text-chart-dim text-sm">
             {t('detail.responseTimeChartDesc', {
@@ -175,7 +175,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
             >
               <div className="relative border-t-2 border-dashed border-amber-400 dark:border-amber-500 w-full">
                 <span className="absolute right-0 bottom-1 text-xs font-bold text-amber-500 dark:text-amber-400 bg-white dark:bg-chart-bg px-1 rounded leading-none">
-                  {t('services.detail.chart.timeout')}{' '}
+                  {t('healthcheck.detail.chart.timeout')}{' '}
                   {timeout >= 1000 ? `${timeout / 1000}s` : `${timeout}ms`}
                 </span>
               </div>

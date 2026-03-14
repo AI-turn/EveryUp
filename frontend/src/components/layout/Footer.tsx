@@ -11,7 +11,7 @@ const GitHubIcon = () => (
 
 export function Footer() {
   const { theme } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
   const currentYear = new Date().getFullYear();
 

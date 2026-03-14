@@ -91,7 +91,7 @@ interface AlertRuleFormProps {
 }
 
 export function AlertRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['alerts', 'common']);
     const { closePanel } = useSidePanel();
     const isEdit = !!rule;
 
@@ -104,7 +104,7 @@ export function AlertRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps)
 }
 
 function SystemRuleEditor({ rule, channels, onSuccess }: { rule: AlertRule; channels: NotificationChannel[]; onSuccess: () => void }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['alerts', 'common']);
     const { closePanel } = useSidePanel();
     const [message, setMessage] = useState(rule.message ?? '');
     const [selectedChannels, setSelectedChannels] = useState<string[]>(rule.channelIds || []);
@@ -180,7 +180,7 @@ function SystemRuleEditor({ rule, channels, onSuccess }: { rule: AlertRule; chan
 }
 
 function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['alerts', 'common']);
     const { closePanel } = useSidePanel();
     const isEdit = !!rule;
     const [services, setServices] = useState<Service[]>([]);

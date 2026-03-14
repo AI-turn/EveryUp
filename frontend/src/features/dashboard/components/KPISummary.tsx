@@ -5,7 +5,7 @@ import { useDashboardKPI } from '../../../hooks/useData';
 import { KPICardSkeleton } from '../../../components/skeleton';
 
 export function KPISummary() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { data: kpiData, loading, error } = useDashboardKPI();
 

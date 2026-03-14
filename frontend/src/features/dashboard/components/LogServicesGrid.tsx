@@ -9,7 +9,7 @@ const MAX_ITEMS = 3;
 
 export function LogServicesGrid() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'logs', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [latestLogs, setLatestLogs] = useState<Record<string, LogEntry | null>>({});
@@ -63,7 +63,7 @@ export function LogServicesGrid() {
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
         >
           <MaterialIcon name="add" className="text-sm" />
-          {t('dashboard.addService')}
+          {t('logServices.add.submit')}
         </button>
       </div>
 
@@ -83,7 +83,7 @@ export function LogServicesGrid() {
           title={t('dashboard.logServices.empty', { defaultValue: 'No log services yet' })}
           description={t('dashboard.logServices.emptyDesc', { defaultValue: 'Add a log service to collect and analyze error logs from your APIs.' })}
           action={{
-            label: t('logServices.add.submit', { defaultValue: 'Add Log Service' }),
+            label: t('logs.add.submit'),
             onClick: () => navigate('/logs'),
           }}
         />

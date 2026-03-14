@@ -20,7 +20,7 @@ const typeBadgeColors: Record<Resource['type'], string> = {
 };
 
 export function InfraCard({ resource, onClick }: InfraCardProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['infra', 'common']);
     return (
         <div
             onClick={onClick}
@@ -61,7 +61,7 @@ export function InfraCard({ resource, onClick }: InfraCardProps) {
                 <div className="flex items-center gap-1.5">
                     <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold ${typeBadgeColors[resource.type]}`}>
                         <MaterialIcon name={typeIcons[resource.type]} className="text-xs" />
-                        {t(`monitoring.resourceTypes.${resource.type}`)}
+                        {t(`infra.resourceTypes.${resource.type}`)}
                     </span>
                     {resource.isRemote ? (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">

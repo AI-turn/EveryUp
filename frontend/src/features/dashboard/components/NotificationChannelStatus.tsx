@@ -10,7 +10,7 @@ const CHANNEL_META: Record<string, { icon: string; color: string; bg: string }> 
 };
 
 export function NotificationChannelStatus() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { data: channels, loading } = useNotificationChannels();
 

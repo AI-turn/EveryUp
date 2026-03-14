@@ -8,7 +8,7 @@ const MAX_ITEMS = 3;
 
 export function ResourceStatusGrid() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'infra', 'common']);
   const { data: resources, loading, error, refetch } = useMonitoringResources();
 
   const items = resources || [];
@@ -34,7 +34,7 @@ export function ResourceStatusGrid() {
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
         >
           <MaterialIcon name="add" className="text-sm" />
-          {t('monitoring.addResource')}
+          {t('infra.addResource')}
         </button>
       </div>
 
@@ -65,7 +65,7 @@ export function ResourceStatusGrid() {
           title={t('dashboard.infrastructure.empty', { defaultValue: 'No resources registered' })}
           description={t('dashboard.infrastructure.emptyDesc', { defaultValue: 'Add a server to start monitoring CPU, memory, and disk.' })}
           action={{
-            label: t('monitoring.addResource'),
+            label: t('infra.addResource'),
             onClick: () => navigate('/infra'),
           }}
         />

@@ -14,10 +14,11 @@ const channelSchema = z.object({
     type: z.enum(['telegram', 'discord']),
     botToken: z.string().optional(),
     chatId: z.string().optional(),
-    webhookUrl: z.preprocess(v => v === '' ? undefined : v, z.string().url('Invalid URL').optional()),
+    webhookUrl: z.string().optional(),
 }).refine(data => {
     if (data.type === 'telegram' && (!data.botToken || !data.chatId)) return false;
     if (data.type === 'discord' && !data.webhookUrl) return false;
+    if (data.type === 'discord' && data.webhookUrl && !/^https?:\/\/.+/.test(data.webhookUrl)) return false;
     return true;
 }, {
     message: 'Please fill in all required fields',
@@ -32,7 +33,7 @@ interface ChannelFormProps {
 }
 
 export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['alerts', 'common']);
     const { closePanel } = useSidePanel();
     const [isTesting, setIsTesting] = useState(false);
     const isEditMode = !!channel;

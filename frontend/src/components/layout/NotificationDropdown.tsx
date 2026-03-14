@@ -5,6 +5,15 @@ import { MaterialIcon } from '../common';
 import { useNotificationBell } from '../../hooks/useNotificationBell';
 import type { NotificationHistory, NotificationStatus, NotificationAlertType } from '../../services/api';
 
+function IconBell() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function timeAgo(dateStr: string, lang: string): string {
@@ -100,8 +109,8 @@ function Badge({ count }: BadgeProps) {
   if (count <= 0) return null;
   const label = count > 9 ? '9+' : String(count);
   return (
-    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-0.5 flex items-center justify-center
-      bg-error text-white text-xs font-bold rounded-full leading-none border border-white dark:border-bg-main-dark">
+    <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-0.5 flex items-center justify-center
+      bg-error text-white text-[10px] font-bold rounded-full leading-none ring-2 ring-white dark:ring-bg-main-dark">
       {label}
     </span>
   );
@@ -116,7 +125,7 @@ interface NotificationDropdownProps {
 }
 
 export function NotificationDropdown({ open, onClose, onToggle }: NotificationDropdownProps) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('common');
   const navigate = useNavigate();
   const { previewItems, unreadCount, readIds, loading, markAsRead, markAllAsRead } = useNotificationBell();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -158,13 +167,15 @@ export function NotificationDropdown({ open, onClose, onToggle }: NotificationDr
       {/* Bell Button */}
       <button
         onClick={onToggle}
-        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark dark:hover:text-white relative transition-colors cursor-pointer"
+        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
         aria-label={t('notificationBell.title')}
         aria-expanded={open}
         aria-haspopup="true"
       >
-        <MaterialIcon name="notifications" className="text-xl" />
-        <Badge count={unreadCount} />
+        <span className="relative inline-flex">
+          <IconBell />
+          <Badge count={unreadCount} />
+        </span>
       </button>
 
       {/* Dropdown Panel */}

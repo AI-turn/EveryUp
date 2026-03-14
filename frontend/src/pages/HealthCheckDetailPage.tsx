@@ -21,7 +21,7 @@ import { api, Service } from '../services/api';
 export function HealthCheckDetailPage() {
   const { serviceId } = useParams<{ serviceId: string }>();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['healthcheck', 'common']);
   const { openPanel } = useSidePanel();
   const [isLive, setIsLive] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -63,10 +63,10 @@ export function HealthCheckDetailPage() {
     setIsDeleting(true);
     try {
       await api.deleteService(service.id);
-      toast.success(t('services.toast.deleted', { defaultValue: 'Service deleted successfully' }));
+      toast.success(t('healthcheck.toast.deleted', { defaultValue: 'Service deleted successfully' }));
       navigate('/');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('services.toast.deleteFailed', { defaultValue: 'Failed to delete service' }));
+      toast.error(err instanceof Error ? err.message : t('healthcheck.toast.deleteFailed', { defaultValue: 'Failed to delete service' }));
       setIsDeleting(false);
     }
   };
@@ -74,7 +74,7 @@ export function HealthCheckDetailPage() {
   const handleManage = () => {
     if (!service) return;
     openPanel(
-      t('services.detail.manage'),
+      t('healthcheck.detail.manage'),
       <HealthCheckForm onSuccess={fetchService} service={service} />
     );
   };
@@ -97,7 +97,7 @@ export function HealthCheckDetailPage() {
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <MaterialIcon name="error_outline" className="text-3xl text-red-500" />
         <p className="text-slate-600 dark:text-text-muted-dark">
-          {error || t('services.detail.notFound')}
+          {error || t('healthcheck.detail.notFound')}
         </p>
         <button
           onClick={() => navigate('/')}
@@ -160,7 +160,7 @@ export function HealthCheckDetailPage() {
                 className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm font-bold transition-all text-white"
               >
                 <MaterialIcon name="edit" className="text-lg" />
-                <span className="hidden sm:inline">{t('services.detail.manage')}</span>
+                <span className="hidden sm:inline">{t('healthcheck.detail.manage')}</span>
               </button>
             )}
             <button
@@ -193,7 +193,7 @@ export function HealthCheckDetailPage() {
       <div className="flex items-center gap-2 mt-2 mb-4">
         <MaterialIcon name="analytics" className="text-base text-slate-400 dark:text-text-dim-dark" />
         <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-text-dim-dark">
-          {t('services.detail.section.performance', { defaultValue: 'Performance' })}
+          {t('healthcheck.detail.section.performance', { defaultValue: 'Performance' })}
         </h2>
         <div className="flex-1 border-t border-slate-200 dark:border-ui-border-dark" />
       </div>
@@ -204,7 +204,7 @@ export function HealthCheckDetailPage() {
       <div className="flex items-center gap-2 mt-2 mb-4">
         <MaterialIcon name="report" className="text-base text-slate-400 dark:text-text-dim-dark" />
         <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-text-dim-dark">
-          {t('services.detail.section.issues', { defaultValue: 'Issues' })}
+          {t('healthcheck.detail.section.issues', { defaultValue: 'Issues' })}
         </h2>
         <div className="flex-1 border-t border-slate-200 dark:border-ui-border-dark" />
       </div>
@@ -220,15 +220,15 @@ export function HealthCheckDetailPage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {t('services.delete.title', { defaultValue: 'Delete Service' })}
+                  {t('healthcheck.delete.title', { defaultValue: 'Delete Service' })}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-text-muted-dark">
-                  {t('services.delete.subtitle', { defaultValue: 'This action cannot be undone' })}
+                  {t('healthcheck.delete.subtitle', { defaultValue: 'This action cannot be undone' })}
                 </p>
               </div>
             </div>
             <p className="text-sm text-slate-600 dark:text-text-secondary-dark mb-6">
-              {t('services.delete.confirm', {
+              {t('healthcheck.delete.confirm', {
                 defaultValue: 'Are you sure you want to delete',
                 name: service.name
               })} <span className="font-bold">{service.name}</span>?

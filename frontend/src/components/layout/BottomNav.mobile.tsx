@@ -23,7 +23,7 @@ const navItems: { Icon: IconComponent; labelKey: string; href: string }[] = [
 
 export function BottomNavMobile() {
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
   function isActive(href: string) {
     return href === '/'

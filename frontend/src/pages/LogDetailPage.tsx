@@ -19,7 +19,7 @@ export function LogDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['healthcheck', 'logs', 'common']);
   const { copy } = useCopyToClipboard();
   const [isLive, setIsLive] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -100,10 +100,10 @@ export function LogDetailPage() {
     setIsDeleting(true);
     try {
       await api.deleteService(service.id);
-      toast.success(t('services.toast.deleted', { defaultValue: 'Service deleted successfully' }));
+      toast.success(t('healthcheck.toast.deleted', { defaultValue: 'Service deleted successfully' }));
       navigate('/logs');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('services.toast.deleteFailed', { defaultValue: 'Failed to delete service' }));
+      toast.error(err instanceof Error ? err.message : t('healthcheck.toast.deleteFailed', { defaultValue: 'Failed to delete service' }));
       setIsDeleting(false);
     }
   };
@@ -126,7 +126,7 @@ export function LogDetailPage() {
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <MaterialIcon name="error_outline" className="text-3xl text-red-500" />
         <p className="text-slate-600 dark:text-text-muted-dark">
-          {error || t('services.detail.notFound')}
+          {error || t('healthcheck.detail.notFound')}
         </p>
         <button
           onClick={() => navigate('/logs')}
@@ -139,9 +139,9 @@ export function LogDetailPage() {
   }
 
   const tabs: { key: 'logs' | 'integration' | 'settings'; label: string; icon: string }[] = [
-    { key: 'logs', label: t('services.detail.tabs.logs'), icon: 'article' },
-    { key: 'integration', label: t('services.detail.tabs.integration'), icon: 'integration_instructions' },
-    { key: 'settings', label: t('services.detail.tabs.settings', { defaultValue: 'Settings' }), icon: 'tune' },
+    { key: 'logs', label: t('healthcheck.detail.tabs.logs'), icon: 'article' },
+    { key: 'integration', label: t('healthcheck.detail.tabs.integration'), icon: 'integration_instructions' },
+    { key: 'settings', label: t('healthcheck.detail.tabs.settings', { defaultValue: 'Settings' }), icon: 'tune' },
   ];
 
   return (
@@ -248,15 +248,15 @@ export function LogDetailPage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {t('services.delete.title', { defaultValue: 'Delete Service' })}
+                  {t('healthcheck.delete.title', { defaultValue: 'Delete Service' })}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-text-muted-dark">
-                  {t('services.delete.subtitle', { defaultValue: 'This action cannot be undone' })}
+                  {t('healthcheck.delete.subtitle', { defaultValue: 'This action cannot be undone' })}
                 </p>
               </div>
             </div>
             <p className="text-sm text-slate-600 dark:text-text-secondary-dark mb-6">
-              {t('services.delete.confirm', { defaultValue: 'Are you sure you want to delete' })} <span className="font-bold">{service.name}</span>?
+              {t('healthcheck.delete.confirm', { defaultValue: 'Are you sure you want to delete' })} <span className="font-bold">{service.name}</span>?
             </p>
             <div className="flex gap-3">
               <button
@@ -298,10 +298,10 @@ export function LogDetailPage() {
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {t('services.integration.apiKey.revealTitle')}
+                  {t('healthcheck.integration.apiKey.revealTitle')}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">
-                  {t('services.integration.apiKey.revealDesc')}
+                  {t('healthcheck.integration.apiKey.revealDesc')}
                 </p>
               </div>
             </div>
@@ -322,7 +322,7 @@ export function LogDetailPage() {
             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg mb-4">
               <p className="text-xs text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
                 <MaterialIcon name="warning" className="text-sm" />
-                {t('services.integration.apiKey.revealOnce', { defaultValue: 'This key is shown only once. Copy it now — you won\'t be able to see it again.' })}
+                {t('healthcheck.integration.apiKey.revealOnce', { defaultValue: 'This key is shown only once. Copy it now — you won\'t be able to see it again.' })}
               </p>
             </div>
 
@@ -330,7 +330,7 @@ export function LogDetailPage() {
               onClick={() => setRevealedKey(null)}
               className="w-full px-4 py-2.5 rounded-lg bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors"
             >
-              {t('services.integration.apiKey.revealConfirm')}
+              {t('healthcheck.integration.apiKey.revealConfirm')}
               {revealCountdown > 0 && ` (${revealCountdown}s)`}
             </button>
           </div>

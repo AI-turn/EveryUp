@@ -62,7 +62,7 @@ const mockApiServices: Service[] = mockServices.map((s) => ({
   status: s.status === 'healthy' ? 'healthy' : s.status === 'offline' ? 'unhealthy' : 'unknown',
   uptime: parseFloat(s.uptime?.replace('%', '') ?? '99'),
   responseTime: parseInt(s.latency?.replace('ms', '').replace(',', '') ?? '0', 10),
-  tags: [s.cluster ?? 'default'],
+  tags: [],
   scheduleType: 'interval' as const,
 }));
 

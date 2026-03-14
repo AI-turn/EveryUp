@@ -9,7 +9,7 @@ interface RealtimeMetricsProps {
 }
 
 export function RealtimeMetrics({ serviceId, refreshKey }: RealtimeMetricsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
   const [summary, setSummary] = useState<MetricsSummary | null>(null);
   const [recentFailures, setRecentFailures] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -52,32 +52,32 @@ export function RealtimeMetrics({ serviceId, refreshKey }: RealtimeMetricsProps)
 
   const metrics = [
     {
-      label: t('services.detail.metrics.responseTime'),
+      label: t('healthcheck.detail.metrics.responseTime'),
       value: summary ? `${Math.round(summary.avgResponseTime)}ms` : '-',
       icon: 'speed',
       iconColor: 'text-primary',
       subtext: summary
-        ? t('services.detail.metrics.maxMin', {
+        ? t('healthcheck.detail.metrics.maxMin', {
             max: Math.round(summary.maxResponseTime),
             min: Math.round(summary.minResponseTime),
           })
         : '-',
     },
     {
-      label: t('services.detail.metrics.successRate'),
+      label: t('healthcheck.detail.metrics.successRate'),
       value: summary ? `${(summary.uptime ?? 0).toFixed(2)}%` : '-',
       icon: 'check_circle',
       iconColor: summary && (summary.uptime ?? 0) >= 99 ? 'text-green-500' : 'text-amber-500',
       subtext: summary
-        ? t('services.detail.metrics.totalChecks', { count: summary.totalChecks })
+        ? t('healthcheck.detail.metrics.totalChecks', { count: summary.totalChecks })
         : '-',
     },
     {
-      label: t('services.detail.metrics.recentFailures', { defaultValue: 'Recent Failures' }),
+      label: t('healthcheck.detail.metrics.recentFailures', { defaultValue: 'Recent Failures' }),
       value: summary ? String(recentFailures) : '-',
       icon: recentFailures === 0 ? 'check_circle' : 'error',
       iconColor: recentFailures === 0 ? 'text-green-500' : 'text-red-500',
-      subtext: t('services.detail.metrics.recentFailuresSubtext', { defaultValue: 'Out of last 100 checks' }),
+      subtext: t('healthcheck.detail.metrics.recentFailuresSubtext', { defaultValue: 'Out of last 100 checks' }),
     },
   ];
 

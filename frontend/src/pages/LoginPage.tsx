@@ -10,7 +10,7 @@ export function LoginPage() {
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const { t } = useTranslation()
+  const { t } = useTranslation(['auth', 'common'])
   // Validate redirect path to prevent open redirect attacks
   const rawFrom = (location.state as { from?: string })?.from
   const from = rawFrom && rawFrom.startsWith('/') && !rawFrom.startsWith('//') ? rawFrom : '/'

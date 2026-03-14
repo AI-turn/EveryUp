@@ -1,0 +1,111 @@
+{
+    "infra": {
+        "title": "인프라",
+        "subtitle": "서버 및 컨테이너의 실시간 인프라 모니터링",
+        "features": {
+            "cpuMemDisk": "CPU / 메모리 / 디스크",
+            "sshRemote": "SSH 원격 호스트",
+            "liveCharts": "실시간 메트릭 차트",
+            "alerting": "인프라 알림",
+            "processList": "프로세스 추적"
+        },
+        "searchPlaceholder": "인프라 검색...",
+        "addResource": "인프라 추가",
+        "pauseStream": "스트림 일시정지",
+        "exportReport": "보고서 내보내기",
+        "uptime": "가동 시간",
+        "settings": "설정",
+        "editHost": "호스트 수정",
+        "deleteHost": "호스트 삭제",
+        "pauseMonitoring": "모니터링 일시정지",
+        "resumeMonitoring": "모니터링 재개",
+        "active": "활성",
+        "paused": "일시정지",
+        "resourceTypes": {
+            "server": "서버",
+            "database": "데이터베이스",
+            "container": "컨테이너"
+        },
+        "trends": {
+            "title": "인프라 트렌드",
+            "last6h": "최근 6시간",
+            "last12h": "최근 12시간",
+            "last24h": "최근 24시간"
+        },
+        "processes": {
+            "title": "주요 프로세스",
+            "viewAll": "전체 프로세스 보기",
+            "name": "프로세스 이름",
+            "pid": "PID",
+            "cpu": "CPU%",
+            "memory": "메모리%",
+            "status": "상태",
+            "actions": "작업",
+            "terminate": "종료"
+        },
+        "deleteConfirm": {
+            "title": "호스트 삭제",
+            "message": "정말 삭제하시겠습니까",
+            "warning": "이 작업은 되돌릴 수 없습니다. 이 호스트의 모든 메트릭과 데이터가 영구적으로 삭제됩니다."
+        },
+        "toast": {
+            "paused": "호스트 모니터링이 일시정지되었습니다",
+            "resumed": "호스트 모니터링이 재개되었습니다",
+            "updated": "호스트가 성공적으로 업데이트되었습니다",
+            "deleted": "호스트가 성공적으로 삭제되었습니다",
+            "cannotDeleteLocal": "로컬 호스트는 삭제할 수 없습니다",
+            "updateFailed": "호스트 상태 업데이트에 실패했습니다",
+            "deleteFailed": "호스트 삭제에 실패했습니다"
+        },
+        "sections": {
+            "basicInfo": "기본 정보"
+        },
+        "modal": {
+            "idCannotChange": "ID는 변경할 수 없습니다",
+            "displayName": "표시 이름",
+            "ipAddress": "IP 주소",
+            "ipPlaceholder": "192.168.1.100",
+            "port": "포트",
+            "portPlaceholder": "22",
+            "group": "그룹",
+            "groupPlaceholder": "production",
+            "groupHint": "선택사항: 환경별로 호스트 그룹화",
+            "description": "설명",
+            "descriptionPlaceholder": "프로덕션 웹 서버...",
+            "localAutoManaged": "로컬 호스트는 시스템이 자동 관리합니다",
+            "resourceCategory": "인프라 종류",
+            "idHint": "영문 소문자, 숫자, 하이픈",
+            "hostIdPlaceholder": "server-01",
+            "hostNamePlaceholder": "웹 서버 01",
+            "sshSettings": "SSH 설정",
+            "sshUser": "SSH 사용자",
+            "sshUserPlaceholder": "monitor",
+            "sshPort": "SSH 포트",
+            "authType": "인증 방식",
+            "authPassword": "비밀번호",
+            "authKey": "SSH 키 (PEM)",
+            "authKeyFile": "키 파일 경로",
+            "password": "비밀번호",
+            "passwordPlaceholder": "SSH 비밀번호 입력",
+            "passwordChangePlaceholder": "현재 값 유지하려면 비워두세요",
+            "sshKey": "SSH 개인 키",
+            "sshKeyPlaceholder": "-----BEGIN RSA PRIVATE KEY-----\n...",
+            "sshKeyChangePlaceholder": "현재 키를 유지하려면 비워두세요",
+            "sshKeyBrowse": "파일 선택",
+            "sshKeyDragDrop": "또는 키 파일을 여기에 드래그 & 드롭",
+            "sshKeyPpkDetected": "PPK 형식이 감지되었습니다. PEM 형식으로 변환해주세요: puttygen key.ppk -O private-openssh -o key.pem",
+            "sshKeyPath": "키 파일 경로 (API 서버)",
+            "sshKeyPathPlaceholder": "/home/user/.ssh/id_rsa",
+            "sshKeyPathHint": "로컬 PC가 아닌 API 서버의 파일 경로입니다",
+            "testConnection": "연결 테스트",
+            "testing": "테스트 중...",
+            "connectionSuccess": "연결 성공",
+            "connectionFailed": "연결 실패",
+            "latency": "지연시간"
+        },
+        "error": {
+            "lastError": "최근 에러",
+            "retryConnection": "재연결"
+        }
+    }
+}

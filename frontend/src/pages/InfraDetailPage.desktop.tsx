@@ -15,7 +15,7 @@ interface InfraDetailDesktopProps {
 }
 
 export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['infra', 'common']);
   const navigate = useNavigate();
   const { openPanel } = useSidePanel();
   const { data: host, loading: hostLoading, refetch } = useHost(hostId);
@@ -43,14 +43,14 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
     try {
       if (host.isActive) {
         await api.pauseHost(host.id);
-        toast.success(t('monitoring.toast.paused'));
+        toast.success(t('infra.toast.paused'));
       } else {
         await api.resumeHost(host.id);
-        toast.success(t('monitoring.toast.resumed'));
+        toast.success(t('infra.toast.resumed'));
       }
       refetch();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('monitoring.toast.updateFailed'));
+      toast.error(error instanceof Error ? error.message : t('infra.toast.updateFailed'));
     } finally {
       setIsPausing(false);
     }
@@ -61,10 +61,10 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
     setIsDeleting(true);
     try {
       await api.deleteHost(host.id);
-      toast.success(t('monitoring.toast.deleted'));
+      toast.success(t('infra.toast.deleted'));
       navigate('/infra');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('monitoring.toast.deleteFailed'));
+      toast.error(error instanceof Error ? error.message : t('infra.toast.deleteFailed'));
       setIsDeleting(false);
     }
   };
@@ -72,7 +72,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
   const handleEdit = () => {
     if (!host) return;
     openPanel(
-      t('monitoring.editHost'),
+      t('infra.editHost'),
       <InfraForm onSuccess={refetch} host={host} />
     );
   };
@@ -127,7 +127,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
               <div className="flex items-center gap-2 min-w-0">
                 <MaterialIcon name="error_outline" className="text-lg text-red-500 shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-red-700 dark:text-red-400">{t('monitoring.error.lastError')}</p>
+                  <p className="text-xs font-bold text-red-700 dark:text-red-400">{t('infra.error.lastError')}</p>
                   <p className="text-xs text-red-600 dark:text-red-500 truncate">{host.lastError}</p>
                 </div>
               </div>
@@ -136,14 +136,14 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                 disabled={isPausing}
                 className="shrink-0 px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 text-xs font-bold hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors disabled:opacity-50"
               >
-                {t('monitoring.error.retryConnection')}
+                {t('infra.error.retryConnection')}
               </button>
             </div>
           )}
           <div className="flex gap-2">
             <button className="flex items-center justify-center rounded-lg h-10 px-3 sm:px-4 bg-slate-100 dark:bg-bg-surface-dark border border-transparent dark:border-ui-border-dark text-slate-900 dark:text-white text-sm font-bold hover:bg-slate-200 dark:hover:bg-ui-hover-dark transition-colors gap-2">
               <MaterialIcon name="download" className="text-lg" />
-              <span className="hidden sm:inline">{t('monitoring.exportReport')}</span>
+              <span className="hidden sm:inline">{t('infra.exportReport')}</span>
             </button>
             {host && (
               <>
@@ -154,7 +154,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                       onChange={handlePauseResume}
                     />
                     <span className="hidden sm:inline text-sm font-medium text-slate-700 dark:text-text-secondary-dark">
-                      {host.isActive ? t('monitoring.active') : t('monitoring.paused')}
+                      {host.isActive ? t('infra.active') : t('infra.paused')}
                     </span>
                   </div>
                 )}
@@ -163,12 +163,12 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                   className="flex items-center justify-center rounded-lg h-10 px-3 sm:px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors gap-2 cursor-pointer active:scale-95"
                 >
                   <MaterialIcon name="edit" className="text-lg" />
-                  <span className="hidden sm:inline">{t('monitoring.editHost')}</span>
+                  <span className="hidden sm:inline">{t('infra.editHost')}</span>
                 </button>
                 <button
                   onClick={() => {
                     if (isLocal) {
-                      toast.error(t('monitoring.toast.cannotDeleteLocal'));
+                      toast.error(t('infra.toast.cannotDeleteLocal'));
                       return;
                     }
                     setIsDeleteDialogOpen(true);
@@ -177,7 +177,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                   className="flex items-center justify-center rounded-lg h-10 px-3 sm:px-4 bg-red-500 dark:bg-red-600 text-white text-sm font-bold hover:bg-red-600 dark:hover:bg-red-700 transition-colors gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                 >
                   <MaterialIcon name="delete" className="text-lg" />
-                  <span className="hidden sm:inline">{t('monitoring.deleteHost')}</span>
+                  <span className="hidden sm:inline">{t('infra.deleteHost')}</span>
                 </button>
               </>
             )}

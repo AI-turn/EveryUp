@@ -17,7 +17,7 @@ const levelBadge: Record<string, string> = {
 };
 
 export function LogServiceCard({ service, latestLog, onClick }: LogServiceCardProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['logs', 'common']);
 
   return (
     <div
@@ -52,7 +52,7 @@ export function LogServiceCard({ service, latestLog, onClick }: LogServiceCardPr
           </>
         ) : latestLog === null ? (
           <span className="text-xs text-slate-400 dark:text-text-dim-dark italic">
-            {t('dashboard.logServices.noLogs', { defaultValue: 'No logs yet' })}
+            {t('logs.noLogs')}
           </span>
         ) : (
           <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />

@@ -4,7 +4,7 @@ import { MaterialIcon } from '../common';
 
 export function NetworkStatusBanner() {
   const { isOnline } = useNetworkStatus();
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
   if (isOnline) return null;
 

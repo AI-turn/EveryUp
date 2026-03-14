@@ -29,7 +29,7 @@ function InfoChip({ icon, label, value, accent }: { icon: string; label: string;
 }
 
 export function LogServiceIdentity({ service, onSettingsClick }: Props) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['logs', 'common']);
 
   const dateLocale = useMemo(
     () => (i18n.language.startsWith('ko') ? ko : enUS),

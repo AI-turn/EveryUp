@@ -7,7 +7,7 @@ interface SetupGuideProps {
 }
 
 export function SetupGuide({ type }: SetupGuideProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['alerts', 'common']);
     const [isOpen, setIsOpen] = useState(false);
 
     const steps = type === 'telegram'

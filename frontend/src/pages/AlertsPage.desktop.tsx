@@ -11,7 +11,7 @@ import { ChannelForm } from '../features/alerts/components/ChannelForm';
 type TabType = 'channels' | 'rules' | 'history';
 
 export function AlertsDesktop() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['alerts', 'common']);
   const { openPanel } = useSidePanel();
   const [activeTab, setActiveTab] = useState<TabType>('channels');
   const [channels, setChannels] = useState<NotificationChannel[]>([]);

@@ -19,7 +19,7 @@ const ruleDescMap: Record<string, string> = {
 };
 
 export function NotificationRulesTable() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['alerts', 'common']);
   const { data: notificationRules, loading } = useNotificationRules();
   const [rules, setRules] = useState(notificationRules || []);
 

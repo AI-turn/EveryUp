@@ -1,0 +1,56 @@
+{
+    "dashboard": {
+        "title": "모니터링 대시보드",
+        "subtitle": "서비스 및 인프라의 실시간 상태 개요",
+        "addService": "서비스 추가",
+        "serviceAdded": "서비스가 성공적으로 추가되었습니다.",
+        "emptyState": "모니터링 중인 항목이 없습니다. 첫 항목을 추가하여 시작하세요.",
+        "emptyStateDesc": "헬스체크, 로그, 인프라를 추가하여 모니터링을 시작하세요.",
+        "kpi": {
+            "totalServices": "전체 서비스",
+            "avgResponseTime": "평균 응답 시간",
+            "criticalAlerts": "심각한 알림",
+            "overallUptime": "전체 가동률"
+        },
+        "healthCheck": {
+            "title": "헬스체크",
+            "empty": "등록된 헬스체크가 없습니다.",
+            "emptyDesc": "헬스체크를 추가하여 URL 상태와 응답 시간을 모니터링하세요."
+        },
+        "infrastructure": {
+            "title": "인프라",
+            "empty": "등록된 인프라가 없습니다",
+            "emptyDesc": "서버를 추가하여 CPU, 메모리, 디스크 모니터링을 시작하세요.",
+            "addHost": "인프라 추가"
+        },
+        "logServices": {
+            "title": "로그",
+            "empty": "등록된 로그가 없습니다",
+            "emptyDesc": "로그를 추가하여 API 오류를 수집하고 분석하세요."
+        },
+        "timeline": {
+            "title": "장애 이력",
+            "empty": "최근 장애 기록이 없습니다",
+            "history": "전체 이력 보기"
+        },
+        "notifications": {
+            "title": "알림 채널",
+            "manage": "알림 설정",
+            "empty": "등록된 알림 채널이 없습니다",
+            "addChannel": "채널 추가",
+            "active": "활성",
+            "inactive": "비활성"
+        },
+        "alertRules": {
+            "title": "알림 규칙",
+            "manage": "규칙 관리",
+            "empty": "구성된 알림 규칙이 없습니다",
+            "addRule": "규칙 추가",
+            "active": "활성",
+            "inactive": "비활성",
+            "builtIn": "내장",
+            "enabled": "{{count}}개 활성",
+            "serverReboot": "서버 재부팅"
+        }
+    }
+}

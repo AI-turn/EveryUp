@@ -3,7 +3,7 @@ import { IntegrationCard } from './IntegrationCard';
 import { MaterialIcon } from '../../../components/common';
 
 export function NotificationChannels() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['alerts', 'common']);
 
   return (
     <>

@@ -11,7 +11,7 @@ const SLOT_COUNT = 90;
 
 
 export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [uptimeData, setUptimeData] = useState<UptimeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,10 +62,10 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
-            {t('services.detail.checkHistory.title')}
+            {t('healthcheck.detail.checkHistory.title')}
           </h2>
           <p className="text-slate-400 dark:text-text-chart-dim text-sm">
-            {t('services.detail.checkHistory.desc', { count: SLOT_COUNT })}
+            {t('healthcheck.detail.checkHistory.desc', { count: SLOT_COUNT })}
           </p>
         </div>
         {!loading && successRate !== null && (
@@ -76,7 +76,7 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
               {successRate}%
             </span>
             <p className="text-xs text-slate-400 dark:text-text-muted-dark">
-              {t('services.detail.checkHistory.successRate')}
+              {t('healthcheck.detail.checkHistory.successRate')}
             </p>
           </div>
         )}
@@ -116,8 +116,8 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
             ))}
           </div>
           <div className="flex justify-between mt-2 text-xs text-slate-400 dark:text-text-dim-dark">
-            <span>{t('services.detail.checkHistory.oldest', { count: SLOT_COUNT })}</span>
-            <span>{t('services.detail.checkHistory.latest')}</span>
+            <span>{t('healthcheck.detail.checkHistory.oldest', { count: SLOT_COUNT })}</span>
+            <span>{t('healthcheck.detail.checkHistory.latest')}</span>
           </div>
 
           {/* Mobile tap detail card */}
@@ -158,7 +158,7 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
               {uptimeData ? `${uptimeData.percentage.toFixed(2)}%` : '-'}
             </p>
             <p className="text-xs text-slate-400 dark:text-text-dim-dark mt-1">
-              {t('services.detail.uptime')} (90{t('common.days')})
+              {t('healthcheck.detail.uptime')} (90{t('common.days')})
             </p>
           </div>
 
@@ -175,7 +175,7 @@ export function CheckHistoryBar({ serviceId, refreshKey }: CheckHistoryBarProps)
               />
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400 dark:text-text-muted-dark">{t('services.detail.totalIncidents')}</span>
+              <span className="text-slate-400 dark:text-text-muted-dark">{t('healthcheck.detail.totalIncidents')}</span>
               <span className={`font-semibold ${incidentDays > 0 ? 'text-amber-500' : 'text-slate-900 dark:text-white'}`}>
                 {incidentDays > 0 ? `${incidentDays}${t('common.days')}` : t('common.none', { defaultValue: '-' })}
               </span>

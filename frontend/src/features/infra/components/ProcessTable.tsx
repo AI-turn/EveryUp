@@ -9,7 +9,7 @@ interface ProcessTableProps {
 }
 
 export function ProcessTable({ hostId }: ProcessTableProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['infra', 'common']);
   const { data: processes, loading } = useMonitoringProcesses(hostId);
 
   if (loading) {
@@ -21,10 +21,10 @@ export function ProcessTable({ hostId }: ProcessTableProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight">
-          {t('monitoring.processes.title')}
+          {t('infra.processes.title')}
         </h2>
         <button className="text-primary text-sm font-bold hover:underline">
-          {t('monitoring.processes.viewAll')}
+          {t('infra.processes.viewAll')}
         </button>
       </div>
 
@@ -34,22 +34,22 @@ export function ProcessTable({ hostId }: ProcessTableProps) {
           <thead className="bg-slate-50 dark:bg-chart-surface/50 border-b border-slate-200 dark:border-chart-border">
             <tr>
               <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
-                {t('monitoring.processes.name')}
+                {t('infra.processes.name')}
               </th>
               <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
-                {t('monitoring.processes.pid')}
+                {t('infra.processes.pid')}
               </th>
               <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
-                {t('monitoring.processes.cpu')}
+                {t('infra.processes.cpu')}
               </th>
               <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
-                {t('monitoring.processes.memory')}
+                {t('infra.processes.memory')}
               </th>
               <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider">
-                {t('monitoring.processes.status')}
+                {t('infra.processes.status')}
               </th>
               <th className="px-3 py-3 sm:px-5 sm:py-4 text-xs font-bold text-slate-500 dark:text-text-muted-dark uppercase tracking-wider text-right">
-                {t('monitoring.processes.actions')}
+                {t('infra.processes.actions')}
               </th>
             </tr>
           </thead>
@@ -88,7 +88,7 @@ export function ProcessTable({ hostId }: ProcessTableProps) {
                 </td>
                 <td className="px-3 py-3 sm:px-5 sm:py-4 text-right">
                   <button className="text-red-400 hover:text-red-500 font-bold text-xs uppercase">
-                    {t('monitoring.processes.terminate')}
+                    {t('infra.processes.terminate')}
                   </button>
                 </td>
               </tr>

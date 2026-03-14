@@ -17,7 +17,7 @@ interface InfraDetailMobileProps {
 type MobileTab = 'overview' | 'trends' | 'processes';
 
 export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['infra', 'common']);
   const navigate = useNavigate();
   const { openPanel } = useSidePanel();
   const { data: host, loading: hostLoading, refetch } = useHost(hostId);
@@ -47,14 +47,14 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
     try {
       if (host.isActive) {
         await api.pauseHost(host.id);
-        toast.success(t('monitoring.toast.paused'));
+        toast.success(t('infra.toast.paused'));
       } else {
         await api.resumeHost(host.id);
-        toast.success(t('monitoring.toast.resumed'));
+        toast.success(t('infra.toast.resumed'));
       }
       refetch();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('monitoring.toast.updateFailed'));
+      toast.error(error instanceof Error ? error.message : t('infra.toast.updateFailed'));
     } finally {
       setIsPausing(false);
     }
@@ -65,10 +65,10 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
     setIsDeleting(true);
     try {
       await api.deleteHost(host.id);
-      toast.success(t('monitoring.toast.deleted'));
+      toast.success(t('infra.toast.deleted'));
       navigate('/infra');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('monitoring.toast.deleteFailed'));
+      toast.error(error instanceof Error ? error.message : t('infra.toast.deleteFailed'));
       setIsDeleting(false);
     }
   };
@@ -76,15 +76,15 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
   const handleEdit = () => {
     if (!host) return;
     openPanel(
-      t('monitoring.editHost'),
+      t('infra.editHost'),
       <InfraForm onSuccess={refetch} host={host} />
     );
   };
 
   const tabs: { key: MobileTab; label: string; icon: string }[] = [
     { key: 'overview', label: t('common.overview', { defaultValue: 'Overview' }), icon: 'dashboard' },
-    { key: 'trends', label: t('monitoring.trends.title'), icon: 'trending_up' },
-    { key: 'processes', label: t('monitoring.processes.title'), icon: 'list' },
+    { key: 'trends', label: t('infra.trends.title'), icon: 'trending_up' },
+    { key: 'processes', label: t('infra.processes.title'), icon: 'list' },
   ];
 
   return (
@@ -122,7 +122,7 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
           <div className="mt-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
             <div className="flex items-center gap-2 mb-1">
               <MaterialIcon name="error_outline" className="text-sm text-red-500" />
-              <p className="text-xs font-bold text-red-700 dark:text-red-400">{t('monitoring.error.lastError')}</p>
+              <p className="text-xs font-bold text-red-700 dark:text-red-400">{t('infra.error.lastError')}</p>
             </div>
             <p className="text-xs text-red-600 dark:text-red-500 truncate">{host.lastError}</p>
           </div>
@@ -134,7 +134,7 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
             <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
               <Toggle checked={host.isActive} onChange={handlePauseResume} />
               <span className="text-xs font-medium text-slate-700 dark:text-text-secondary-dark">
-                {host.isActive ? t('monitoring.active') : t('monitoring.paused')}
+                {host.isActive ? t('infra.active') : t('infra.paused')}
               </span>
             </div>
           )}
@@ -227,7 +227,7 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
       {activeTab === 'processes' && (
         <div className="space-y-2">
           <h3 className="text-base font-bold text-slate-900 dark:text-white px-1">
-            {t('monitoring.processes.title')}
+            {t('infra.processes.title')}
           </h3>
           {processesLoading ? (
             [1, 2, 3, 4].map(i => (
@@ -235,7 +235,7 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
             ))
           ) : !processes || processes.length === 0 ? (
             <div className="py-8 text-center text-slate-400 dark:text-text-muted-dark text-sm">
-              {t('monitoring.processes.empty', { defaultValue: 'No processes found' })}
+              {t('infra.processes.empty', { defaultValue: 'No processes found' })}
             </div>
           ) : (
             processes.map((proc, idx) => {

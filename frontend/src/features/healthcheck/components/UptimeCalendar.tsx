@@ -8,7 +8,7 @@ interface UptimeCalendarProps {
 }
 
 export function UptimeCalendar({ serviceId, refreshKey }: UptimeCalendarProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
   const [uptimeData, setUptimeData] = useState<UptimeData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +97,7 @@ export function UptimeCalendar({ serviceId, refreshKey }: UptimeCalendarProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-slate-900 dark:text-white text-lg font-bold tracking-tight">
-          {t('services.detail.health')}
+          {t('healthcheck.detail.health')}
         </h2>
         <span className="text-green-500 text-sm font-bold">{stats.percentage}</span>
       </div>
@@ -124,12 +124,12 @@ export function UptimeCalendar({ serviceId, refreshKey }: UptimeCalendarProps) {
       {/* Stats */}
       <div className="space-y-3">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-500 dark:text-text-muted-dark">{t('services.detail.uptime')}</span>
+          <span className="text-slate-500 dark:text-text-muted-dark">{t('healthcheck.detail.uptime')}</span>
           <span className="text-slate-900 dark:text-white font-medium">{stats.uptime}</span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-500 dark:text-text-muted-dark">
-            {t('services.detail.totalIncidents')}
+            {t('healthcheck.detail.totalIncidents')}
           </span>
           <span className="text-slate-900 dark:text-white font-medium">{stats.totalIncidents}</span>
         </div>

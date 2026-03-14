@@ -33,7 +33,7 @@ const labelMap: Record<string, string> = {
 };
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const colors = styleMap[status] ?? fallbackStyle;
   const labelKey = labelMap[status] ?? 'common.unknown';
 

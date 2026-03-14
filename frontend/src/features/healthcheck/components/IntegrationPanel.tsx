@@ -11,7 +11,7 @@ interface IntegrationPanelProps {
 }
 
 export function IntegrationPanel({ service, onApiKeyRegenerated }: IntegrationPanelProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
   const { copy } = useCopyToClipboard();
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -60,9 +60,9 @@ export function IntegrationPanel({ service, onApiKeyRegenerated }: IntegrationPa
       const { apiKey: newKey, apiKeyMasked: newMasked } = await api.regenerateServiceApiKey(service.id);
       onApiKeyRegenerated(newKey, newMasked);
       setRevealedKey(newKey);
-      toast.success(t('services.integration.toast.regenerated'));
+      toast.success(t('healthcheck.integration.toast.regenerated'));
     } catch {
-      toast.error(t('services.integration.toast.regenerateFailed'));
+      toast.error(t('healthcheck.integration.toast.regenerateFailed'));
     } finally {
       setIsRegenerating(false);
     }
@@ -333,7 +333,7 @@ WantedBy=multi-user.target
   ];
 
   const agentTabs = [
-    { key: 'config', label: t('services.integration.snippets.agentConfig') },
+    { key: 'config', label: t('healthcheck.integration.snippets.agentConfig') },
     { key: 'docker_sidecar', label: 'Docker (Sidecar)' },
     { key: 'docker_pipe', label: 'Docker (Pipe)' },
     { key: 'systemd', label: 'systemd' },
@@ -451,10 +451,10 @@ docker run -d \\
           </div>
           <div>
             <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              {t('services.integration.apiKey.title')}
+              {t('healthcheck.integration.apiKey.title')}
             </h3>
             <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-              {t('services.integration.apiKey.description')}
+              {t('healthcheck.integration.apiKey.description')}
             </p>
           </div>
         </div>
@@ -468,7 +468,7 @@ docker run -d \\
         <div className="flex items-center justify-between">
           <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
             <MaterialIcon name="warning" className="text-sm" />
-            {t('services.integration.apiKey.warning')}
+            {t('healthcheck.integration.apiKey.warning')}
           </p>
           <button
             onClick={() => setShowConfirm(true)}
@@ -480,7 +480,7 @@ docker run -d \\
             ) : (
               <MaterialIcon name="refresh" className="text-sm" />
             )}
-            {t('services.integration.apiKey.regenerate')}
+            {t('healthcheck.integration.apiKey.regenerate')}
           </button>
         </div>
       </div>
@@ -494,10 +494,10 @@ docker run -d \\
           </div>
           <div>
             <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              {t('services.integration.endpoint.title')}
+              {t('healthcheck.integration.endpoint.title')}
             </h3>
             <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-              {t('services.integration.endpoint.description')}
+              {t('healthcheck.integration.endpoint.description')}
             </p>
           </div>
         </div>
@@ -525,12 +525,12 @@ docker run -d \\
           <span className="text-slate-300 dark:text-ui-border-dark select-none">·</span>
           <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-text-muted-dark">
             <MaterialIcon name="auto_awesome" className="text-sm text-blue-400" />
-            {t('services.integration.endpoint.formatInfo', { defaultValue: 'Formats auto-detected' })}
+            {t('healthcheck.integration.endpoint.formatInfo', { defaultValue: 'Formats auto-detected' })}
           </span>
           <span className="text-slate-300 dark:text-ui-border-dark select-none">·</span>
           <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-text-muted-dark">
             <MaterialIcon name="layers" className="text-sm text-blue-400" />
-            {t('services.integration.endpoint.batchInfo', { defaultValue: 'Batch up to 100 logs/req' })}
+            {t('healthcheck.integration.endpoint.batchInfo', { defaultValue: 'Batch up to 100 logs/req' })}
           </span>
         </div>
       </div>
@@ -544,10 +544,10 @@ docker run -d \\
           </div>
           <div>
             <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-              {t('services.integration.connectionTest.title', { defaultValue: 'Connection Test' })}
+              {t('healthcheck.integration.connectionTest.title', { defaultValue: 'Connection Test' })}
             </h3>
             <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-              {t('services.integration.connectionTest.description', { defaultValue: 'Verify network connectivity and API key before integrating.' })}
+              {t('healthcheck.integration.connectionTest.description', { defaultValue: 'Verify network connectivity and API key before integrating.' })}
             </p>
           </div>
         </div>
@@ -571,7 +571,7 @@ docker run -d \\
         <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
           <p className="text-xs text-emerald-700 dark:text-emerald-300 flex items-start gap-1.5">
             <MaterialIcon name="check_circle" className="text-sm mt-0.5 shrink-0" />
-            {t('services.integration.connectionTest.successHint', { defaultValue: 'If connected successfully, the server responds with HTTP 200. If you get a timeout or connection refused, check your firewall outbound rules and server inbound rules.' })}
+            {t('healthcheck.integration.connectionTest.successHint', { defaultValue: 'If connected successfully, the server responds with HTTP 200. If you get a timeout or connection refused, check your firewall outbound rules and server inbound rules.' })}
           </p>
         </div>
       </div>
@@ -584,15 +584,15 @@ docker run -d \\
             <MaterialIcon name="code" className="text-lg text-purple-600 dark:text-purple-400" />
           </div>
           <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-            {t('services.integration.snippets.title')}
+            {t('healthcheck.integration.snippets.title')}
           </h3>
         </div>
 
         {/* Category toggle */}
         <div className="flex gap-1 mb-5 bg-slate-100 dark:bg-ui-hover-dark p-1 rounded-lg w-fit">
           {[
-            { key: 'http-appender' as const, label: t('services.integration.snippets.httpAppender'), icon: 'http' },
-            { key: 'agent' as const, label: t('services.integration.snippets.agent'), icon: 'smart_toy' },
+            { key: 'http-appender' as const, label: t('healthcheck.integration.snippets.httpAppender'), icon: 'http' },
+            { key: 'agent' as const, label: t('healthcheck.integration.snippets.agent'), icon: 'smart_toy' },
           ].map((cat) => (
             <button
               key={cat.key}
@@ -618,10 +618,10 @@ docker run -d \\
               </div>
               <div>
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                  {t('services.integration.agent.quickStart', { defaultValue: 'Quick Start' })}
+                  {t('healthcheck.integration.agent.quickStart', { defaultValue: 'Quick Start' })}
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                  {t('services.integration.agent.quickStartDesc', { defaultValue: 'Pull and run the Log Agent with a single command.' })}
+                  {t('healthcheck.integration.agent.quickStartDesc', { defaultValue: 'Pull and run the Log Agent with a single command.' })}
                 </p>
               </div>
             </div>
@@ -636,7 +636,7 @@ docker run -d \\
               <button
                 onClick={() => copy(`docker run -d --name everyup-log-agent \\\n  -v /var/log/myapp:/var/log/myapp:ro \\\n  -e MT_ENDPOINT="${window.location.origin}" \\\n  -e MT_API_KEY="${displayKey}" \\\n  -e MT_FILE="/var/log/myapp/*.log" \\\n  --restart unless-stopped \\\n  aiturn/everyup-log-agent:latest`)}
                 className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
-                title={t('services.integration.snippets.copy')}
+                title={t('healthcheck.integration.snippets.copy')}
               >
                 <MaterialIcon name="content_copy" className="text-sm" />
               </button>
@@ -671,8 +671,8 @@ docker run -d \\
             <div className="pt-3 hidden sm:block">
               <p className="text-xs text-slate-400 dark:text-text-dim-dark leading-relaxed px-2">
                 {activeCategory === 'http-appender'
-                  ? t('services.integration.snippets.httpAppenderDesc', { defaultValue: 'Add a transport to your app code. Best when you control the source.' })
-                  : t('services.integration.snippets.agentDesc', { defaultValue: 'Tail log files and forward. Best for servers or containers.' })
+                  ? t('healthcheck.integration.snippets.httpAppenderDesc', { defaultValue: 'Add a transport to your app code. Best when you control the source.' })
+                  : t('healthcheck.integration.snippets.agentDesc', { defaultValue: 'Tail log files and forward. Best for servers or containers.' })
                 }
               </p>
             </div>
@@ -687,7 +687,7 @@ docker run -d \\
               <button
                 onClick={() => copy(currentSnippets[activeSnippet])}
                 className="absolute top-3 right-3 p-1.5 rounded-md bg-slate-700 hover:bg-slate-600 transition-colors text-slate-300"
-                title={t('services.integration.snippets.copy')}
+                title={t('healthcheck.integration.snippets.copy')}
               >
                 <MaterialIcon name="content_copy" className="text-sm" />
               </button>
@@ -775,10 +775,10 @@ docker run -d \\
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {t('services.integration.apiKey.confirmTitle')}
+                  {t('healthcheck.integration.apiKey.confirmTitle')}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">
-                  {t('services.integration.apiKey.confirmDesc')}
+                  {t('healthcheck.integration.apiKey.confirmDesc')}
                 </p>
               </div>
             </div>
@@ -793,7 +793,7 @@ docker run -d \\
                 onClick={handleRegenerate}
                 className="flex-1 px-4 py-2.5 rounded-lg bg-red-600 text-white font-semibold text-sm hover:bg-red-700 transition-colors"
               >
-                {t('services.integration.apiKey.confirmAction')}
+                {t('healthcheck.integration.apiKey.confirmAction')}
               </button>
             </div>
           </div>
@@ -810,10 +810,10 @@ docker run -d \\
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {t('services.integration.apiKey.revealTitle')}
+                  {t('healthcheck.integration.apiKey.revealTitle')}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">
-                  {t('services.integration.apiKey.revealDesc')}
+                  {t('healthcheck.integration.apiKey.revealDesc')}
                 </p>
               </div>
             </div>
@@ -825,7 +825,7 @@ docker run -d \\
               <button
                 onClick={() => copy(revealedKey)}
                 className="shrink-0 p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-ui-active-dark transition-colors text-slate-500 dark:text-text-muted-dark"
-                title={t('services.integration.apiKey.copy')}
+                title={t('healthcheck.integration.apiKey.copy')}
               >
                 <MaterialIcon name="content_copy" className="text-base" />
               </button>
@@ -835,7 +835,7 @@ docker run -d \\
               onClick={dismissRevealedKey}
               className="w-full px-4 py-2.5 rounded-lg bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors"
             >
-              {t('services.integration.apiKey.revealConfirm')}
+              {t('healthcheck.integration.apiKey.revealConfirm')}
               {revealCountdown > 0 && ` (${revealCountdown}s)`}
             </button>
           </div>

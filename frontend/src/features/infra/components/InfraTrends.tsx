@@ -31,7 +31,7 @@ function getIsDark() {
 }
 
 export function InfraTrends({ hostId }: InfraTrendsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['infra', 'common']);
   const [timeRange, setTimeRange] = useState<'6H' | '12H' | '24H'>('6H');
   const { data: charts, loading } = useMonitoringTrends(hostId, timeRange.toLowerCase());
 
@@ -42,9 +42,9 @@ export function InfraTrends({ hostId }: InfraTrendsProps) {
   const tooltipBorder = isDark ? TOOLTIP_BORDER_DARK : TOOLTIP_BORDER_LIGHT;
 
   const rangeLabel: Record<string, string> = {
-    '6H': t('monitoring.trends.last6h'),
-    '12H': t('monitoring.trends.last12h'),
-    '24H': t('monitoring.trends.last24h'),
+    '6H': t('infra.trends.last6h'),
+    '12H': t('infra.trends.last12h'),
+    '24H': t('infra.trends.last24h'),
   };
 
   return (
@@ -52,7 +52,7 @@ export function InfraTrends({ hostId }: InfraTrendsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight">
-          {t('monitoring.trends.title')}{' '}
+          {t('infra.trends.title')}{' '}
           <span className="text-slate-400 dark:text-text-dim-dark font-normal text-lg">
             ({rangeLabel[timeRange]})
           </span>

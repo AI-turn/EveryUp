@@ -16,7 +16,7 @@ export function DeleteConfirmDialog({
   hostName,
   isDeleting,
 }: DeleteConfirmDialogProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['infra', 'common']);
 
   if (!isOpen) return null;
 
@@ -28,16 +28,16 @@ export function DeleteConfirmDialog({
           <div className="flex items-center justify-center w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-full">
             <MaterialIcon name="warning" className="text-red-600 dark:text-red-400 text-xl" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('monitoring.deleteConfirm.title')}</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('infra.deleteConfirm.title')}</h2>
         </div>
 
         {/* Content */}
         <div className="p-6">
           <p className="text-slate-600 dark:text-text-muted-dark mb-2">
-            {t('monitoring.deleteConfirm.message')} <span className="font-bold text-slate-900 dark:text-white">{hostName}</span>?
+            {t('infra.deleteConfirm.message')} <span className="font-bold text-slate-900 dark:text-white">{hostName}</span>?
           </p>
           <p className="text-sm text-slate-500 dark:text-text-dim-dark">
-            {t('monitoring.deleteConfirm.warning')}
+            {t('infra.deleteConfirm.warning')}
           </p>
         </div>
 

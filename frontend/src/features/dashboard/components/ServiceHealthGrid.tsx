@@ -28,7 +28,7 @@ export function ServiceHealthGrid({
   onAddClick,
 }: ServiceHealthGridProps) {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'healthcheck', 'logs', 'common']);
   const { data: services, loading, error, refetch } = useDashboardServices();
 
   useEffect(() => {
@@ -39,8 +39,7 @@ export function ServiceHealthGrid({
 
   const filteredServices = (services || []).filter(s => {
     const matchesSearch =
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.cluster.toLowerCase().includes(searchQuery.toLowerCase());
+      s.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = !statusFilter || s.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -69,7 +68,7 @@ export function ServiceHealthGrid({
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
             >
               <MaterialIcon name="add" className="text-sm" />
-              {t('dashboard.addService')}
+              {t('healthcheck.addService')}
             </button>
           </div>
         </div>
@@ -98,7 +97,7 @@ export function ServiceHealthGrid({
           title={t('dashboard.healthCheck.empty')}
           description={t('dashboard.healthCheck.emptyDesc')}
           action={{
-            label: t('dashboard.addService'),
+            label: t('healthcheck.addService'),
             onClick: onAddClick ?? (() => navigate('/healthcheck')),
           }}
         />

@@ -46,7 +46,7 @@ interface TargetBadgeProps {
 }
 
 function TargetBadge({ rule, services, hosts }: TargetBadgeProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['alerts', 'common']);
 
   if (rule.type === 'service') {
     if (rule.serviceId) {
@@ -88,7 +88,7 @@ interface AlertRulesTabProps {
 }
 
 export function AlertRulesTab({ addTrigger }: AlertRulesTabProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['alerts', 'common']);
   const { openPanel } = useSidePanel();
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [channels, setChannels] = useState<NotificationChannel[]>([]);

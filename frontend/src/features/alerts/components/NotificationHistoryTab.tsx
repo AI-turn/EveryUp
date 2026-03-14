@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko, enUS } from 'date-fns/locale';
 
 export function NotificationHistoryTab() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['alerts', 'common']);
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [total, setTotal] = useState(0);

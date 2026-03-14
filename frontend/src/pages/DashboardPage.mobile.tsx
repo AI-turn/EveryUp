@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MaterialIcon } from '../components/common';
-import { IconHealthCheck, IconLogs, IconInfra, IconAlerts, IconSettings } from '../components/icons/SidebarIcons';
-import { useDashboardKPI, useDashboardServices, useDashboardIncidents, useMonitoringResources, useNotificationChannels } from '../hooks/useData';
+import { IconHealthCheck, IconLogs, IconInfra } from '../components/icons/SidebarIcons';
+import { useDashboardKPI, useDashboardServices, useMonitoringResources } from '../hooks/useData';
 import { api, type Service, type LogEntry } from '../services/api';
-import { incidentTypeConfig } from '../mocks/configs';
 import { relativeTime } from '../utils/formatters';
+import { IncidentTimeline } from '../features/dashboard';
 
 
 const logLevelBadge: Record<string, string> = {
@@ -50,13 +49,11 @@ const resourceStatusText: Record<string, string> = {
 };
 
 export function DashboardMobile() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'logs', 'common']);
   const navigate = useNavigate();
   const { data: kpiData, loading: kpiLoading } = useDashboardKPI();
   const { data: services, loading: svcLoading } = useDashboardServices();
-  const { data: incidents } = useDashboardIncidents();
   const { data: resources, loading: resourceLoading } = useMonitoringResources();
-  const { data: channels } = useNotificationChannels();
   const [logServices, setLogServices] = useState<Service[]>([]);
   const [latestLogs, setLatestLogs] = useState<Record<string, LogEntry | null>>({});
   const [logLoading, setLogLoading] = useState(true);
@@ -88,11 +85,23 @@ export function DashboardMobile() {
     });
   }, [logServices]);
 
-  const kpiColors: Record<string, string> = {
-    primary: 'text-primary',
-    red: 'text-red-500',
-    emerald: 'text-emerald-500',
-    amber: 'text-amber-500',
+  const kpiColorConfig: Record<string, { cardBg: string; valueText: string }> = {
+    primary: {
+      cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
+      valueText: 'text-primary',
+    },
+    red: {
+      cardBg: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900/40',
+      valueText: 'text-red-600 dark:text-red-400',
+    },
+    emerald: {
+      cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
+      valueText: 'text-emerald-600 dark:text-emerald-400',
+    },
+    amber: {
+      cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
+      valueText: 'text-amber-600 dark:text-amber-400',
+    },
   };
 
   const kpiLabelMap: Record<string, string> = {
@@ -114,12 +123,16 @@ export function DashboardMobile() {
             <div
               key={kpi.label}
               onClick={kpi.href ? () => navigate(kpi.href!) : undefined}
-              className={`shrink-0 flex-1 min-w-[110px] bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3 ${kpi.href ? 'active:scale-95 cursor-pointer' : ''}`}
+              className={[
+                'shrink-0 flex-1 min-w-27.5 border rounded-xl p-3',
+                (kpiColorConfig[kpi.color] ?? kpiColorConfig.primary).cardBg,
+                kpi.href ? 'active:scale-95 cursor-pointer' : '',
+              ].join(' ')}
             >
               <p className="text-xs font-medium text-slate-500 dark:text-text-muted-dark truncate">
                 {kpiLabelMap[kpi.label] ? t(kpiLabelMap[kpi.label]) : kpi.label}
               </p>
-              <p className={`text-xl font-bold ${kpiColors[kpi.color] || 'text-slate-900 dark:text-white'}`}>
+              <p className={`text-xl font-bold tabular-nums ${(kpiColorConfig[kpi.color] ?? kpiColorConfig.primary).valueText}`}>
                 {kpi.value}
               </p>
               {kpi.subValue && (
@@ -258,7 +271,7 @@ export function DashboardMobile() {
                         </>
                       ) : (
                         <span className="text-xs text-slate-400 dark:text-text-dim-dark italic">
-                          {t('dashboard.logServices.noLogs', { defaultValue: 'No logs yet' })}
+                          {t('logs.noLogs')}
                         </span>
                       )}
                     </div>
@@ -336,79 +349,8 @@ export function DashboardMobile() {
         </div>
       </section>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          onClick={() => navigate('/alerts')}
-          className="flex items-center gap-3 p-4 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl active:scale-95 transition-transform"
-        >
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-            <IconAlerts size={20} className="text-amber-500" />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-bold text-slate-900 dark:text-white">
-              {t('nav.alerts')}
-            </p>
-            <p className="text-xs text-slate-400 dark:text-text-dim-dark">
-              {(channels || []).filter(c => c.isEnabled).length} {t('dashboard.notifications.active')}
-            </p>
-          </div>
-        </button>
-        <button
-          onClick={() => navigate('/settings')}
-          className="flex items-center gap-3 p-4 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl active:scale-95 transition-transform"
-        >
-          <div className="w-10 h-10 rounded-lg bg-slate-500/10 flex items-center justify-center">
-            <IconSettings size={20} className="text-slate-500" />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-bold text-slate-900 dark:text-white">
-              {t('nav.settings')}
-            </p>
-            <p className="text-xs text-slate-400 dark:text-text-dim-dark">
-              {t('alerts.features.channels')}
-            </p>
-          </div>
-        </button>
-      </div>
-
       {/* Recent Events */}
-      {incidents && incidents.length > 0 && (
-        <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
-          <div className="flex items-center gap-2 p-4 pb-0">
-            <MaterialIcon name="timeline" className="text-lg text-primary" />
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-              {t('dashboard.timeline.title')}
-            </h2>
-          </div>
-          <div className="p-3 space-y-1">
-            {incidents.slice(0, 6).map(incident => {
-              const incidentType = incident.type as keyof typeof incidentTypeConfig;
-              const config = incidentTypeConfig[incidentType] || incidentTypeConfig.info;
-              return (
-                <div
-                  key={incident.id}
-                  className="flex items-start gap-3 p-2 rounded-lg"
-                >
-                  <MaterialIcon
-                    name={config.icon}
-                    className={`text-base mt-0.5 shrink-0 ${config.colorClasses.icon}`}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-slate-700 dark:text-text-base-dark">
-                      <span className="font-semibold">{incident.serviceName}</span>{' '}
-                      <span className="text-slate-500 dark:text-text-muted-dark">{incident.message}</span>
-                    </p>
-                  </div>
-                  <span className="text-xs text-slate-400 dark:text-text-dim-dark shrink-0 mt-0.5">
-                    {incident.time}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
+      <IncidentTimeline />
     </div>
   );
 }

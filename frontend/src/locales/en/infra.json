@@ -1,0 +1,111 @@
+{
+    "infra": {
+        "title": "Infrastructure",
+        "subtitle": "Real-time infrastructure monitoring for servers and containers",
+        "features": {
+            "cpuMemDisk": "CPU / Memory / Disk",
+            "sshRemote": "SSH Remote Host",
+            "liveCharts": "Live Metric Charts",
+            "alerting": "Infrastructure Alerts",
+            "processList": "Process Tracking"
+        },
+        "searchPlaceholder": "Search infrastructure...",
+        "addResource": "Add Infrastructure",
+        "pauseStream": "Pause Stream",
+        "exportReport": "Export Report",
+        "uptime": "Uptime",
+        "settings": "Settings",
+        "editHost": "Edit Host",
+        "deleteHost": "Delete Host",
+        "pauseMonitoring": "Pause Monitoring",
+        "resumeMonitoring": "Resume Monitoring",
+        "active": "Active",
+        "paused": "Paused",
+        "resourceTypes": {
+            "server": "Server",
+            "database": "Database",
+            "container": "Container"
+        },
+        "trends": {
+            "title": "Infrastructure Trends",
+            "last6h": "Last 6 Hours",
+            "last12h": "Last 12 Hours",
+            "last24h": "Last 24 Hours"
+        },
+        "processes": {
+            "title": "Top Processes",
+            "viewAll": "View All Processes",
+            "name": "Process Name",
+            "pid": "PID",
+            "cpu": "CPU%",
+            "memory": "Memory%",
+            "status": "Status",
+            "actions": "Actions",
+            "terminate": "Terminate"
+        },
+        "deleteConfirm": {
+            "title": "Delete Host",
+            "message": "Are you sure you want to delete",
+            "warning": "This action cannot be undone. All metrics and data for this host will be permanently removed."
+        },
+        "toast": {
+            "paused": "Host monitoring paused",
+            "resumed": "Host monitoring resumed",
+            "updated": "Host updated successfully",
+            "deleted": "Host deleted successfully",
+            "cannotDeleteLocal": "Cannot delete local host",
+            "updateFailed": "Failed to update host status",
+            "deleteFailed": "Failed to delete host"
+        },
+        "sections": {
+            "basicInfo": "Basic Information"
+        },
+        "modal": {
+            "idCannotChange": "ID cannot be changed",
+            "displayName": "Display name",
+            "ipAddress": "IP Address",
+            "ipPlaceholder": "192.168.1.100",
+            "port": "Port",
+            "portPlaceholder": "22",
+            "group": "Group",
+            "groupPlaceholder": "production",
+            "groupHint": "Optional: Group hosts by environment",
+            "description": "Description",
+            "descriptionPlaceholder": "Production web server...",
+            "localAutoManaged": "Local hosts are auto-managed by system",
+            "resourceCategory": "Infrastructure Type",
+            "idHint": "Lowercase, numbers, hyphens",
+            "hostIdPlaceholder": "server-01",
+            "hostNamePlaceholder": "Web Server 01",
+            "sshSettings": "SSH Settings",
+            "sshUser": "SSH User",
+            "sshUserPlaceholder": "monitor",
+            "sshPort": "SSH Port",
+            "authType": "Auth Type",
+            "authPassword": "Password",
+            "authKey": "SSH Key (PEM)",
+            "authKeyFile": "Key File Path",
+            "password": "Password",
+            "passwordPlaceholder": "Enter SSH password",
+            "passwordChangePlaceholder": "Leave empty to keep current",
+            "sshKey": "SSH Private Key",
+            "sshKeyPlaceholder": "-----BEGIN RSA PRIVATE KEY-----\n...",
+            "sshKeyChangePlaceholder": "Leave empty to keep current key",
+            "sshKeyBrowse": "Browse File",
+            "sshKeyDragDrop": "or drag & drop a key file here",
+            "sshKeyPpkDetected": "PPK format detected. Please convert to PEM format using: puttygen key.ppk -O private-openssh -o key.pem",
+            "sshKeyPath": "Key File Path (on API server)",
+            "sshKeyPathPlaceholder": "/home/user/.ssh/id_rsa",
+            "sshKeyPathHint": "Path on the server where the API is running, not your local machine",
+            "testConnection": "Test Connection",
+            "testing": "Testing...",
+            "connectionSuccess": "Connected successfully",
+            "connectionFailed": "Connection failed",
+            "latency": "Latency"
+        },
+        "error": {
+            "lastError": "Last Error",
+            "retryConnection": "Retry Connection"
+        }
+    }
+}

@@ -24,7 +24,7 @@ const navItems: { Icon: IconComponent; labelKey: string; href: string }[] = [
 
 export function Sidebar() {
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const { isCollapsed } = useSidebar();
 
   return (

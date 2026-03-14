@@ -134,7 +134,6 @@ export function useDashboardServices() {
     return services.map((service) => ({
       id: service.id,
       name: service.name,
-      cluster: service.tags?.[0] || 'default-cluster',
       status: statusMap[service.status] || 'warning',
       latency: `${service.responseTime || 0}ms`,
       uptime: `${(service.uptime || 0).toFixed(1)}%`,

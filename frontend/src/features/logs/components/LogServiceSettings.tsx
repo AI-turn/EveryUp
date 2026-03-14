@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function LogServiceSettings({ service, onSuccess }: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['logs', 'common']);
 
   const initialFilter = service.logLevelFilter ?? [];
   const [filterAll, setFilterAll] = useState(initialFilter.length === 0);

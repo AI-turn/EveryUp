@@ -18,9 +18,9 @@ export function SectionCard({
           <MaterialIcon name={icon} className="text-primary text-lg" />
         </div>
         <div>
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">{title}</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h2>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">{subtitle}</p>
+            <p className="text-sm text-slate-500 dark:text-text-muted-dark mt-0.5">{subtitle}</p>
           )}
         </div>
       </div>

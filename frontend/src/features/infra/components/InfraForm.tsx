@@ -45,7 +45,7 @@ interface InfraFormProps {
 }
 
 export function InfraForm({ onSuccess, host }: InfraFormProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['infra', 'common']);
     const { closePanel } = useSidePanel();
     const isEditMode = !!host;
 
@@ -148,9 +148,9 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                 sshKeyPath: values.sshKeyPath,
             });
             setTestResult(result);
-            toast.success(t('monitoring.modal.connectionSuccess'));
+            toast.success(t('infra.modal.connectionSuccess'));
         } catch (error) {
-            const msg = error instanceof Error ? error.message : t('monitoring.modal.connectionFailed');
+            const msg = error instanceof Error ? error.message : t('infra.modal.connectionFailed');
             setTestError(msg);
             toast.error(msg);
         } finally {
@@ -168,11 +168,11 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
             } else {
                 await api.createHost(data as any);
             }
-            toast.success(t('monitoring.toast.updated'));
+            toast.success(t('infra.toast.updated'));
             onSuccess();
             closePanel();
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : t('monitoring.toast.updateFailed'));
+            toast.error(error instanceof Error ? error.message : t('infra.toast.updateFailed'));
         }
     };
 
@@ -184,7 +184,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
             <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-200 dark:border-ui-border-dark">
                     <MaterialIcon name="info" className="text-primary text-lg" />
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-text-secondary-dark">{t('services.sections.basicInfo')}</h3>
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-text-secondary-dark">{t('infra.sections.basicInfo')}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -192,21 +192,21 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('common.id')}</label>
                         <input
                             {...register('id')}
-                            placeholder={t('monitoring.modal.hostIdPlaceholder')}
+                            placeholder={t('infra.modal.hostIdPlaceholder')}
                             disabled={isEditMode}
                             className={`${inputClass(!!errors.id)} ${isEditMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                         />
                         {errors.id ? (
                             <p className="text-xs text-red-500 font-medium">{errors.id.message}</p>
                         ) : (
-                            <p className="text-xs text-slate-400">{t('monitoring.modal.idHint')}</p>
+                            <p className="text-xs text-slate-400">{t('infra.modal.idHint')}</p>
                         )}
                     </div>
                     <div className="space-y-1">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('common.name')}</label>
                         <input
                             {...register('name')}
-                            placeholder={t('monitoring.modal.hostNamePlaceholder')}
+                            placeholder={t('infra.modal.hostNamePlaceholder')}
                             className={inputClass(!!errors.name)}
                         />
                         {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
@@ -230,12 +230,12 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.resourceCategory')}</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.resourceCategory')}</label>
                     <div className="flex gap-2">
                         {([
-                            { value: 'server', icon: 'dns', label: t('monitoring.resourceTypes.server') },
-                            { value: 'database', icon: 'storage', label: t('monitoring.resourceTypes.database') },
-                            { value: 'container', icon: 'deployed_code', label: t('monitoring.resourceTypes.container') },
+                            { value: 'server', icon: 'dns', label: t('infra.resourceTypes.server') },
+                            { value: 'database', icon: 'storage', label: t('infra.resourceTypes.database') },
+                            { value: 'container', icon: 'deployed_code', label: t('infra.resourceTypes.container') },
                         ] as const).map(({ value, icon, label }) => (
                             <label
                                 key={value}
@@ -253,44 +253,44 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
             <div className="space-y-4 pt-2">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-200 dark:border-ui-border-dark">
                     <MaterialIcon name="settings_ethernet" className="text-primary text-lg" />
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-text-secondary-dark">{t('monitoring.modal.sshSettings')}</h3>
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-text-secondary-dark">{t('infra.modal.sshSettings')}</h3>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
                     <div className="col-span-2 space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.ipAddress')}</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.ipAddress')}</label>
                         <input
                             {...register('ip')}
-                            placeholder={t('monitoring.modal.ipPlaceholder')}
+                            placeholder={t('infra.modal.ipPlaceholder')}
                             className={inputClass(!!errors.ip)}
                         />
                         {errors.ip && <p className="text-xs text-red-500 font-medium">{errors.ip.message}</p>}
                     </div>
                     <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.port')}</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.port')}</label>
                         <input
                             {...register('port')}
                             type="number"
-                            placeholder={t('monitoring.modal.portPlaceholder')}
+                            placeholder={t('infra.modal.portPlaceholder')}
                             className={inputClass(!!errors.port)}
                         />
                     </div>
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.group')}</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.group')}</label>
                     <input
                         {...register('group')}
-                        placeholder={t('monitoring.modal.groupPlaceholder')}
+                        placeholder={t('infra.modal.groupPlaceholder')}
                         className={inputClass(!!errors.group)}
                     />
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.description')}</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.description')}</label>
                     <textarea
                         {...register('description')}
-                        placeholder={t('monitoring.modal.descriptionPlaceholder')}
+                        placeholder={t('infra.modal.descriptionPlaceholder')}
                         rows={2}
                         className={`${inputClass(!!errors.description)} resize-none`}
                     />
@@ -300,16 +300,16 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                     <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-ui-border-dark">
                         <div className="grid grid-cols-3 gap-4">
                             <div className="col-span-2 space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.sshUser')}</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.sshUser')}</label>
                                 <input
                                     {...register('sshUser')}
-                                    placeholder={t('monitoring.modal.sshUserPlaceholder')}
+                                    placeholder={t('infra.modal.sshUserPlaceholder')}
                                     className={inputClass(!!errors.sshUser)}
                                 />
                                 {errors.sshUser && <p className="text-xs text-red-500 font-medium">{errors.sshUser.message}</p>}
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.sshPort')}</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.sshPort')}</label>
                                 <input
                                     {...register('sshPort')}
                                     type="number"
@@ -320,7 +320,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.authType')}</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.authType')}</label>
                             <div className="flex gap-2">
                                 {(['password', 'key', 'key_file'] as const).map((authType) => (
                                     <label
@@ -335,7 +335,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                                             name={authType === 'password' ? 'password' : authType === 'key' ? 'vpn_key' : 'folder'}
                                             className="text-sm"
                                         />
-                                        {t(`monitoring.modal.auth${authType === 'password' ? 'Password' : authType === 'key' ? 'Key' : 'KeyFile'}`)}
+                                        {t(`infra.modal.auth${authType === 'password' ? 'Password' : authType === 'key' ? 'Key' : 'KeyFile'}`)}
                                     </label>
                                 ))}
                             </div>
@@ -343,11 +343,11 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
 
                         {selectedAuthType === 'password' && (
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.password')}</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.password')}</label>
                                 <input
                                     {...register('sshPassword')}
                                     type="password"
-                                    placeholder={isEditMode ? t('monitoring.modal.passwordChangePlaceholder') : t('monitoring.modal.passwordPlaceholder')}
+                                    placeholder={isEditMode ? t('infra.modal.passwordChangePlaceholder') : t('infra.modal.passwordPlaceholder')}
                                     className={inputClass(!!errors.sshPassword)}
                                 />
                             </div>
@@ -356,14 +356,14 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                         {selectedAuthType === 'key' && (
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.sshKey')}</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.sshKey')}</label>
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
                                         className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
                                     >
                                         <MaterialIcon name="upload_file" className="text-sm" />
-                                        {t('monitoring.modal.sshKeyBrowse')}
+                                        {t('infra.modal.sshKeyBrowse')}
                                     </button>
                                     <input
                                         ref={fileInputRef}
@@ -387,7 +387,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                                 >
                                     <textarea
                                         {...register('sshKey')}
-                                        placeholder={isEditMode ? t('monitoring.modal.sshKeyChangePlaceholder') : t('monitoring.modal.sshKeyPlaceholder')}
+                                        placeholder={isEditMode ? t('infra.modal.sshKeyChangePlaceholder') : t('infra.modal.sshKeyPlaceholder')}
                                         rows={4}
                                         className="w-full px-4 py-3 bg-transparent outline-none resize-none font-mono text-xs dark:text-white"
                                     />
@@ -395,7 +395,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                                 {ppkWarning && (
                                     <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-start gap-2">
                                         <MaterialIcon name="warning" className="text-sm text-amber-500 shrink-0 mt-0.5" />
-                                        <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">{t('monitoring.modal.sshKeyPpkDetected')}</p>
+                                        <p className="text-xs text-amber-700 dark:text-amber-400 font-medium">{t('infra.modal.sshKeyPpkDetected')}</p>
                                     </div>
                                 )}
                             </div>
@@ -403,10 +403,10 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
 
                         {selectedAuthType === 'key_file' && (
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('monitoring.modal.sshKeyPath')}</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('infra.modal.sshKeyPath')}</label>
                                 <input
                                     {...register('sshKeyPath')}
-                                    placeholder={t('monitoring.modal.sshKeyPathPlaceholder')}
+                                    placeholder={t('infra.modal.sshKeyPathPlaceholder')}
                                     className={inputClass(!!errors.sshKeyPath)}
                                 />
                             </div>
@@ -421,12 +421,12 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                             {isTesting ? (
                                 <>
                                     <div className="w-4 h-4 border-2 border-slate-400/30 border-t-slate-400 rounded-full animate-spin" />
-                                    {t('monitoring.modal.testing')}
+                                    {t('infra.modal.testing')}
                                 </>
                             ) : (
                                 <>
                                     <MaterialIcon name="cable" className="text-lg" />
-                                    {t('monitoring.modal.testConnection')}
+                                    {t('infra.modal.testConnection')}
                                 </>
                             )}
                         </button>
@@ -435,12 +435,12 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                             <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
                                 <div className="flex items-center gap-2 text-primary font-bold text-sm mb-2">
                                     <MaterialIcon name="check_circle" className="text-lg" />
-                                    {t('monitoring.modal.connectionSuccess')}
+                                    {t('infra.modal.connectionSuccess')}
                                 </div>
                                 <div className="text-xs text-slate-600 dark:text-text-muted-dark space-y-1 font-medium">
                                     {testResult.hostname && <p>Hostname: {testResult.hostname}</p>}
                                     {testResult.platform && <p>OS: {testResult.platform}</p>}
-                                    <p>{t('monitoring.modal.latency')}: <span className="text-primary font-bold">{testResult.latencyMs}ms</span></p>
+                                    <p>{t('infra.modal.latency')}: <span className="text-primary font-bold">{testResult.latencyMs}ms</span></p>
                                 </div>
                             </div>
                         )}
@@ -449,7 +449,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                             <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
                                 <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-bold text-sm mb-1">
                                     <MaterialIcon name="error" className="text-lg" />
-                                    {t('monitoring.modal.connectionFailed')}
+                                    {t('infra.modal.connectionFailed')}
                                 </div>
                                 <p className="text-xs text-red-500/80 font-medium leading-relaxed">{testError}</p>
                             </div>

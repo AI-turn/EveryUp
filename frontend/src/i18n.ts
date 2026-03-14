@@ -1,20 +1,58 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import en from './locales/en.json';
-import ko from './locales/ko.json';
+
+// Korean
+import koCommon from './locales/ko/common.json';
+import koAuth from './locales/ko/auth.json';
+import koDashboard from './locales/ko/dashboard.json';
+import koHealthcheck from './locales/ko/healthcheck.json';
+import koLogs from './locales/ko/logs.json';
+import koInfra from './locales/ko/infra.json';
+import koAlerts from './locales/ko/alerts.json';
+import koSettings from './locales/ko/settings.json';
+
+// English
+import enCommon from './locales/en/common.json';
+import enAuth from './locales/en/auth.json';
+import enDashboard from './locales/en/dashboard.json';
+import enHealthcheck from './locales/en/healthcheck.json';
+import enLogs from './locales/en/logs.json';
+import enInfra from './locales/en/infra.json';
+import enAlerts from './locales/en/alerts.json';
+import enSettings from './locales/en/settings.json';
 
 i18n
-  .use(LanguageDetector) // Detect browser language
-  .use(initReactI18next) // Initialize react-i18next
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
     resources: {
-      en: { translation: en },
-      ko: { translation: ko },
+      ko: {
+        common: koCommon,
+        auth: koAuth,
+        dashboard: koDashboard,
+        healthcheck: koHealthcheck,
+        logs: koLogs,
+        infra: koInfra,
+        alerts: koAlerts,
+        settings: koSettings,
+      },
+      en: {
+        common: enCommon,
+        auth: enAuth,
+        dashboard: enDashboard,
+        healthcheck: enHealthcheck,
+        logs: enLogs,
+        infra: enInfra,
+        alerts: enAlerts,
+        settings: enSettings,
+      },
     },
-    fallbackLng: 'en', // Default language if detection fails
+    defaultNS: 'common',
+    fallbackNS: 'common',
+    fallbackLng: 'en',
     interpolation: {
-      escapeValue: false, // React already protects from XSS
+      escapeValue: false,
     },
     detection: {
       order: ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],

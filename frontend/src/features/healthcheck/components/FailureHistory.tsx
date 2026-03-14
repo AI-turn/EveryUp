@@ -13,7 +13,7 @@ interface FailureHistoryProps {
 const MAX_FAILURES = 10;
 
 export function FailureHistory({ serviceId, refreshKey }: FailureHistoryProps) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['healthcheck', 'common']);
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState(true);
   const initialLoadDone = useRef(false);
@@ -54,10 +54,10 @@ export function FailureHistory({ serviceId, refreshKey }: FailureHistoryProps) {
         </div>
         <div>
           <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
-            {t('services.detail.failureHistory.title')}
+            {t('healthcheck.detail.failureHistory.title')}
           </h2>
           <p className="text-slate-400 dark:text-text-chart-dim text-sm">
-            {t('services.detail.failureHistory.desc')}
+            {t('healthcheck.detail.failureHistory.desc')}
           </p>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function FailureHistory({ serviceId, refreshKey }: FailureHistoryProps) {
         <div className="flex flex-col items-center justify-center py-8 gap-2">
           <MaterialIcon name="check_circle" className="text-3xl text-green-500" />
           <p className="text-sm text-slate-500 dark:text-text-muted-dark">
-            {t('services.detail.failureHistory.noFailures')}
+            {t('healthcheck.detail.failureHistory.noFailures')}
           </p>
         </div>
       ) : (

@@ -7,7 +7,7 @@ import { useSidePanel } from '../contexts/SidePanelContext';
 import { HealthCheckForm } from '../features/healthcheck/components/HealthCheckForm';
 
 export function HealthCheckPage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const { openPanel } = useSidePanel();
@@ -21,7 +21,7 @@ export function HealthCheckPage() {
 
   const handleAddService = () => {
     openPanel(
-      t('dashboard.addService'),
+      t('healthcheck.addService'),
       <HealthCheckForm onSuccess={handleServiceAdded} />
     );
   };
@@ -36,14 +36,14 @@ export function HealthCheckPage() {
   return (
     <>
       <PageHeader
-        title={t('services.title')}
-        subtitle={t('services.subtitle')}
+        title={t('healthcheck.title')}
+        subtitle={t('healthcheck.subtitle')}
         features={[
-          { icon: 'monitor_heart', label: t('services.features.httpStatus') },
-          { icon: 'speed', label: t('services.features.responseTime') },
-          { icon: 'show_chart', label: t('services.features.uptime') },
-          { icon: 'notifications', label: t('services.features.alerting') },
-          { icon: 'schedule', label: t('services.features.scheduledChecks') },
+          { icon: 'monitor_heart', label: t('healthcheck.features.httpStatus') },
+          { icon: 'speed', label: t('healthcheck.features.responseTime') },
+          { icon: 'show_chart', label: t('healthcheck.features.uptime') },
+          { icon: 'notifications', label: t('healthcheck.features.alerting') },
+          { icon: 'schedule', label: t('healthcheck.features.scheduledChecks') },
         ]}
       >
         <button
@@ -51,7 +51,7 @@ export function HealthCheckPage() {
           className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm font-bold transition-all text-white shadow-sm hover:shadow-md cursor-pointer active:scale-95"
         >
           <MaterialIcon name="add" className="text-lg" />
-          {t('dashboard.addService')}
+          {t('healthcheck.addService')}
         </button>
       </PageHeader>
 
@@ -61,7 +61,7 @@ export function HealthCheckPage() {
           <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder={t('services.searchPlaceholder')}
+            placeholder={t('healthcheck.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white dark:placeholder-text-muted-dark"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

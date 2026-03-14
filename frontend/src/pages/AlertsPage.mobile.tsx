@@ -28,7 +28,7 @@ const historyStatusConfig: Record<string, { icon: string; color: string }> = {
 };
 
 export function AlertsMobile() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['alerts', 'common']);
   const { openPanel } = useSidePanel();
   const [activeTab, setActiveTab] = useState<MobileTab>('channels');
   const [channels, setChannels] = useState<NotificationChannel[]>([]);
@@ -207,7 +207,7 @@ export function AlertsMobile() {
                 onClick={handleAddChannel}
                 className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
-                {t('dashboard.notifications.addChannel', { defaultValue: 'Add Channel' })} →
+                {t('alerts.addChannel')} →
               </button>
             </div>
           ) : (
@@ -278,7 +278,7 @@ export function AlertsMobile() {
                 onClick={() => navigate('/alerts?tab=rules')}
                 className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
-                {t('dashboard.alertRules.addRule', { defaultValue: 'Add Rule' })} →
+                {t('alerts.rules.addRule')} →
               </button>
             </div>
           ) : (

@@ -6,7 +6,7 @@ import { incidentTypeConfig } from '../../../mocks/configs';
 import { TableSkeleton } from '../../../components/skeleton';
 
 export function IncidentTimeline() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const { data: incidents, loading, error } = useDashboardIncidents();
 

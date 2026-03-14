@@ -1,0 +1,92 @@
+{
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "loading": "Loading...",
+        "error": "Error",
+        "delete": "Delete",
+        "deleting": "Deleting...",
+        "edit": "Edit",
+        "add": "Add",
+        "id": "Service ID",
+        "name": "Display Name",
+        "type": "Type",
+        "test": "Test",
+        "apply": "Apply Changes",
+        "discard": "Discard Changes",
+        "refresh": "Refresh",
+        "search": "Search...",
+        "all": "All",
+        "online": "Online",
+        "offline": "Offline",
+        "live": "Live",
+        "details": "Details",
+        "copyToClipboard": "Copy to clipboard",
+        "pause": "Pause",
+        "resume": "Resume",
+        "healthy": "Healthy",
+        "degraded": "Degraded",
+        "never": "Never",
+        "warning": "Warning",
+        "critical": "Critical",
+        "discardChanges": "Discard Changes",
+        "saveChanges": "Save Changes",
+        "saveConfig": "Save Configuration",
+        "saving": "Saving...",
+        "unsavedChanges": "Unsaved changes",
+        "checkInputs": "Please check your inputs",
+        "home": "Home",
+        "backToDashboard": "Back to Dashboard",
+        "today": "Today",
+        "daysAgo": "{{count}} days ago",
+        "unknown": "Unknown",
+        "previous": "Previous",
+        "next": "Next",
+        "expand": "Expand",
+        "collapse": "Collapse",
+        "status": "Status",
+        "optional": "optional",
+        "viewMore": "View More"
+    },
+    "nav": {
+        "dashboard": "Main",
+        "healthcheck": "Health Check",
+        "logs": "Logs",
+        "alerts": "Alerts",
+        "monitoring": "Infrastructure",
+        "settings": "Settings",
+        "security": "Security"
+    },
+    "sidebar": {
+        "help": "Help & Support",
+        "notifications": "Notifications",
+        "logout": "Logout",
+        "collapse": "Collapse sidebar",
+        "expand": "Expand sidebar"
+    },
+    "footer": {
+        "rights": "All rights reserved.",
+        "systemOperational": "All Systems Operational",
+        "bugReport": "Send Feedback"
+    },
+    "network": {
+        "disconnected": "Connection lost. Attempting to reconnect..."
+    },
+    "errorFallback": {
+        "title": "Something went wrong",
+        "description": "An unexpected error occurred. Please refresh the page or go back to the home page.",
+        "retry": "Try again",
+        "goHome": "Go Home"
+    },
+    "notfound": {
+        "title": "404",
+        "subtitle": "Page not found."
+    },
+    "notificationBell": {
+        "title": "Notifications",
+        "viewAll": "View all",
+        "markAllRead": "Mark all read",
+        "empty": "No notifications yet",
+        "unreadLabel": "unread"
+    }
+}

@@ -1,0 +1,119 @@
+{
+    "logs": {
+        "title": "로그",
+        "subtitle": "로깅 라이브러리를 통해 에러 로그를 수집하고 분석합니다",
+        "features": {
+            "errorTracking": "에러 추적",
+            "alertTrigger": "알림 트리거",
+            "loggingLibrary": "로깅 라이브러리"
+        },
+        "guide": {
+            "title": "로그 수집 방법",
+            "subtitle": "SDK 설치 없이, 기존 로깅 라이브러리 설정만으로 에러 로그를 수집합니다.",
+            "supported": "지원:",
+            "step1": {
+                "title": "로그 추가",
+                "desc": "\"로그 추가\"를 클릭하고 이름을 입력하세요. 인증용 API 키가 자동으로 발급됩니다."
+            },
+            "step2": {
+                "title": "수집 방식 선택",
+                "desc": "연동 탭에서 수집 방식을 선택하세요 — 앱 코드에 직접 연동하는 HTTP Appender 또는 Docker로 로그 파일을 수집하는 Log Agent."
+            },
+            "step3": {
+                "title": "로그 수집 시작",
+                "desc": "에러 및 경고 로그가 자동으로 수집됩니다. 알림 규칙에 따라 Telegram 또는 Discord로 알림이 발송됩니다."
+            }
+        },
+        "pause": "로그 일시정지",
+        "resume": "로그 재개",
+        "copy": "복사",
+        "details": "상세",
+        "export": "내보내기",
+        "titleRecent": "최근 에러 로그",
+        "formatPretty": "가독성 모드",
+        "formatRaw": "원본 모드",
+        "searchPlaceholder": "로그 검색...",
+        "pausedMessage": "로그 업데이트가 일시정지되었습니다. 재개를 클릭하여 다시 시작하세요.",
+        "noResults": "검색 결과가 없습니다.",
+        "noLogs": "로그가 없습니다.",
+        "loadMore": "더 불러오기",
+        "fetchError": "로그를 불러오는데 실패했습니다.",
+        "formatToggleHint": "JSON 메시지에 적용됩니다",
+        "filter": {
+            "all": "전체",
+            "error": "에러",
+            "warning": "경고",
+            "info": "정보"
+        },
+        "table": {
+            "timestamp": "타임스탬프",
+            "level": "레벨",
+            "message": "메시지",
+            "actions": "작업"
+        }
+    },
+    "logServices": {
+        "viewLogs": "로그 보기",
+        "empty": "등록된 로그가 없습니다",
+        "emptyDesc": "로그를 추가하여 로깅 라이브러리를 통해 에러 로그를 수집하세요.",
+        "add": {
+            "title": "로그 추가",
+            "submit": "로그 추가",
+            "infoTitle": "로그 수집",
+            "infoDesc": "HTTP Appender 또는 Fluent Bit Agent를 통해 에러 로그를 수집합니다. API 키가 자동으로 발급됩니다."
+        },
+        "validation": {
+            "idRequired": "ID는 필수입니다 (최소 2자)",
+            "idFormat": "영문 소문자, 숫자, 하이픈만 사용 가능",
+            "nameRequired": "이름은 필수입니다 (최소 2자)"
+        },
+        "toast": {
+            "created": "로그가 추가되었습니다",
+            "createdGuide": "로그가 추가되었습니다! 아래 연동 코드를 복사하여 로그 수집을 시작하세요.",
+            "createFailed": "로그 추가에 실패했습니다"
+        },
+        "guide": {
+            "recommended": "추천",
+            "universal": "모든 언어",
+            "loggingLibrary": {
+                "title": "로깅 라이브러리 연동",
+                "desc": "기존 로깅 라이브러리(Winston, Logback, Serilog 등)의 HTTP Appender를 설정하여 에러 로그를 자동으로 수집합니다.",
+                "tags": {
+                    "autoSend": "자동 전송",
+                    "asyncBatch": "비동기 배치",
+                    "failSafe": "장애 격리"
+                }
+            },
+            "http": {
+                "title": "HTTP POST 직접 전송",
+                "desc": "어떤 언어나 플랫폼에서든 HTTP POST로 로그를 직접 전송합니다. Bearer 토큰으로 API 키 인증을 사용합니다.",
+                "tags": {
+                    "restApi": "REST API",
+                    "bearerAuth": "Bearer 인증",
+                    "batchSupport": "배치 전송"
+                }
+            }
+        },
+        "identity": {
+            "id": "로그 ID",
+            "apiKey": "API 키",
+            "createdAt": "생성일",
+            "levelFilter": "로그 레벨",
+            "acceptAll": "모두 수집",
+            "levelFilterHint": "클릭하면 설정 탭으로 이동합니다"
+        },
+        "settings": {
+            "levelFilterTitle": "로그 레벨 필터",
+            "levelFilterDesc": "이 로그에서 수집할 레벨을 선택합니다. 필터링된 레벨은 수집 엔드포인트에서 조용히 무시됩니다 — 로그 에이전트에는 오류로 표시되지 않습니다.",
+            "acceptAll": "모든 레벨 수집",
+            "acceptAllDesc": "error, warn, info — 모두 수집합니다 (기본값)",
+            "custom": "선택 수집",
+            "customDesc": "선택한 레벨만 수집합니다",
+            "selectAtLeastOne": "최소 하나의 로그 레벨을 선택해야 합니다.",
+            "saved": "로그 레벨 필터가 저장되었습니다.",
+            "summaryAll": "수집 중: error · warn · info",
+            "summaryNone": "선택된 레벨 없음 — 아무것도 수집되지 않습니다",
+            "summaryCollecting": "수집 중"
+        }
+    }
+}

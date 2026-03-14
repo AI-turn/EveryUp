@@ -52,7 +52,7 @@ export function HealthCheckIdentity({
   timeout,
   cronExpression,
 }: HealthCheckIdentityProps) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['healthcheck', 'common']);
 
   const dateLocale = useMemo(
     () => (i18n.language.startsWith('ko') ? ko : enUS),
@@ -120,7 +120,7 @@ export function HealthCheckIdentity({
 
         {/* Endpoint */}
         <p className="text-slate-500 dark:text-text-muted-dark text-sm mb-3">
-          <span className="text-slate-400 dark:text-text-dim-dark mr-1">{t('services.detail.identity.endpoint')}:</span>
+          <span className="text-slate-400 dark:text-text-dim-dark mr-1">{t('healthcheck.detail.identity.endpoint')}:</span>
           <code className="bg-slate-200 dark:bg-chart-surface px-2 py-0.5 rounded text-primary break-all">{endpoint}</code>
         </p>
 
@@ -128,25 +128,25 @@ export function HealthCheckIdentity({
         <div className="flex flex-wrap gap-2">
           <InfoChip
             icon={type === 'http' ? 'http' : 'dns'}
-            label={t('services.detail.identity.type')}
+            label={t('healthcheck.detail.identity.type')}
             value={type.toUpperCase()}
             accent
           />
           <InfoChip
             icon={scheduleType === 'cron' ? 'schedule' : 'timer'}
-            label={scheduleType === 'cron' ? 'CRON' : t('services.detail.identity.interval')}
+            label={scheduleType === 'cron' ? 'CRON' : t('healthcheck.detail.identity.interval')}
             value={scheduleLabel}
           />
           {timeout != null && (
             <InfoChip
               icon="hourglass_top"
-              label={t('services.detail.identity.timeout')}
+              label={t('healthcheck.detail.identity.timeout')}
               value={`${timeout}s`}
             />
           )}
           <InfoChip
             icon="history"
-            label={t('services.detail.identity.lastChecked')}
+            label={t('healthcheck.detail.identity.lastChecked')}
             value={lastCheckedText}
           />
         </div>

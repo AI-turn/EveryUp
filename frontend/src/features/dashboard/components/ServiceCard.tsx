@@ -15,7 +15,7 @@ function formatInterval(seconds: number): string {
 }
 
 export function ServiceCard({ service, onClick }: ServiceCardProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['healthcheck', 'common']);
 
   return (
     <div
@@ -30,7 +30,6 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
           </div>
           <div className="min-w-0">
             <h3 className="font-bold text-sm truncate">{service.name}</h3>
-            <p className="text-xs text-slate-500 truncate">{service.cluster}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -46,11 +45,11 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">{t('services.detail.metrics.responseTime')}</p>
+          <p className="text-xs text-slate-500 uppercase font-semibold">{t('healthcheck.detail.metrics.responseTime')}</p>
           <p className="text-lg font-bold tabular-nums">{service.latency}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">{t('services.detail.uptime')}</p>
+          <p className="text-xs text-slate-500 uppercase font-semibold">{t('healthcheck.detail.uptime')}</p>
           <p className="text-lg font-bold tabular-nums">{service.uptime}</p>
         </div>
       </div>

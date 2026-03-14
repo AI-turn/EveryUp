@@ -1,0 +1,56 @@
+{
+    "dashboard": {
+        "title": "Monitoring Dashboard",
+        "subtitle": "Real-time overview of your services and infrastructure",
+        "addService": "Add Service",
+        "serviceAdded": "Service added successfully",
+        "emptyState": "Nothing to monitor yet. Add your first item to get started.",
+        "emptyStateDesc": "Add health checks, logs, or infrastructure to start monitoring.",
+        "kpi": {
+            "totalServices": "Total Services",
+            "avgResponseTime": "Avg Response Time",
+            "criticalAlerts": "Critical Alerts",
+            "overallUptime": "Overall Uptime"
+        },
+        "healthCheck": {
+            "title": "Health Check",
+            "empty": "No health checks registered.",
+            "emptyDesc": "Add a health check to start monitoring URL status and response times."
+        },
+        "infrastructure": {
+            "title": "Infrastructure",
+            "empty": "No infrastructure registered",
+            "emptyDesc": "Add a server to start monitoring CPU, memory, and disk.",
+            "addHost": "Add Infrastructure"
+        },
+        "logServices": {
+            "title": "Logs",
+            "empty": "No logs registered",
+            "emptyDesc": "Add a log to collect and analyze error logs from your APIs."
+        },
+        "timeline": {
+            "title": "Fault History",
+            "empty": "No recent incidents",
+            "history": "View full history"
+        },
+        "notifications": {
+            "title": "Notification Channels",
+            "manage": "Manage Alerts",
+            "empty": "No notification channels configured",
+            "addChannel": "Add Channel",
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "alertRules": {
+            "title": "Alert Rules",
+            "manage": "Manage Rules",
+            "empty": "No alert rules configured",
+            "addRule": "Add Rule",
+            "active": "Active",
+            "inactive": "Inactive",
+            "builtIn": "Built-in",
+            "enabled": "{{count}} enabled",
+            "serverReboot": "Server Reboot"
+        }
+    }
+}

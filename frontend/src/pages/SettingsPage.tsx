@@ -24,7 +24,7 @@ function retentionLabel(v: string) {
 }
 
 export function SettingsPage() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['settings', 'common']);
   const { theme, setTheme } = useTheme();
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ export function SettingsPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="mb-2">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
           {t('settings.title')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-text-muted-dark mt-1">

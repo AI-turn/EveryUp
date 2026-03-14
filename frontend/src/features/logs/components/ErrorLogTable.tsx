@@ -30,7 +30,7 @@ const levelDotStyle: Record<string, string> = {
 };
 
 export function ErrorLogTable({ serviceId, refreshKey }: ErrorLogTableProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['logs', 'common']);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);

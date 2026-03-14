@@ -1,16 +1,39 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MaterialIcon } from '../common';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import logoDark from '../../assets/logo-dark.png';
 import { NotificationDropdown } from './NotificationDropdown';
 
+function IconSun() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="2" x2="12" y2="5" />
+            <line x1="12" y1="19" x2="12" y2="22" />
+            <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
+            <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
+            <line x1="2" y1="12" x2="5" y2="12" />
+            <line x1="19" y1="12" x2="22" y2="12" />
+            <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
+            <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
+        </svg>
+    );
+}
+
+function IconMoon() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+    );
+}
+
 
 export function Header() {
     const { theme, toggleTheme } = useTheme();
-    const { i18n } = useTranslation();
+    const { i18n } = useTranslation('common');
     const [notifOpen, setNotifOpen] = useState(false);
 
     const changeLanguage = (lng: string) => {
@@ -55,13 +78,13 @@ export function Header() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2">
+                <div className="flex items-center gap-1">
                     <button
                         onClick={toggleTheme}
-                        className="p-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark dark:hover:text-white transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-white transition-colors"
                         aria-label="Toggle theme"
                     >
-                        <MaterialIcon name={theme === 'light' ? 'dark_mode' : 'light_mode'} className="text-xl" />
+                        {theme === 'light' ? <IconMoon /> : <IconSun />}
                     </button>
                     <NotificationDropdown
                         open={notifOpen}

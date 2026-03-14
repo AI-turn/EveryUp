@@ -7,7 +7,7 @@ interface ErrorFallbackProps {
 }
 
 export function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
   const handleGoHome = () => {
     window.location.href = '/';

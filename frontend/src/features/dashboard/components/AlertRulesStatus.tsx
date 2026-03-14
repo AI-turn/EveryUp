@@ -21,7 +21,7 @@ const METRIC_SHORT: Record<string, string> = {
 };
 
 export function AlertRulesStatus() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['dashboard', 'common']);
   const navigate = useNavigate();
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [loading, setLoading] = useState(true);

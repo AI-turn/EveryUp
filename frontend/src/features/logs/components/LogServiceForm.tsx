@@ -11,7 +11,7 @@ interface LogServiceFormProps {
 }
 
 export function LogServiceForm({ onSuccess }: LogServiceFormProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['logs', 'common']);
     const navigate = useNavigate();
     const { closePanel } = useSidePanel();
     const [id, setId] = useState('');
