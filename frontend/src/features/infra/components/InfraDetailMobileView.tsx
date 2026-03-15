@@ -1,85 +1,56 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-hot-toast';
-import { MaterialIcon, Toggle } from '../components/common';
-import { useHost, useMonitoringGauges, useMonitoringProcesses } from '../hooks/useData';
-import { InfraTrends, InfraForm, DeleteConfirmDialog } from '../features/infra';
-import { api } from '../services/api';
-import { useSidePanel } from '../contexts/SidePanelContext';
-import { infraStatusColorClasses } from '../design-tokens/colors';
-import { processStatusConfig } from '../mocks/configs';
-
-interface InfraDetailMobileProps {
-  hostId: string;
-}
+import { MaterialIcon, Toggle } from '../../../components/common';
+import { useMonitoringGauges, useMonitoringProcesses } from '../../../hooks/useData';
+import { InfraTrends } from './InfraTrends';
+import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { infraStatusColorClasses } from '../../../design-tokens/colors';
+import { processStatusConfig } from '../../../mocks/configs';
+import type { Host } from '../../../services/api';
 
 type MobileTab = 'overview' | 'trends' | 'processes';
 
-export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
+interface InfraDetailMobileViewProps {
+  host: Host | null;
+  hostId: string;
+  hostLoading: boolean;
+  status: string;
+  name: string;
+  ip: string;
+  isLocal: boolean;
+  isDeleting: boolean;
+  isDeleteDialogOpen: boolean;
+  onPauseResume: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
+  onDeleteDialogOpen: () => void;
+  onDeleteDialogClose: () => void;
+}
+
+export function InfraDetailMobileView({
+  host,
+  hostId,
+  hostLoading,
+  status,
+  name,
+  ip,
+  isLocal,
+  isDeleting,
+  isDeleteDialogOpen,
+  onPauseResume,
+  onDelete,
+  onEdit,
+  onDeleteDialogOpen,
+  onDeleteDialogClose,
+}: InfraDetailMobileViewProps) {
   const { t } = useTranslation(['infra', 'common']);
   const navigate = useNavigate();
-  const { openPanel } = useSidePanel();
-  const { data: host, loading: hostLoading, refetch } = useHost(hostId);
   const { data: gauges, loading: gaugesLoading } = useMonitoringGauges(hostId);
   const { data: processes, loading: processesLoading } = useMonitoringProcesses(hostId);
   const [activeTab, setActiveTab] = useState<MobileTab>('overview');
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [, setIsPausing] = useState(false);
 
-  const name = host?.name || hostId;
-  const ip = host?.ip || '';
-  const isLocal = host?.type === 'local';
-
-  const hostStatusMap: Record<string, string> = {
-    online: 'healthy',
-    offline: 'critical',
-    unknown: 'warning',
-    error: 'error',
-  };
-  const status = hostStatusMap[host?.status || 'unknown'] || 'healthy';
   const sc = infraStatusColorClasses[status as keyof typeof infraStatusColorClasses] || infraStatusColorClasses.healthy;
-
-  const handlePauseResume = async () => {
-    if (!host) return;
-    setIsPausing(true);
-    try {
-      if (host.isActive) {
-        await api.pauseHost(host.id);
-        toast.success(t('infra.toast.paused'));
-      } else {
-        await api.resumeHost(host.id);
-        toast.success(t('infra.toast.resumed'));
-      }
-      refetch();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('infra.toast.updateFailed'));
-    } finally {
-      setIsPausing(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!host) return;
-    setIsDeleting(true);
-    try {
-      await api.deleteHost(host.id);
-      toast.success(t('infra.toast.deleted'));
-      navigate('/infra');
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('infra.toast.deleteFailed'));
-      setIsDeleting(false);
-    }
-  };
-
-  const handleEdit = () => {
-    if (!host) return;
-    openPanel(
-      t('infra.editHost'),
-      <InfraForm onSuccess={refetch} host={host} />
-    );
-  };
 
   const tabs: { key: MobileTab; label: string; icon: string }[] = [
     { key: 'overview', label: t('common.overview', { defaultValue: 'Overview' }), icon: 'dashboard' },
@@ -132,7 +103,7 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
         <div className="flex gap-2 mt-3">
           {host && !isLocal && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
-              <Toggle checked={host.isActive} onChange={handlePauseResume} />
+              <Toggle checked={host.isActive} onChange={onPauseResume} />
               <span className="text-xs font-medium text-slate-700 dark:text-text-secondary-dark">
                 {host.isActive ? t('infra.active') : t('infra.paused')}
               </span>
@@ -142,14 +113,14 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
           {host && (
             <>
               <button
-                onClick={handleEdit}
+                onClick={onEdit}
                 className="p-2.5 rounded-lg bg-primary text-white active:scale-95 transition-transform cursor-pointer"
               >
                 <MaterialIcon name="edit" className="text-lg" />
               </button>
               {!isLocal && (
                 <button
-                  onClick={() => setIsDeleteDialogOpen(true)}
+                  onClick={onDeleteDialogOpen}
                   className="p-2.5 rounded-lg bg-red-500 text-white active:scale-95 transition-transform cursor-pointer"
                 >
                   <MaterialIcon name="delete" className="text-lg" />
@@ -181,7 +152,6 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
       {/* Tab Content */}
       {activeTab === 'overview' && (
         <div className="space-y-3">
-          {/* Gauges as Compact Cards */}
           {gaugesLoading ? (
             [1, 2, 3].map(i => (
               <div key={i} className="h-20 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
@@ -203,7 +173,6 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
                       {gauge.percentage}%
                     </span>
                   </div>
-                  {/* Progress bar */}
                   <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-chart-surface overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-700 ${barColor}`}
@@ -269,8 +238,8 @@ export function InfraDetailMobile({ hostId }: InfraDetailMobileProps) {
       {host && (
         <DeleteConfirmDialog
           isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          onConfirm={handleDelete}
+          onClose={onDeleteDialogClose}
+          onConfirm={onDelete}
           hostName={host.name}
           isDeleting={isDeleting}
         />

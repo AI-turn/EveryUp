@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { IconHealthCheck, IconLogs, IconInfra } from '../components/icons/SidebarIcons';
-import { useDashboardKPI, useDashboardServices, useMonitoringResources } from '../hooks/useData';
-import { api, type Service, type LogEntry } from '../services/api';
-import { relativeTime } from '../utils/formatters';
-import { IncidentTimeline } from '../features/dashboard';
-
+import { IconHealthCheck, IconLogs, IconInfra } from '../../../components/icons/SidebarIcons';
+import { useDashboardKPI, useDashboardServices, useMonitoringResources } from '../../../hooks/useData';
+import { api, type Service, type LogEntry } from '../../../services/api';
+import { relativeTime } from '../../../utils/formatters';
+import { IncidentTimeline } from './IncidentTimeline';
 
 const logLevelBadge: Record<string, string> = {
   error:   'bg-red-500 text-white',
@@ -48,7 +47,7 @@ const resourceStatusText: Record<string, string> = {
   unknown:   'text-slate-400 dark:text-text-dim-dark',
 };
 
-export function DashboardMobile() {
+export function DashboardMobileView() {
   const { t } = useTranslation(['dashboard', 'logs', 'common']);
   const navigate = useNavigate();
   const { data: kpiData, loading: kpiLoading } = useDashboardKPI();

@@ -1,0 +1,82 @@
+import { useTranslation } from 'react-i18next';
+import { MaterialIcon, PageHeader } from '../../../components/common';
+import { ServiceHealthGrid } from '../../dashboard';
+
+interface HealthCheckDesktopViewProps {
+  searchQuery: string;
+  statusFilter: string;
+  refreshKey: number;
+  onSearchChange: (query: string) => void;
+  onStatusFilterChange: (filter: string) => void;
+  onAddService: () => void;
+}
+
+export function HealthCheckDesktopView({
+  searchQuery,
+  statusFilter,
+  refreshKey,
+  onSearchChange,
+  onStatusFilterChange,
+  onAddService,
+}: HealthCheckDesktopViewProps) {
+  const { t } = useTranslation(['healthcheck', 'common']);
+
+  return (
+    <>
+      <PageHeader
+        title={t('healthcheck.title')}
+        subtitle={t('healthcheck.subtitle')}
+        features={[
+          { icon: 'monitor_heart', label: t('healthcheck.features.httpStatus') },
+          { icon: 'speed', label: t('healthcheck.features.responseTime') },
+          { icon: 'show_chart', label: t('healthcheck.features.uptime') },
+          { icon: 'notifications', label: t('healthcheck.features.alerting') },
+          { icon: 'schedule', label: t('healthcheck.features.scheduledChecks') },
+        ]}
+      >
+        <button
+          onClick={onAddService}
+          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm font-bold transition-all text-white shadow-sm hover:shadow-md cursor-pointer active:scale-95"
+        >
+          <MaterialIcon name="add" className="text-lg" />
+          {t('healthcheck.addService')}
+        </button>
+      </PageHeader>
+
+      {/* Search and Filters */}
+      <div className="mb-8 flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder={t('healthcheck.searchPlaceholder')}
+            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white dark:placeholder-text-muted-dark"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => onStatusFilterChange(e.target.value)}
+          className="px-3 py-2 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg text-sm font-medium text-slate-700 dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-colors outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
+        >
+          <option value="">{t('common.status')}: {t('common.all')}</option>
+          <option value="healthy">{t('common.healthy')}</option>
+          <option value="degraded">{t('common.degraded')}</option>
+          <option value="warning">{t('common.warning')}</option>
+          <option value="offline">{t('common.offline')}</option>
+        </select>
+      </div>
+
+      <ServiceHealthGrid
+        hideHeader
+        bare
+        searchQuery={searchQuery}
+        statusFilter={statusFilter}
+        refreshKey={refreshKey}
+        navigateTo={(id) => `/healthcheck/${id}`}
+        onAddClick={onAddService}
+      />
+    </>
+  );
+}

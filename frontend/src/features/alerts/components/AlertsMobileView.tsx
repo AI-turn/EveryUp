@@ -1,14 +1,27 @@
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-hot-toast';
-import { MaterialIcon } from '../components/common';
-import { api, type NotificationChannel, type AlertRule, type NotificationHistory, type NotificationStats } from '../services/api';
-import { useSidePanel } from '../contexts/SidePanelContext';
-import { ChannelForm } from '../features/alerts/components/ChannelForm';
 import { formatDistanceToNow } from 'date-fns';
 import { ko, enUS } from 'date-fns/locale';
+import { MaterialIcon } from '../../../components/common';
+import type { NotificationChannel, AlertRule, NotificationHistory, NotificationStats } from '../../../services/api';
 
 type MobileTab = 'channels' | 'rules' | 'history';
+
+interface AlertsMobileViewProps {
+  channels: NotificationChannel[];
+  rules: AlertRule[];
+  history: NotificationHistory[];
+  stats: NotificationStats | null;
+  isLoading: boolean;
+  rulesLoading: boolean;
+  historyLoading: boolean;
+  activeTab: MobileTab;
+  setActiveTab: (tab: MobileTab) => void;
+  onAddChannel: () => void;
+  onEditChannel: (channel: NotificationChannel) => void;
+  onDeleteChannel: (id: string) => void;
+  onToggleChannel: (id: string) => void;
+  onTestChannel: (id: string) => void;
+}
 
 const channelIcons: Record<string, { icon: string; color: string; bg: string }> = {
   telegram: { icon: 'send', color: 'text-sky-500', bg: 'bg-sky-500/10' },
@@ -27,105 +40,24 @@ const historyStatusConfig: Record<string, { icon: string; color: string }> = {
   pending: { icon: 'schedule', color: 'text-amber-500' },
 };
 
-export function AlertsMobile() {
+export function AlertsMobileView({
+  channels,
+  rules,
+  history,
+  stats,
+  isLoading,
+  rulesLoading,
+  historyLoading,
+  activeTab,
+  setActiveTab,
+  onAddChannel,
+  onEditChannel,
+  onDeleteChannel,
+  onToggleChannel,
+  onTestChannel,
+}: AlertsMobileViewProps) {
   const { t, i18n } = useTranslation(['alerts', 'common']);
-  const { openPanel } = useSidePanel();
-  const [activeTab, setActiveTab] = useState<MobileTab>('channels');
-  const [channels, setChannels] = useState<NotificationChannel[]>([]);
-  const [rules, setRules] = useState<AlertRule[]>([]);
-  const [history, setHistory] = useState<NotificationHistory[]>([]);
-  const [stats, setStats] = useState<NotificationStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [rulesLoading, setRulesLoading] = useState(true);
-  const [historyLoading, setHistoryLoading] = useState(true);
-
   const dateLocale = i18n.language === 'ko' ? ko : enUS;
-
-  const loadChannels = async () => {
-    try {
-      const data = await api.getNotificationChannels();
-      setChannels(data);
-    } catch {
-      toast.error(t('alerts.loadFailed'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadRules = async () => {
-    try {
-      const data = await api.getAlertRules();
-      setRules(data);
-    } catch {
-      toast.error(t('alerts.loadFailed'));
-    } finally {
-      setRulesLoading(false);
-    }
-  };
-
-  const loadHistory = async () => {
-    try {
-      const response = await api.getNotificationHistory({ limit: 30, offset: 0 });
-      setHistory(response.items || []);
-    } catch {
-      toast.error(t('alerts.loadFailed'));
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
-
-  const loadStats = async () => {
-    try {
-      const data = await api.getNotificationHistoryStats(7);
-      setStats(data);
-    } catch {
-      // stats are non-critical, failure is acceptable
-    }
-  };
-
-  useEffect(() => {
-    loadChannels();
-    loadRules();
-    loadHistory();
-    loadStats();
-  }, []);
-
-  const handleToggleChannel = async (id: string) => {
-    try {
-      const result = await api.toggleNotificationChannel(id);
-      setChannels(prev =>
-        prev.map(ch => ch.id === id ? { ...ch, isEnabled: result.isEnabled } : ch)
-      );
-      toast.success(result.isEnabled ? t('alerts.channelEnabled') : t('alerts.channelDisabled'));
-    } catch {
-      toast.error(t('alerts.toggleFailed'));
-    }
-  };
-
-  const handleDeleteChannel = async (id: string) => {
-    if (!confirm(t('alerts.confirmDelete'))) return;
-    try {
-      await api.deleteNotificationChannel(id);
-      toast.success(t('alerts.channelDeleted'));
-      loadChannels();
-    } catch {
-      toast.error(t('alerts.deleteFailed'));
-    }
-  };
-
-  const handleAddChannel = () => {
-    openPanel(
-      t('alerts.addChannel'),
-      <ChannelForm onSuccess={loadChannels} />
-    );
-  };
-
-  const handleEditChannel = (channel: NotificationChannel) => {
-    openPanel(
-      t('alerts.modal.editTitle', { defaultValue: 'Edit Channel' }),
-      <ChannelForm channel={channel} onSuccess={loadChannels} />
-    );
-  };
 
   const tabs: { key: MobileTab; label: string; icon: string; count?: number }[] = [
     { key: 'channels', label: t('alerts.channelsTitle'), icon: 'notifications', count: channels.length },
@@ -186,7 +118,7 @@ export function AlertsMobile() {
       {activeTab === 'channels' && (
         <div className="space-y-3">
           <button
-            onClick={handleAddChannel}
+            onClick={onAddChannel}
             className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-ui-border-dark text-primary font-bold text-sm active:scale-95 transition-transform"
           >
             <MaterialIcon name="add_circle" className="text-lg" />
@@ -204,7 +136,7 @@ export function AlertsMobile() {
                 {t('alerts.noChannels')}
               </p>
               <button
-                onClick={handleAddChannel}
+                onClick={onAddChannel}
                 className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
                 {t('alerts.addChannel')} →
@@ -227,7 +159,7 @@ export function AlertsMobile() {
                       <p className={`text-xs font-semibold capitalize ${meta.color}`}>{channel.type}</p>
                     </div>
                     <button
-                      onClick={() => handleToggleChannel(channel.id)}
+                      onClick={() => onToggleChannel(channel.id)}
                       className={`relative w-11 h-6 rounded-full transition-colors ${channel.isEnabled ? 'bg-primary' : 'bg-slate-400'}`}
                     >
                       <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${channel.isEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
@@ -235,20 +167,20 @@ export function AlertsMobile() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => api.testNotificationChannel(channel.id).then(() => toast.success(t('alerts.testSent'))).catch(() => toast.error(t('alerts.testFailed')))}
+                      onClick={() => onTestChannel(channel.id)}
                       className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary text-xs font-bold active:scale-95 transition-transform"
                     >
                       <MaterialIcon name="send" className="text-sm" />
                       {t('alerts.test')}
                     </button>
                     <button
-                      onClick={() => handleEditChannel(channel)}
+                      onClick={() => onEditChannel(channel)}
                       className="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-ui-hover-dark text-slate-500 active:scale-95 transition-transform"
                     >
                       <MaterialIcon name="edit" className="text-base" />
                     </button>
                     <button
-                      onClick={() => handleDeleteChannel(channel.id)}
+                      onClick={() => onDeleteChannel(channel.id)}
                       className="flex items-center justify-center p-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 active:scale-95 transition-transform"
                     >
                       <MaterialIcon name="delete" className="text-base" />
@@ -274,12 +206,6 @@ export function AlertsMobile() {
               <p className="text-sm text-slate-400 dark:text-text-muted-dark mt-2">
                 {t('alerts.rules.empty', { defaultValue: 'No alert rules configured' })}
               </p>
-              <button
-                onClick={() => navigate('/alerts?tab=rules')}
-                className="mt-3 text-sm font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
-              >
-                {t('alerts.rules.addRule')} →
-              </button>
             </div>
           ) : (
             rules.map(rule => {

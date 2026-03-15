@@ -1,83 +1,52 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-hot-toast';
-import { MaterialIcon, Toggle } from '../components/common';
-import { Breadcrumbs } from '../components/layout/Breadcrumbs';
-import { InfraGauges, InfraTrends, ProcessTable, InfraForm, DeleteConfirmDialog } from '../features/infra';
-import { useHost } from '../hooks/useData';
-import { api } from '../services/api';
-import { useSidePanel } from '../contexts/SidePanelContext';
-import { infraStatusColorClasses } from '../design-tokens/colors';
+import { MaterialIcon, Toggle } from '../../../components/common';
+import { Breadcrumbs } from '../../../components/layout/Breadcrumbs';
+import { InfraGauges } from './InfraGauges';
+import { InfraTrends } from './InfraTrends';
+import { ProcessTable } from './ProcessTable';
+import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { infraStatusColorClasses } from '../../../design-tokens/colors';
+import type { Host } from '../../../services/api';
 
-interface InfraDetailDesktopProps {
+interface InfraDetailDesktopViewProps {
+  host: Host | null;
   hostId: string;
+  hostLoading: boolean;
+  status: string;
+  name: string;
+  ip: string;
+  cluster: string;
+  isLocal: boolean;
+  isPausing: boolean;
+  isDeleting: boolean;
+  isDeleteDialogOpen: boolean;
+  onPauseResume: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
+  onDeleteDialogOpen: () => void;
+  onDeleteDialogClose: () => void;
 }
 
-export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
+export function InfraDetailDesktopView({
+  host,
+  hostId,
+  hostLoading,
+  status,
+  name,
+  ip,
+  cluster,
+  isLocal,
+  isPausing,
+  isDeleting,
+  isDeleteDialogOpen,
+  onPauseResume,
+  onDelete,
+  onEdit,
+  onDeleteDialogOpen,
+  onDeleteDialogClose,
+}: InfraDetailDesktopViewProps) {
   const { t } = useTranslation(['infra', 'common']);
-  const navigate = useNavigate();
-  const { openPanel } = useSidePanel();
-  const { data: host, loading: hostLoading, refetch } = useHost(hostId);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isPausing, setIsPausing] = useState(false);
-
-  const name = host?.name || hostId;
-  const ip = host?.ip || '';
-  const cluster = host?.group || '';
-
-  const hostStatusMap: Record<string, string> = {
-    online: 'healthy',
-    offline: 'critical',
-    unknown: 'warning',
-    error: 'error',
-  };
-  const status = hostStatusMap[host?.status || 'unknown'] || 'healthy';
-
   const sc = infraStatusColorClasses[status as keyof typeof infraStatusColorClasses] || infraStatusColorClasses.healthy;
-
-  const handlePauseResume = async () => {
-    if (!host) return;
-    setIsPausing(true);
-    try {
-      if (host.isActive) {
-        await api.pauseHost(host.id);
-        toast.success(t('infra.toast.paused'));
-      } else {
-        await api.resumeHost(host.id);
-        toast.success(t('infra.toast.resumed'));
-      }
-      refetch();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('infra.toast.updateFailed'));
-    } finally {
-      setIsPausing(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!host) return;
-    setIsDeleting(true);
-    try {
-      await api.deleteHost(host.id);
-      toast.success(t('infra.toast.deleted'));
-      navigate('/infra');
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('infra.toast.deleteFailed'));
-      setIsDeleting(false);
-    }
-  };
-
-  const handleEdit = () => {
-    if (!host) return;
-    openPanel(
-      t('infra.editHost'),
-      <InfraForm onSuccess={refetch} host={host} />
-    );
-  };
-
-  const isLocal = host?.type === 'local';
 
   return (
     <>
@@ -132,7 +101,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                 </div>
               </div>
               <button
-                onClick={handlePauseResume}
+                onClick={onPauseResume}
                 disabled={isPausing}
                 className="shrink-0 px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 text-xs font-bold hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors disabled:opacity-50"
               >
@@ -151,7 +120,7 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
                     <Toggle
                       checked={host.isActive}
-                      onChange={handlePauseResume}
+                      onChange={onPauseResume}
                     />
                     <span className="hidden sm:inline text-sm font-medium text-slate-700 dark:text-text-secondary-dark">
                       {host.isActive ? t('infra.active') : t('infra.paused')}
@@ -159,20 +128,14 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
                   </div>
                 )}
                 <button
-                  onClick={handleEdit}
+                  onClick={onEdit}
                   className="flex items-center justify-center rounded-lg h-10 px-3 sm:px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors gap-2 cursor-pointer active:scale-95"
                 >
                   <MaterialIcon name="edit" className="text-lg" />
                   <span className="hidden sm:inline">{t('infra.editHost')}</span>
                 </button>
                 <button
-                  onClick={() => {
-                    if (isLocal) {
-                      toast.error(t('infra.toast.cannotDeleteLocal'));
-                      return;
-                    }
-                    setIsDeleteDialogOpen(true);
-                  }}
+                  onClick={onDeleteDialogOpen}
                   disabled={isLocal}
                   className="flex items-center justify-center rounded-lg h-10 px-3 sm:px-4 bg-red-500 dark:bg-red-600 text-white text-sm font-bold hover:bg-red-600 dark:hover:bg-red-700 transition-colors gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                 >
@@ -198,8 +161,8 @@ export function InfraDetailDesktop({ hostId }: InfraDetailDesktopProps) {
       {host && (
         <DeleteConfirmDialog
           isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          onConfirm={handleDelete}
+          onClose={onDeleteDialogClose}
+          onConfirm={onDelete}
           hostName={host.name}
           isDeleting={isDeleting}
         />

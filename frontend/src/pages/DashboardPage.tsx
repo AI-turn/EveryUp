@@ -1,23 +1,11 @@
-import { KPISummary, ServiceHealthGrid, ResourceStatusGrid, LogServicesGrid, IncidentTimeline, NotificationChannelStatus, AlertRulesStatus } from '../features/dashboard';
-import { DashboardMobile } from './DashboardPage.mobile';
+import { DashboardDesktopView } from '../features/dashboard/components/DashboardDesktopView';
+import { DashboardMobileView } from '../features/dashboard/components/DashboardMobileView';
 import { useIsMobile } from '../hooks/useMediaQuery';
 
 export function DashboardPage() {
   const isMobile = useIsMobile();
 
-  if (isMobile) return <DashboardMobile />;
+  if (isMobile) return <DashboardMobileView />;
 
-  return (
-    <div className="space-y-8">
-      <KPISummary />
-      <ServiceHealthGrid maxItems={3} />
-      <LogServicesGrid />
-      <ResourceStatusGrid />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <NotificationChannelStatus />
-        <AlertRulesStatus />
-      </div>
-      <IncidentTimeline />
-    </div>
-  );
+  return <DashboardDesktopView />;
 }
