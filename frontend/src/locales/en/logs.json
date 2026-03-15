@@ -102,6 +102,24 @@
             "acceptAll": "Accept All",
             "levelFilterHint": "Click to go to the Settings tab"
         },
+        "detail": {
+            "tabs": {
+                "logs": "Error Logs",
+                "integration": "Integration",
+                "settings": "Settings"
+            }
+        },
+        "delete": {
+            "title": "Delete Log",
+            "subtitle": "This action cannot be undone",
+            "confirm": "Are you sure you want to delete"
+        },
+        "apiKey": {
+            "revealTitle": "New API Key Generated",
+            "revealDesc": "Copy your new API key now. It will not be shown again.",
+            "revealConfirm": "Done",
+            "revealOnce": "This key is shown only once. Copy it now — you won't be able to see it again."
+        },
         "settings": {
             "levelFilterTitle": "Log Level Filter",
             "levelFilterDesc": "Choose which log levels this log accepts. Filtered levels are silently dropped at the ingest endpoint — your log agent won't see errors.",

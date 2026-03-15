@@ -60,12 +60,12 @@ export function LogDetailDesktopView({
   onRevealedKeyClose,
   onCopyKey,
 }: LogDetailDesktopViewProps) {
-  const { t } = useTranslation(['healthcheck', 'logs', 'common']);
+  const { t } = useTranslation(['logs', 'common']);
 
   const tabs: { key: TabKey; label: string; icon: string }[] = [
-    { key: 'logs', label: t('healthcheck.detail.tabs.logs'), icon: 'article' },
-    { key: 'integration', label: t('healthcheck.detail.tabs.integration'), icon: 'integration_instructions' },
-    { key: 'settings', label: t('healthcheck.detail.tabs.settings', { defaultValue: 'Settings' }), icon: 'tune' },
+    { key: 'logs', label: t('logServices.detail.tabs.logs'), icon: 'article' },
+    { key: 'integration', label: t('logServices.detail.tabs.integration'), icon: 'integration_instructions' },
+    { key: 'settings', label: t('logServices.detail.tabs.settings'), icon: 'tune' },
   ];
 
   return (
@@ -159,15 +159,15 @@ export function LogDetailDesktopView({
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {t('healthcheck.delete.title', { defaultValue: 'Delete Service' })}
+                  {t('logServices.delete.title')}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-text-muted-dark">
-                  {t('healthcheck.delete.subtitle', { defaultValue: 'This action cannot be undone' })}
+                  {t('logServices.delete.subtitle')}
                 </p>
               </div>
             </div>
             <p className="text-sm text-slate-600 dark:text-text-secondary-dark mb-6">
-              {t('healthcheck.delete.confirm', { defaultValue: 'Are you sure you want to delete' })} <span className="font-bold">{service.name}</span>?
+              {t('logServices.delete.confirm')} <span className="font-bold">{service.name}</span>?
             </p>
             <div className="flex gap-3">
               <button
@@ -209,10 +209,10 @@ export function LogDetailDesktopView({
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {t('healthcheck.integration.apiKey.revealTitle')}
+                  {t('logServices.apiKey.revealTitle')}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">
-                  {t('healthcheck.integration.apiKey.revealDesc')}
+                  {t('logServices.apiKey.revealDesc')}
                 </p>
               </div>
             </div>
@@ -231,14 +231,14 @@ export function LogDetailDesktopView({
             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg mb-4">
               <p className="text-xs text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
                 <MaterialIcon name="warning" className="text-sm" />
-                {t('healthcheck.integration.apiKey.revealOnce', { defaultValue: "This key is shown only once. Copy it now — you won't be able to see it again." })}
+                {t('logServices.apiKey.revealOnce')}
               </p>
             </div>
             <button
               onClick={onRevealedKeyClose}
               className="w-full px-4 py-2.5 rounded-lg bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors"
             >
-              {t('healthcheck.integration.apiKey.revealConfirm')}
+              {t('logServices.apiKey.revealConfirm')}
               {revealCountdown > 0 && ` (${revealCountdown}s)`}
             </button>
           </div>

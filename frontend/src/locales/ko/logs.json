@@ -102,6 +102,24 @@
             "acceptAll": "모두 수집",
             "levelFilterHint": "클릭하면 설정 탭으로 이동합니다"
         },
+        "detail": {
+            "tabs": {
+                "logs": "에러 로그",
+                "integration": "연동",
+                "settings": "설정"
+            }
+        },
+        "delete": {
+            "title": "로그 삭제",
+            "subtitle": "이 작업은 되돌릴 수 없습니다",
+            "confirm": "정말 삭제하시겠습니까?"
+        },
+        "apiKey": {
+            "revealTitle": "새 API 키가 발급되었습니다",
+            "revealDesc": "지금 복사해 두세요. 이 키는 다시 표시되지 않습니다.",
+            "revealConfirm": "확인",
+            "revealOnce": "이 키는 한 번만 표시됩니다. 지금 복사해 두세요 — 다시 확인할 수 없습니다."
+        },
         "settings": {
             "levelFilterTitle": "로그 레벨 필터",
             "levelFilterDesc": "이 로그에서 수집할 레벨을 선택합니다. 필터링된 레벨은 수집 엔드포인트에서 조용히 무시됩니다 — 로그 에이전트에는 오류로 표시되지 않습니다.",

@@ -24,7 +24,7 @@ export function LogListDesktopView({
   onAddService,
   onServiceClick,
 }: LogListDesktopViewProps) {
-  const { t } = useTranslation(['logs', 'healthcheck', 'common']);
+  const { t } = useTranslation(['logs', 'common']);
 
   return (
     <>
@@ -124,7 +124,7 @@ export function LogListDesktopView({
           <MaterialIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder={t('healthcheck.searchPlaceholder')}
+            placeholder={t('logs.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white dark:placeholder-text-muted-dark"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
