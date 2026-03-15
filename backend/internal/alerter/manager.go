@@ -166,6 +166,18 @@ func (m *Manager) sendToChannel(ch models.NotificationChannel, notification Noti
 		}
 		provider = NewTelegramProvider(config.BotToken, config.ChatID)
 
+	case "slack":
+		var config models.SlackConfig
+		if err := json.Unmarshal([]byte(ch.Config), &config); err != nil {
+			log.Printf("Failed to parse Slack config for channel %s: %v", ch.Name, err)
+			return
+		}
+		if err := ValidateWebhookURL("slack", config.WebhookURL); err != nil {
+			log.Printf("[SECURITY] Blocked Slack webhook for channel %s: %v", ch.Name, err)
+			return
+		}
+		provider = NewSlackProvider(config.WebhookURL)
+
 	default:
 		log.Printf("Unknown channel type: %s", ch.Type)
 		return

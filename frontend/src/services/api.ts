@@ -487,7 +487,7 @@ export interface HealthStatus {
 export interface NotificationChannel {
   id: string;
   name: string;
-  type: 'telegram' | 'discord';
+  type: 'telegram' | 'discord' | 'slack';
   config: string; // JSON string
   isEnabled: boolean;
   createdAt: string;
@@ -502,10 +502,14 @@ export interface DiscordConfig {
   webhookUrl: string;
 }
 
+export interface SlackConfig {
+  webhookUrl: string;
+}
+
 export interface CreateNotificationChannelData {
   name: string;
-  type: 'telegram' | 'discord';
-  config: TelegramConfig | DiscordConfig;
+  type: 'telegram' | 'discord' | 'slack';
+  config: TelegramConfig | DiscordConfig | SlackConfig;
 }
 
 // Host Types

@@ -3,29 +3,34 @@ import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../../../components/common';
 
 interface SetupGuideProps {
-    type: 'telegram' | 'discord';
+    type: 'telegram' | 'discord' | 'slack';
 }
 
 export function SetupGuide({ type }: SetupGuideProps) {
     const { t } = useTranslation(['alerts', 'common']);
     const [isOpen, setIsOpen] = useState(false);
 
-    const steps = type === 'telegram'
-        ? [
+    const stepsMap: Record<string, string[]> = {
+        telegram: [
             t('alerts.guide.telegram.step1'),
             t('alerts.guide.telegram.step2'),
             t('alerts.guide.telegram.step3'),
             t('alerts.guide.telegram.step4'),
-        ]
-        : [
+        ],
+        discord: [
             t('alerts.guide.discord.step1'),
             t('alerts.guide.discord.step2'),
             t('alerts.guide.discord.step3'),
-        ];
+        ],
+        slack: [
+            t('alerts.guide.slack.step1'),
+            t('alerts.guide.slack.step2'),
+            t('alerts.guide.slack.step3'),
+        ],
+    };
 
-    const tip = type === 'telegram'
-        ? t('alerts.guide.telegram.tip')
-        : t('alerts.guide.discord.tip');
+    const steps = stepsMap[type] || [];
+    const tip = t(`alerts.guide.${type}.tip`);
 
     return (
         <div className="rounded-lg border border-slate-200 dark:border-ui-border-dark overflow-hidden">

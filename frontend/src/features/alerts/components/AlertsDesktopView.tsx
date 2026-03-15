@@ -24,10 +24,13 @@ interface AlertsDesktopViewProps {
 const channelStyles: Record<string, { bg: string; text: string }> = {
   telegram: { bg: 'bg-sky-500/10', text: 'text-sky-500' },
   discord: { bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
+  slack: { bg: 'bg-purple-500/10', text: 'text-purple-500' },
 };
 
 const getChannelIcon = (type: string) => {
-  return type === 'telegram' ? 'send' : 'sports_esports';
+  if (type === 'telegram') return 'send';
+  if (type === 'slack') return 'tag';
+  return 'sports_esports';
 };
 
 export function AlertsDesktopView({

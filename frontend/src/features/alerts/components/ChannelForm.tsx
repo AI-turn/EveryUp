@@ -5,20 +5,20 @@ import { z } from 'zod';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '../../../components/common';
-import { api, type CreateNotificationChannelData, type NotificationChannel, type TelegramConfig, type DiscordConfig } from '../../../services/api';
+import { api, type CreateNotificationChannelData, type NotificationChannel, type TelegramConfig, type DiscordConfig, type SlackConfig } from '../../../services/api';
 import { useSidePanel } from '../../../contexts/SidePanelContext';
 import { SetupGuide } from './SetupGuide';
 
 const channelSchema = z.object({
     name: z.string().min(2, 'Name is too short'),
-    type: z.enum(['telegram', 'discord']),
+    type: z.enum(['telegram', 'discord', 'slack']),
     botToken: z.string().optional(),
     chatId: z.string().optional(),
     webhookUrl: z.string().optional(),
 }).refine(data => {
     if (data.type === 'telegram' && (!data.botToken || !data.chatId)) return false;
-    if (data.type === 'discord' && !data.webhookUrl) return false;
-    if (data.type === 'discord' && data.webhookUrl && !/^https?:\/\/.+/.test(data.webhookUrl)) return false;
+    if ((data.type === 'discord' || data.type === 'slack') && !data.webhookUrl) return false;
+    if ((data.type === 'discord' || data.type === 'slack') && data.webhookUrl && !/^https?:\/\/.+/.test(data.webhookUrl)) return false;
     return true;
 }, {
     message: 'Please fill in all required fields',
@@ -53,7 +53,7 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
 
     useEffect(() => {
         if (channel) {
-            let config: TelegramConfig | DiscordConfig | null = null;
+            let config: TelegramConfig | DiscordConfig | SlackConfig | null = null;
             try {
                 config = typeof channel.config === 'string'
                     ? JSON.parse(channel.config)
@@ -67,7 +67,7 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
                 type: channel.type,
                 botToken: channel.type === 'telegram' && config ? (config as TelegramConfig).botToken : '',
                 chatId: channel.type === 'telegram' && config ? (config as TelegramConfig).chatId : '',
-                webhookUrl: channel.type === 'discord' && config ? (config as DiscordConfig).webhookUrl : '',
+                webhookUrl: (channel.type === 'discord' || channel.type === 'slack') && config ? (config as DiscordConfig).webhookUrl : '',
             });
         } else {
             reset({ type: 'telegram', name: '', botToken: '', chatId: '', webhookUrl: '' });
@@ -83,7 +83,7 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
                 type: data.type,
                 config: data.type === 'telegram'
                     ? { botToken: data.botToken!, chatId: data.chatId! }
-                    : { webhookUrl: data.webhookUrl! },
+                    : { webhookUrl: data.webhookUrl! }, // discord & slack both use webhookUrl
             };
 
             if (isEditMode) {
@@ -143,6 +143,11 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
                             <MaterialIcon name="sports_esports" className="text-lg" />
                             {t('alerts.modal.discord')}
                         </label>
+                        <label className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border cursor-pointer transition-all ${selectedType === 'slack' ? 'bg-[#4A154B]/10 border-[#4A154B] text-[#4A154B] font-bold dark:bg-[#E01E5A]/10 dark:border-[#E01E5A] dark:text-[#E01E5A]' : 'bg-slate-50 dark:bg-ui-hover-dark border-slate-200 dark:border-ui-border-dark text-slate-500'}`}>
+                            <input {...register('type')} type="radio" value="slack" className="hidden" />
+                            <MaterialIcon name="tag" className="text-lg" />
+                            {t('alerts.modal.slack')}
+                        </label>
                     </div>
                 </div>
 
@@ -173,12 +178,12 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('alerts.modal.webhookUrl')}</label>
                             <input
                                 {...register('webhookUrl')}
-                                placeholder={t('alerts.modal.webhookUrlPlaceholder')}
+                                placeholder={selectedType === 'slack' ? t('alerts.modal.slackWebhookUrlPlaceholder') : t('alerts.modal.webhookUrlPlaceholder')}
                                 className={`w-full px-4 py-2 bg-slate-50 dark:bg-ui-hover-dark border ${errors.webhookUrl ? 'border-red-500' : 'border-slate-200 dark:border-ui-border-dark'} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-mono dark:text-white`}
                             />
                             {errors.webhookUrl && <p className="text-xs text-red-500 font-medium">{errors.webhookUrl.message}</p>}
                         </div>
-                        <SetupGuide type="discord" />
+                        <SetupGuide type={selectedType as 'discord' | 'slack'} />
                     </>
                 )}
             </div>

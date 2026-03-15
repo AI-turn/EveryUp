@@ -26,6 +26,7 @@ interface AlertsMobileViewProps {
 const channelIcons: Record<string, { icon: string; color: string; bg: string }> = {
   telegram: { icon: 'send', color: 'text-sky-500', bg: 'bg-sky-500/10' },
   discord: { icon: 'sports_esports', color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+  slack: { icon: 'tag', color: 'text-purple-500', bg: 'bg-purple-500/10' },
 };
 
 const severityColors: Record<string, { text: string; bg: string }> = {

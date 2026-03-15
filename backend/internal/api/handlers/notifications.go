@@ -63,12 +63,12 @@ func (h *NotificationHandler) Create(c *fiber.Ctx) error {
 	}
 
 	// Validate type
-	if req.Type != "telegram" && req.Type != "discord" {
+	if req.Type != "telegram" && req.Type != "discord" && req.Type != "slack" {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
 			"error": fiber.Map{
 				"code":    "INVALID_TYPE",
-				"message": "Type must be 'telegram' or 'discord'",
+				"message": "Type must be 'telegram', 'discord', or 'slack'",
 			},
 		})
 	}
@@ -183,6 +183,19 @@ func (h *NotificationHandler) Test(c *fiber.Ctx) error {
 			})
 		}
 		provider = alerter.NewTelegramProvider(config.BotToken, config.ChatID)
+
+	case "slack":
+		var config models.SlackConfig
+		if err := json.Unmarshal([]byte(channel.Config), &config); err != nil {
+			return c.Status(400).JSON(fiber.Map{
+				"success": false,
+				"error": fiber.Map{
+					"code":    "INVALID_CONFIG",
+					"message": "Invalid Slack configuration",
+				},
+			})
+		}
+		provider = alerter.NewSlackProvider(config.WebhookURL)
 	}
 
 	if err := provider.Send(notification); err != nil {
@@ -238,12 +251,12 @@ func (h *NotificationHandler) Update(c *fiber.Ctx) error {
 	}
 
 	// Validate type
-	if req.Type != "telegram" && req.Type != "discord" {
+	if req.Type != "telegram" && req.Type != "discord" && req.Type != "slack" {
 		return c.Status(400).JSON(fiber.Map{
 			"success": false,
 			"error": fiber.Map{
 				"code":    "INVALID_TYPE",
-				"message": "Type must be 'telegram' or 'discord'",
+				"message": "Type must be 'telegram', 'discord', or 'slack'",
 			},
 		})
 	}
@@ -366,10 +379,7 @@ func validateChannelWebhookURL(channelType string, configJSON []byte) error {
 		}
 		return alerter.ValidateWebhookURL("discord", cfg.WebhookURL)
 	case "slack":
-		// Slack support future-proofing
-		var cfg struct {
-			WebhookURL string `json:"webhookUrl"`
-		}
+		var cfg models.SlackConfig
 		if err := json.Unmarshal(configJSON, &cfg); err != nil {
 			return nil
 		}

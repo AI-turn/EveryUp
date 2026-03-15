@@ -9,7 +9,7 @@ import (
 type NotificationChannel struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
-	Type      string    `json:"type"`   // "telegram" | "discord"
+	Type      string    `json:"type"`   // "telegram" | "discord" | "slack"
 	Config    string    `json:"config"` // JSON string
 	IsEnabled bool      `json:"isEnabled"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -23,6 +23,11 @@ type TelegramConfig struct {
 
 // DiscordConfig holds Discord webhook configuration
 type DiscordConfig struct {
+	WebhookURL string `json:"webhookUrl"`
+}
+
+// SlackConfig holds Slack incoming webhook configuration
+type SlackConfig struct {
 	WebhookURL string `json:"webhookUrl"`
 }
 
@@ -50,6 +55,16 @@ func (ch *NotificationChannel) MaskConfig() NotificationChannel {
 		}
 	case "discord":
 		var cfg DiscordConfig
+		if err := json.Unmarshal([]byte(ch.Config), &cfg); err == nil {
+			if cfg.WebhookURL != "" {
+				cfg.WebhookURL = "***"
+			}
+			if b, err := json.Marshal(cfg); err == nil {
+				masked.Config = string(b)
+			}
+		}
+	case "slack":
+		var cfg SlackConfig
 		if err := json.Unmarshal([]byte(ch.Config), &cfg); err == nil {
 			if cfg.WebhookURL != "" {
 				cfg.WebhookURL = "***"

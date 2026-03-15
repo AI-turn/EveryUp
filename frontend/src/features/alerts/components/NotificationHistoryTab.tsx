@@ -279,7 +279,7 @@ export function NotificationHistoryTab() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <MaterialIcon
-                          name={item.channelType === 'discord' ? 'sports_esports' : 'send'}
+                          name={item.channelType === 'discord' ? 'sports_esports' : item.channelType === 'slack' ? 'tag' : 'send'}
                           className="text-lg"
                         />
                         <span className="text-sm text-gray-900 dark:text-white">
