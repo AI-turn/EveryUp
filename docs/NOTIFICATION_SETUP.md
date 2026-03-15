@@ -2,7 +2,7 @@
 
 > Korean version: [NOTIFICATION_SETUP.ko.md](./NOTIFICATION_SETUP.ko.md)
 
-EveryUp supports **Telegram** and **Discord** as notification channels. This guide walks you through obtaining the required credentials and configuring each channel.
+EveryUp supports **Telegram**, **Discord**, and **Slack** as notification channels. This guide walks you through obtaining the required credentials and configuring each channel.
 
 ---
 
@@ -99,6 +99,49 @@ The Chat ID tells EveryUp where to deliver messages. It works for private chats,
 | Test notification not received | The webhook may have been deleted. Verify it still exists under Server Settings → Integrations → Webhooks. |
 | `404 Unknown Webhook` | Webhook was deleted. Create a new one and update the URL in EveryUp. |
 | Rate limited | Discord enforces per-webhook rate limits. This is temporary — EveryUp will retry automatically. |
+
+---
+
+## Slack
+
+### Step 1 — Create a Slack App
+
+1. Go to [https://api.slack.com/apps](https://api.slack.com/apps) and click **Create New App**.
+2. Choose **From scratch**, give it a name (e.g., `EveryUp Alerts`), and select your workspace.
+3. Click **Create App**.
+
+---
+
+### Step 2 — Enable Incoming Webhooks
+
+1. In your app's settings, navigate to **Incoming Webhooks** in the left sidebar.
+2. Toggle **Activate Incoming Webhooks** to **On**.
+3. Click **Add New Webhook to Workspace** at the bottom of the page.
+4. Select the **channel** where you want alerts to appear and click **Allow**.
+5. Copy the **Webhook URL** that appears.
+
+> **Example URL:** `https://hooks.slack.com/services/T.../B.../xxxx...`
+
+> **Tip:** You can create multiple webhooks under the same Slack app, each posting to a different channel. No additional permissions are needed beyond the initial app installation.
+
+---
+
+### Step 3 — Configure in EveryUp
+
+1. Go to **Alerts → Add Channel → Slack**.
+2. Enter a display name and paste the **Webhook URL**.
+3. Click **Save** — a test notification is sent automatically.
+
+---
+
+### Troubleshooting
+
+| Symptom | Cause & Fix |
+|---------|-------------|
+| `404` or `invalid_payload` error | The Webhook URL is invalid or the app was uninstalled. Re-create the webhook from your Slack app settings. |
+| Test notification not received | Make sure the bot hasn't been removed from the channel. Check the channel's **Integrations** tab. |
+| `channel_not_found` | The target channel was deleted or renamed. Add a new webhook pointing to the correct channel. |
+| Messages delayed | Slack may occasionally queue messages during high traffic. EveryUp will retry automatically with exponential backoff. |
 
 ---
 
