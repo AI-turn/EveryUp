@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import logoDark from '../../assets/logo-dark.png';
 import { NotificationDropdown } from './NotificationDropdown';
+import { useIsMobile } from '../../hooks/useMediaQuery';
 
 function IconSun() {
     return (
@@ -35,57 +36,73 @@ export function Header() {
     const { theme, toggleTheme } = useTheme();
     const { i18n } = useTranslation('common');
     const [notifOpen, setNotifOpen] = useState(false);
+    const isMobile = useIsMobile();
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng);
     };
 
+    const toggleLanguage = () => {
+        const next = i18n.language.startsWith('ko') ? 'en' : 'ko';
+        i18n.changeLanguage(next);
+    };
+
     return (
-        <header className="h-16 border-b border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-main-dark flex items-center justify-between px-4 shrink-0 transition-colors duration-200 z-30 relative">
-            {/* 1. Left: Logo Area */}
+        <header className="h-14 lg:h-16 border-b border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-main-dark flex items-center justify-between px-4 shrink-0 transition-colors duration-200 z-30 relative">
+            {/* Left: Logo */}
             <Link to="/" className="flex items-center gap-2 group shrink-0 z-10 transition-transform active:scale-95">
                 <div className="flex items-center justify-center h-10 w-10 overflow-hidden">
                     <img src={theme === 'dark' ? logoDark : logo} alt="Monitoring Logo" className="h-full w-full object-contain" />
-
                 </div>
                 <div className="flex flex-col">
                     <h1 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-primary transition-colors">EveryUp</h1>
                 </div>
             </Link>
 
-            {/* 2. Right: Actions */}
-            <div className="flex items-center gap-6 z-10">
+            {/* Right: Actions */}
+            <div className="flex items-center gap-3 lg:gap-6 z-10">
                 {/* Language Switcher */}
-                <div className="flex items-center gap-1 bg-slate-100 dark:bg-bg-surface-dark p-1 rounded-lg">
+                {isMobile ? (
                     <button
-                        onClick={() => changeLanguage('ko')}
-                        className={`px-2.5 py-1.5 text-xs font-bold rounded-md transition-all ${i18n.language.startsWith('ko')
-                            ? 'bg-white dark:bg-ui-hover-dark text-primary shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:text-text-muted-dark dark:hover:text-white'
-                            }`}
+                        onClick={toggleLanguage}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-bg-surface-dark text-xs font-bold text-slate-600 dark:text-text-muted-dark active:scale-95 transition-all"
                     >
-                        KO
+                        {i18n.language.startsWith('ko') ? 'EN' : 'KO'}
                     </button>
-                    <button
-                        onClick={() => changeLanguage('en')}
-                        className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${i18n.language.startsWith('en')
-                            ? 'bg-white dark:bg-ui-hover-dark text-primary shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:text-text-muted-dark dark:hover:text-white'
-                            }`}
-                    >
-                        EN
-                    </button>
-                </div>
+                ) : (
+                    <div className="flex items-center gap-1 bg-slate-100 dark:bg-bg-surface-dark p-1 rounded-lg">
+                        <button
+                            onClick={() => changeLanguage('ko')}
+                            className={`px-2.5 py-1.5 text-xs font-bold rounded-md transition-all ${i18n.language.startsWith('ko')
+                                ? 'bg-white dark:bg-ui-hover-dark text-primary shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700 dark:text-text-muted-dark dark:hover:text-white'
+                                }`}
+                        >
+                            KO
+                        </button>
+                        <button
+                            onClick={() => changeLanguage('en')}
+                            className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${i18n.language.startsWith('en')
+                                ? 'bg-white dark:bg-ui-hover-dark text-primary shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700 dark:text-text-muted-dark dark:hover:text-white'
+                                }`}
+                        >
+                            EN
+                        </button>
+                    </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-1">
-                    <button
-                        onClick={toggleTheme}
-                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-white transition-colors"
-                        aria-label="Toggle theme"
-                    >
-                        {theme === 'light' ? <IconMoon /> : <IconSun />}
-                    </button>
+                    {!isMobile && (
+                        <button
+                            onClick={toggleTheme}
+                            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark hover:text-slate-700 dark:hover:text-white transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'light' ? <IconMoon /> : <IconSun />}
+                        </button>
+                    )}
                     <NotificationDropdown
                         open={notifOpen}
                         onToggle={() => setNotifOpen(v => !v)}
