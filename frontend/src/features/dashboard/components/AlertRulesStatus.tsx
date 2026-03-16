@@ -89,7 +89,7 @@ export function AlertRulesStatus() {
                 onClick={() => navigate('/alerts?tab=rules')}
                 className="mt-3 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
-                {t('dashboard.alertRules.addRule')} →
+                {t('dashboard.alertRules.add')} →
               </button>
             </div>
           ) : (

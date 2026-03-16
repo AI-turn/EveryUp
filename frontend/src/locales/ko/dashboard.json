@@ -22,9 +22,9 @@
             "title": "인프라",
             "empty": "등록된 인프라가 없습니다",
             "emptyDesc": "서버를 추가하여 CPU, 메모리, 디스크 모니터링을 시작하세요.",
-            "addHost": "인프라 추가"
+            "add": "인프라 추가"
         },
-        "logServices": {
+        "logs": {
             "title": "로그",
             "empty": "등록된 로그가 없습니다",
             "emptyDesc": "로그를 추가하여 API 오류를 수집하고 분석하세요.",
@@ -39,7 +39,7 @@
             "title": "알림 채널",
             "manage": "알림 설정",
             "empty": "등록된 알림 채널이 없습니다",
-            "addChannel": "채널 추가",
+            "add": "채널 추가",
             "active": "활성",
             "inactive": "비활성"
         },
@@ -47,7 +47,7 @@
             "title": "알림 규칙",
             "manage": "규칙 관리",
             "empty": "구성된 알림 규칙이 없습니다",
-            "addRule": "규칙 추가",
+            "add": "규칙 추가",
             "active": "활성",
             "inactive": "비활성",
             "builtIn": "내장",

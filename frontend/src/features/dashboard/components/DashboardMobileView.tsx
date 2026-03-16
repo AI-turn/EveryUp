@@ -211,7 +211,7 @@ export function DashboardMobileView() {
           <div className="flex items-center gap-2">
             <IconLogs size={18} className="text-primary" />
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-              {t('nav.logs')}
+              {t('dashboard.logs.title')}
             </h2>
           </div>
           <button
@@ -232,10 +232,10 @@ export function DashboardMobileView() {
             <div className="py-6 text-center">
               <IconLogs size={28} className="text-slate-300 dark:text-text-dim-dark block mx-auto" />
               <p className="text-xs font-medium text-slate-400 dark:text-text-muted-dark mt-2">
-                {t('dashboard.logServices.empty')}
+                {t('dashboard.logs.empty')}
               </p>
               <p className="text-xs text-slate-300 dark:text-text-dim-dark mt-0.5">
-                {t('dashboard.logServices.emptyDesc')}
+                {t('dashboard.logs.emptyDesc')}
               </p>
             </div>
           ) : (
@@ -321,7 +321,7 @@ export function DashboardMobileView() {
                 onClick={() => navigate('/infra')}
                 className="mt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
-                {t('dashboard.infrastructure.addHost', { defaultValue: 'Add Host' })} →
+                {t('dashboard.infrastructure.add', { defaultValue: 'Add Infrastructure' })} →
               </button>
             </div>
           ) : (

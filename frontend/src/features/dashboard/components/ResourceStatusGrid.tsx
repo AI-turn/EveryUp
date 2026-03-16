@@ -34,7 +34,7 @@ export function ResourceStatusGrid() {
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
         >
           <MaterialIcon name="add" className="text-sm" />
-          {t('dashboard.infrastructure.addHost')}
+          {t('dashboard.infrastructure.add')}
         </button>
       </div>
 
@@ -65,7 +65,7 @@ export function ResourceStatusGrid() {
           title={t('dashboard.infrastructure.empty', { defaultValue: 'No resources registered' })}
           description={t('dashboard.infrastructure.emptyDesc', { defaultValue: 'Add a server to start monitoring CPU, memory, and disk.' })}
           action={{
-            label: t('infra.addResource'),
+            label: t('dashboard.infrastructure.add'),
             onClick: () => navigate('/infra'),
           }}
         />

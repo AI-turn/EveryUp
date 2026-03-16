@@ -22,9 +22,9 @@
             "title": "Infrastructure",
             "empty": "No infrastructure registered",
             "emptyDesc": "Add a server to start monitoring CPU, memory, and disk.",
-            "addHost": "Add Infrastructure"
+            "add": "Add Infrastructure"
         },
-        "logServices": {
+        "logs": {
             "title": "Logs",
             "empty": "No logs registered",
             "emptyDesc": "Add a log to collect and analyze error logs from your APIs.",
@@ -39,7 +39,7 @@
             "title": "Notification Channels",
             "manage": "Manage Alerts",
             "empty": "No notification channels configured",
-            "addChannel": "Add Channel",
+            "add": "Add Channel",
             "active": "Active",
             "inactive": "Inactive"
         },
@@ -47,7 +47,7 @@
             "title": "Alert Rules",
             "manage": "Manage Rules",
             "empty": "No alert rules configured",
-            "addRule": "Add Rule",
+            "add": "Add Rule",
             "active": "Active",
             "inactive": "Inactive",
             "builtIn": "Built-in",

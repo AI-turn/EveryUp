@@ -92,14 +92,12 @@ export function useDashboardKPI() {
     // Transform API response to match KPIData structure
     return [
       {
-        icon: 'hub',
         label: 'Total Services',
         value: `${summary.healthyServices}/${summary.totalServices}`,
         subValue: `${Math.round((summary.healthyServices / summary.totalServices) * 100)}% Active`,
         color: 'primary' as const,
       },
       {
-        icon: 'warning',
         label: 'Active Alerts',
         value: summary.criticalAlerts.toString(),
         subValue: summary.criticalAlerts > 0 ? 'Requires attention' : 'All clear',
@@ -112,7 +110,6 @@ export function useDashboardKPI() {
             : '/alerts',
       },
       {
-        icon: 'timer',
         label: 'Global Uptime',
         value: `${summary.overallUptime.toFixed(2)}%`,
         subValue: 'Last 24 hours',

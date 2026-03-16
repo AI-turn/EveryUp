@@ -69,7 +69,7 @@ export function NotificationChannelStatus() {
             onClick={() => navigate('/alerts')}
             className="mt-3 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
           >
-            {t('dashboard.notifications.addChannel')} →
+            {t('dashboard.notifications.add')} →
           </button>
         </div>
       )}

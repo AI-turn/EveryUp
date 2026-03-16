@@ -97,7 +97,7 @@ export function ServiceHealthGrid({
           title={t('dashboard.healthCheck.empty')}
           description={t('dashboard.healthCheck.emptyDesc')}
           action={{
-            label: t('dashboard.healthCheck.addService'),
+            label: t('dashboard.healthCheck.add'),
             onClick: onAddClick ?? (() => navigate('/healthcheck')),
           }}
         />

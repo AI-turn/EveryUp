@@ -21,7 +21,6 @@ export interface Incident {
 }
 
 export interface KPIData {
-  icon: string;
   label: string;
   value: string;
   subValue: string;

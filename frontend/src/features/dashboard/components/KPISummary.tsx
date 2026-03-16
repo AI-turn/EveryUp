@@ -43,7 +43,6 @@ export function KPISummary() {
           label={labelMap[data.label] ? t(labelMap[data.label]) : data.label}
           value={data.value}
           subValue={data.subValue}
-          icon={data.icon}
           color={data.color as any}
           onClick={data.href ? () => navigate(data.href!) : undefined}
         />
