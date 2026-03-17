@@ -20,6 +20,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showForgot, setShowForgot] = useState(false)
 
   // Check if first-run setup is needed
   useEffect(() => {
@@ -146,6 +147,63 @@ export function LoginPage() {
             </button>
           </form>
         </div>
+
+        {!isSetup && (
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => setShowForgot(!showForgot)}
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors"
+            >
+              {t('login.forgotPassword')}
+            </button>
+
+            {showForgot && (
+              <div className="mt-3 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4 text-left space-y-4">
+                <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                  {t('login.forgotPasswordDesc')}
+                </p>
+
+                {/* Method 1: Env var */}
+                <div className="space-y-1.5">
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    {t('login.recoveryMethod1Title')}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                    {t('login.recoveryMethod1Desc')}
+                  </p>
+                  <pre className="text-[11px] bg-slate-50 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
+{`# docker-compose.yml
+environment:
+  MT_ADMIN_USERNAME: admin
+  MT_ADMIN_PASSWORD: newpassword
+
+# then restart
+docker compose restart`}
+                  </pre>
+                </div>
+
+                {/* Method 2: Docker exec */}
+                <div className="space-y-1.5">
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    {t('login.recoveryMethod2Title')}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                    {t('login.recoveryMethod2Desc')}
+                  </p>
+                  <pre className="text-[11px] bg-slate-50 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
+{`docker exec -it everyup \\
+  sqlite3 /app/data/everyup.db \\
+  "DELETE FROM users;"
+
+# then restart
+docker compose restart`}
+                  </pre>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <p className="text-center text-slate-400 dark:text-slate-600 text-xs mt-4">
           {t('login.hint')}

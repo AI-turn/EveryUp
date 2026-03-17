@@ -22,7 +22,7 @@ func (c *TCPChecker) Check(config *models.TCPConfig) *CheckResult {
 		CheckedAt: time.Now(),
 	}
 
-	address := fmt.Sprintf("%s:%d", config.Host, config.Port)
+	address := net.JoinHostPort(config.Host, fmt.Sprintf("%d", config.Port))
 	timeout := time.Duration(config.Timeout) * time.Millisecond
 
 	// Attempt connection

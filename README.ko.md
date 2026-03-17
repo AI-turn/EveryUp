@@ -1,6 +1,6 @@
 # EveryUp
 
-> 서비스, 서버, API를 하나의 셀프 호스팅 대시보드에서 모니터링하세요. 장애 발생 시 Telegram 또는 Discord로 실시간 알림을 받을 수 있습니다.
+> 서비스, 서버, API를 하나의 셀프 호스팅 대시보드에서 모니터링하세요. 장애 발생 시 Telegram, Discord 또는 Slack으로 실시간 알림을 받을 수 있습니다.
 
 [English](README.md) | **한국어**
 
@@ -21,7 +21,7 @@
 | **헬스체크** | HTTP/TCP 헬스체크, 업타임, 레이턴시 추적 |
 | **인프라** | CPU/메모리/디스크/네트워크 실시간 수집 (로컬 + SSH 원격) |
 | **API 메트릭** | 엔드포인트별 트래픽, 에러율, 응답시간 분석 |
-| **알림** | Telegram / Discord 채널 연동, 임계값 기반 규칙 |
+| **알림** | Telegram / Discord / Slack 채널 연동, 임계값 기반 규칙 |
 | **로그** | 통합 로그 뷰어, 검색, 로그 에이전트 수집 |
 | **실시간 스트리밍** | WebSocket 기반 메트릭 실시간 업데이트 |
 
@@ -206,7 +206,7 @@ docker run -d \
 | [backend/README.md](backend/README.md) | 백엔드 API 및 설정 문서 |
 | [frontend/README.md](frontend/README.md) | 프론트엔드 개발 환경 및 페이지 구조 |
 | [log-agent/README.md](log-agent/README.md) | 로그 에이전트 배포 가이드 |
-| [docs/NOTIFICATION_SETUP.ko.md](docs/NOTIFICATION_SETUP.ko.md) | 텔레그램 & 디스코드 채널 설정 가이드 |
+| [docs/NOTIFICATION_SETUP.ko.md](docs/NOTIFICATION_SETUP.ko.md) | 텔레그램, 디스코드 & 슬랙 채널 설정 가이드 |
 
 ---
 

@@ -121,6 +121,28 @@ func (h *HostHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate field lengths
+	if len(req.ID) > 100 || len(req.Name) > 200 || len(req.IP) > 255 {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "VALIDATION_ERROR",
+				"message": "id (max 100), name (max 200), or ip (max 255) exceeds maximum length",
+			},
+		})
+	}
+
+	// Reject reserved host IDs
+	if req.ID == "local" {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "VALIDATION_ERROR",
+				"message": "id 'local' is reserved for the system host",
+			},
+		})
+	}
+
 	// Check if host already exists
 	existing, _ := h.repo.GetByID(req.ID)
 	if existing != nil {

@@ -367,8 +367,8 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{t('alerts.rules.metric')}</label>
                         <div className="flex flex-wrap gap-2">
-                            {(isEndpoint ? ['http_status', 'response_time'] : ['cpu', 'memory', 'disk']).map(m => (
-                                <button key={m} type="button" onClick={() => handleMetricChange(m as any)}
+                            {(isEndpoint ? ['http_status', 'response_time'] as const : ['cpu', 'memory', 'disk'] as const).map(m => (
+                                <button key={m} type="button" onClick={() => handleMetricChange(m)}
                                     className={`px-4 py-2 rounded-lg text-xs font-bold border-2 transition-all ${watchedMetric === m ? 'border-primary bg-primary/10 text-primary' : 'border-slate-100 dark:border-ui-border-dark text-slate-500'
                                         }`}>
                                     {m.replace('_', ' ').toUpperCase()}

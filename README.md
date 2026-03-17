@@ -1,6 +1,6 @@
 # EveryUp
 
-> Monitor your services, servers, and APIs from a single self-hosted dashboard. Get real-time alerts on Telegram or Discord when something goes down.
+> Monitor your services, servers, and APIs from a single self-hosted dashboard. Get real-time alerts on Telegram, Discord, or Slack when something goes down.
 
 [한국어](README.ko.md) | **English**
 
@@ -21,7 +21,7 @@
 | **Health Check** | HTTP/TCP health checks, uptime tracking, latency trends |
 | **Infrastructure** | Real-time CPU/memory/disk/network collection (local + SSH remote) |
 | **API Metrics** | Per-endpoint traffic, error rate, and response time analysis |
-| **Alerts** | Telegram / Discord integration, threshold-based rules |
+| **Alerts** | Telegram / Discord / Slack integration, threshold-based rules |
 | **Logs** | Unified log viewer, search, log agent collection |
 | **Real-time Streaming** | WebSocket-based live metric updates |
 
@@ -206,7 +206,7 @@ See [log-agent/README.md](log-agent/README.md) for more details.
 | [backend/README.md](backend/README.md) | Backend API and configuration reference |
 | [frontend/README.md](frontend/README.md) | Frontend dev setup and page structure |
 | [log-agent/README.md](log-agent/README.md) | Log agent deployment guide |
-| [docs/NOTIFICATION_SETUP.md](docs/NOTIFICATION_SETUP.md) | Telegram & Discord channel setup guide |
+| [docs/NOTIFICATION_SETUP.md](docs/NOTIFICATION_SETUP.md) | Telegram, Discord & Slack channel setup guide |
 
 ---
 

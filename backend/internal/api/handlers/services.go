@@ -145,6 +145,17 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate field lengths
+	if len(req.ID) > 100 || len(req.Name) > 200 || len(req.URL) > 2048 {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "VALIDATION_ERROR",
+				"message": "id (max 100), name (max 200), or url (max 2048) exceeds maximum length",
+			},
+		})
+	}
+
 	// Log type services don't require URL/Host — they only receive SDK metrics
 	if req.Type == models.ServiceTypeLog {
 		// No URL/Host validation needed

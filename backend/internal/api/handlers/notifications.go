@@ -196,6 +196,15 @@ func (h *NotificationHandler) Test(c *fiber.Ctx) error {
 			})
 		}
 		provider = alerter.NewSlackProvider(config.WebhookURL)
+
+	default:
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "UNSUPPORTED_TYPE",
+				"message": "Unsupported channel type: " + channel.Type,
+			},
+		})
 	}
 
 	if err := provider.Send(notification); err != nil {

@@ -219,5 +219,9 @@ func (h *AuthHandler) Reset(c *fiber.Ctx) error {
 		return internalError(c, "SECRET_ERROR", err)
 	}
 
+	// Clear the caller's JWT cookie — the rotated secret invalidates all tokens,
+	// but the stale cookie would cause repeated 401s until it expires.
+	clearAuthCookie(c)
+
 	return c.JSON(fiber.Map{"success": true})
 }

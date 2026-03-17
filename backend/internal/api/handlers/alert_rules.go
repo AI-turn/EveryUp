@@ -84,6 +84,17 @@ func (h *AlertRuleHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate field lengths
+	if len(req.Name) > 200 || len(req.Message) > 1000 {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"error": fiber.Map{
+				"code":    "VALIDATION_ERROR",
+				"message": "name (max 200) or message (max 1000) exceeds maximum length",
+			},
+		})
+	}
+
 	// Validate required fields
 	if req.Name == "" {
 		return c.Status(400).JSON(fiber.Map{

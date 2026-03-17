@@ -91,6 +91,7 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName:               "EveryUp API",
 		DisableStartupMessage: cfg.Server.Mode == "production",
+		BodyLimit:             4 * 1024 * 1024, // 4 MB
 	})
 
 	// Setup WebSocket hub

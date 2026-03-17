@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/aiturn/everyup/internal/models"
@@ -78,10 +77,12 @@ func (r *LogRepository) GetAll(filter models.LogFilter) ([]models.Log, int, erro
 	// Add pagination
 	query += " ORDER BY created_at DESC"
 	if filter.Limit > 0 {
-		query += fmt.Sprintf(" LIMIT %d", filter.Limit)
+		query += " LIMIT ?"
+		args = append(args, filter.Limit)
 	}
 	if filter.Offset > 0 {
-		query += fmt.Sprintf(" OFFSET %d", filter.Offset)
+		query += " OFFSET ?"
+		args = append(args, filter.Offset)
 	}
 
 	rows, err := DB.Query(query, args...)
