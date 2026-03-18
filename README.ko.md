@@ -38,6 +38,7 @@
 ### Docker
 
 ```bash
+docker pull aiturn/everyup:latest
 docker run -d \
   --name everyup \
   -p 3001:3001 \

@@ -38,6 +38,7 @@ Supports `linux/amd64` and `linux/arm64` — Docker automatically pulls the corr
 ### Docker
 
 ```bash
+docker pull aiturn/everyup:latest
 docker run -d \
   --name everyup \
   -p 3001:3001 \
