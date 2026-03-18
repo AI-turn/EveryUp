@@ -19,7 +19,7 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
 
   return (
     <div
-      className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 hover:border-primary/50 transition-colors ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}`}
+      className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0' : ''}`}
       onClick={onClick}
     >
       {/* Header */}

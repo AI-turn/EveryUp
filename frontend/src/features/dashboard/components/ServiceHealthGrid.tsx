@@ -48,10 +48,10 @@ export function ServiceHealthGrid({
   const hasMore = maxItems ? filteredServices.length > maxItems : false;
 
   return (
-    <div className={bare ? '' : 'bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6'}>
+    <div>
       {/* Header */}
       {!hideHeader && (
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 pt-2">
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-slate-900 dark:text-white">
               {t('dashboard.healthCheck.title')}
@@ -65,7 +65,7 @@ export function ServiceHealthGrid({
           <div className="flex gap-2">
             <button
               onClick={() => navigate('/healthcheck', { state: { openAddModal: true } })}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm"
+              className="flex items-center gap-2 px-3 py-2 min-h-9 rounded-lg bg-primary text-white text-sm font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
             >
               <MaterialIcon name="add" className="text-sm" />
               {t('dashboard.healthCheck.add')}
@@ -92,15 +92,17 @@ export function ServiceHealthGrid({
 
       {/* Empty State */}
       {!loading && !error && (!services || services.length === 0) && (
-        <EmptyState
-          icon="monitor_heart"
-          title={t('dashboard.healthCheck.empty')}
-          description={t('dashboard.healthCheck.emptyDesc')}
-          action={{
-            label: t('dashboard.healthCheck.add'),
-            onClick: onAddClick ?? (() => navigate('/healthcheck')),
-          }}
-        />
+        <div className="rounded-xl border-2 border-dashed border-slate-200 dark:border-ui-border-dark bg-slate-50/50 dark:bg-ui-hover-dark/30">
+          <EmptyState
+            icon="monitor_heart"
+            title={t('dashboard.healthCheck.empty')}
+            description={t('dashboard.healthCheck.emptyDesc')}
+            action={{
+              label: t('dashboard.healthCheck.add'),
+              onClick: onAddClick ?? (() => navigate('/healthcheck')),
+            }}
+          />
+        </div>
       )}
 
       {/* Grid */}
@@ -136,6 +138,8 @@ export function ServiceHealthGrid({
           <p className="text-slate-500 dark:text-text-muted-dark">{t('logs.noResults')}</p>
         </div>
       )}
+
+      {!bare && <div className="mt-6 mx-6 h-px bg-slate-200 dark:bg-ui-border-dark" />}
     </div>
   );
 }

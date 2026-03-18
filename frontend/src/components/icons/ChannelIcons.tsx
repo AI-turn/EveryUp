@@ -47,7 +47,7 @@ export function IconSlack({ size = 20, ...props }: IconProps) {
     <svg
       width={size}
       height={size}
-      viewBox="0 0 270 270"
+      viewBox="60 60 150 150"
       fill="currentColor"
       {...props}
     >

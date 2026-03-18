@@ -84,23 +84,11 @@ export function DashboardMobileView() {
     });
   }, [logServices]);
 
-  const kpiColorConfig: Record<string, { cardBg: string; valueText: string }> = {
-    primary: {
-      cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
-      valueText: 'text-primary',
-    },
-    red: {
-      cardBg: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900/40',
-      valueText: 'text-red-600 dark:text-red-400',
-    },
-    emerald: {
-      cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
-      valueText: 'text-emerald-600 dark:text-emerald-400',
-    },
-    amber: {
-      cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
-      valueText: 'text-amber-600 dark:text-amber-400',
-    },
+  const kpiValueColorMap: Record<string, string> = {
+    primary: 'text-primary',
+    red: 'text-red-500 dark:text-red-400',
+    emerald: 'text-emerald-600 dark:text-emerald-400',
+    amber: 'text-amber-600 dark:text-amber-400',
   };
 
   const kpiLabelMap: Record<string, string> = {
@@ -109,41 +97,76 @@ export function DashboardMobileView() {
     'Global Uptime': 'dashboard.kpi.overallUptime',
   };
 
+  const alertsItem = (kpiData || []).find(k => k.label === 'Active Alerts');
+  const uptimeItem = (kpiData || []).find(k => k.label === 'Global Uptime');
+  const isCritical = alertsItem?.color === 'red';
+  const isDegraded = !isCritical && parseFloat(String(uptimeItem?.value ?? '100')) < 99;
+  const mobileStatusKey = isCritical ? 'critical' : isDegraded ? 'degraded' : 'operational';
+
+  const mobileStatusConfig = {
+    operational: { dot: 'bg-emerald-500', label: 'OPERATIONAL', labelColor: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
+    degraded:    { dot: 'bg-amber-500',   label: 'DEGRADED',    labelColor: 'text-amber-600 dark:text-amber-400',   bg: 'bg-amber-500/10'   },
+    critical:    { dot: 'bg-red-500',     label: 'CRITICAL',    labelColor: 'text-red-600 dark:text-red-400',       bg: 'bg-red-500/10'     },
+  };
+  const mobileStatus = mobileStatusConfig[mobileStatusKey];
+
   return (
     <div className="space-y-4">
-      {/* KPI Strip */}
-      <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
-        {kpiLoading ? (
-          [1, 2, 3].map(i => (
-            <div key={i} className="shrink-0 w-32 h-20 rounded-xl bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
-          ))
-        ) : (
-          (kpiData || []).map(kpi => (
-            <div
-              key={kpi.label}
-              onClick={kpi.href ? () => navigate(kpi.href!) : undefined}
-              className={[
-                'shrink-0 flex-1 min-w-27.5 border rounded-xl p-3',
-                (kpiColorConfig[kpi.color] ?? kpiColorConfig.primary).cardBg,
-                kpi.href ? 'active:scale-95 cursor-pointer' : '',
-              ].join(' ')}
-            >
-              <p className="text-xs font-medium text-slate-500 dark:text-text-muted-dark truncate">
-                {kpiLabelMap[kpi.label] ? t(kpiLabelMap[kpi.label]) : kpi.label}
-              </p>
-              <p className={`text-xl font-bold tabular-nums ${(kpiColorConfig[kpi.color] ?? kpiColorConfig.primary).valueText}`}>
-                {kpi.value}
-              </p>
-              {kpi.subValue && (
-                <p className="text-xs text-slate-400 dark:text-text-dim-dark">{kpi.subValue}</p>
-              )}
+      {/* System Status Banner */}
+      {kpiLoading ? (
+        <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4 animate-pulse">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-ui-hover-dark" />
+              <div className="h-4 w-24 bg-slate-200 dark:bg-ui-hover-dark rounded" />
             </div>
-          ))
-        )}
-      </div>
+            <div className="flex gap-4">
+              {[1, 2, 3].map(i => <div key={i} className="h-5 w-10 bg-slate-200 dark:bg-ui-hover-dark rounded" />)}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            {/* Status */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className={`w-8 h-8 rounded-lg ${mobileStatus.bg} flex items-center justify-center shrink-0`}>
+                <span className="relative flex w-2 h-2">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${mobileStatus.dot} opacity-60`} />
+                  <span className={`relative inline-flex rounded-full w-2 h-2 ${mobileStatus.dot}`} />
+                </span>
+              </div>
+              <p className={`text-xs font-bold uppercase tracking-widest truncate ${mobileStatus.labelColor}`}>
+                {mobileStatus.label}
+              </p>
+            </div>
+            {/* Stats */}
+            <div className="flex items-center divide-x divide-slate-200 dark:divide-ui-border-dark shrink-0">
+              {(kpiData || []).map((kpi, i) => (
+                <div
+                  key={kpi.label}
+                  onClick={kpi.href ? () => navigate(kpi.href!) : undefined}
+                  className={[
+                    i === 0 ? 'pr-3' : i === (kpiData?.length ?? 1) - 1 ? 'pl-3' : 'px-3',
+                    'text-right',
+                    kpi.href ? 'cursor-pointer active:opacity-70' : '',
+                  ].join(' ')}
+                >
+                  <p className={`text-base font-bold tabular-nums leading-none ${kpiValueColorMap[kpi.color]}`}>
+                    {kpi.value}
+                  </p>
+                  <p className="text-[10px] text-slate-400 dark:text-text-dim-dark mt-0.5 whitespace-nowrap">
+                    {kpiLabelMap[kpi.label] ? t(kpiLabelMap[kpi.label]) : kpi.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Services Quick Status */}
-      <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
+      <section>
         <div className="flex items-center justify-between p-4 pb-0">
           <div className="flex items-center gap-2">
             <IconHealthCheck size={18} className="text-primary" />
@@ -166,7 +189,7 @@ export function DashboardMobileView() {
               ))}
             </div>
           ) : !services || services.length === 0 ? (
-            <div className="py-6 text-center">
+            <div className="rounded-xl border-2 border-dashed border-slate-200 dark:border-ui-border-dark bg-slate-50/50 dark:bg-ui-hover-dark/30 py-6 text-center">
               <IconHealthCheck size={28} className="text-slate-300 dark:text-text-dim-dark block mx-auto" />
               <p className="text-xs font-medium text-slate-400 dark:text-text-muted-dark mt-2">
                 {t('dashboard.healthCheck.empty')}
@@ -203,10 +226,11 @@ export function DashboardMobileView() {
             </div>
           )}
         </div>
+        <div className="mx-4 h-px bg-slate-200 dark:bg-ui-border-dark" />
       </section>
 
       {/* Log Services */}
-      <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
+      <section>
         <div className="flex items-center justify-between p-4 pb-3">
           <div className="flex items-center gap-2">
             <IconLogs size={18} className="text-primary" />
@@ -229,7 +253,7 @@ export function DashboardMobileView() {
               ))}
             </div>
           ) : logServices.length === 0 ? (
-            <div className="py-6 text-center">
+            <div className="rounded-xl border-2 border-dashed border-slate-200 dark:border-ui-border-dark bg-slate-50/50 dark:bg-ui-hover-dark/30 py-6 text-center">
               <IconLogs size={28} className="text-slate-300 dark:text-text-dim-dark block mx-auto" />
               <p className="text-xs font-medium text-slate-400 dark:text-text-muted-dark mt-2">
                 {t('dashboard.logs.empty')}
@@ -280,10 +304,11 @@ export function DashboardMobileView() {
             </div>
           )}
         </div>
+        <div className="mx-4 h-px bg-slate-200 dark:bg-ui-border-dark" />
       </section>
 
       {/* Infrastructure Quick Status */}
-      <section className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl">
+      <section>
         <div className="flex items-center justify-between p-4 pb-3">
           <div className="flex items-center gap-2">
             <IconInfra size={18} className="text-primary" />
@@ -310,7 +335,7 @@ export function DashboardMobileView() {
               ))}
             </div>
           ) : !resources || resources.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
+            <div className="rounded-xl border-2 border-dashed border-slate-200 dark:border-ui-border-dark bg-slate-50/50 dark:bg-ui-hover-dark/30 flex flex-col items-center justify-center py-6 text-center">
               <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-ui-hover-dark flex items-center justify-center mb-2">
                 <IconInfra size={20} className="text-slate-400" />
               </div>
@@ -346,6 +371,7 @@ export function DashboardMobileView() {
             </div>
           )}
         </div>
+        <div className="mx-4 h-px bg-slate-200 dark:bg-ui-border-dark" />
       </section>
 
       {/* Recent Events */}

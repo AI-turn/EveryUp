@@ -8,7 +8,7 @@ import { AlertRulesStatus } from './AlertRulesStatus';
 
 export function DashboardDesktopView() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <KPISummary />
       <ServiceHealthGrid maxItems={3} />
       <LogServicesGrid />

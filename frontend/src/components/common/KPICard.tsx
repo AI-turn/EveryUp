@@ -32,11 +32,14 @@ export function KPICard({ label, value, subValue, color, onClick }: KPICardProps
     return (
         <div
             onClick={onClick}
+            tabIndex={isClickable ? 0 : undefined}
+            onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.(); } : undefined}
+            role={isClickable ? 'button' : undefined}
             className={[
                 'border rounded-xl p-5 transition-all duration-150',
                 config.cardBg,
                 isClickable
-                    ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
+                    ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2'
                     : '',
             ].join(' ')}
         >
