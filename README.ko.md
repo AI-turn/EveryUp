@@ -31,55 +31,48 @@
 
 ## 빠른 시작
 
-### Docker로 실행 (권장)
+> **별도 설정이 필요 없습니다.** 처음 실행 후 브라우저에서 관리자 계정을 직접 생성합니다. 암호화 키와 JWT 시크릿은 최초 실행 시 자동 생성됩니다.
 
-```bash
-docker pull aiturn/everyup:latest
-```
+`linux/amd64`와 `linux/arm64` 모두 지원합니다 — Docker가 플랫폼에 맞는 이미지를 자동으로 선택합니다.
+
+### Docker
 
 ```bash
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
-  -e TZ=Asia/Seoul \
   aiturn/everyup:latest
 ```
 
-`linux/amd64`와 `linux/arm64` 모두 지원합니다 — Docker가 플랫폼에 맞는 이미지를 자동으로 선택합니다.
+### Docker Compose
 
-**접속 → http://localhost:3001** 후 관리자 계정 생성
+`docker-compose.yml` 파일을 만들고 실행합니다.
 
-> **별도 계정 설정이 필요 없습니다.** 처음 실행 후 브라우저에서 관리자 계정을 직접 생성합니다.
-> **암호화 키와 JWT 시크릿도 별도 설정 없이** 앱이 최초 실행 시 자동 생성하여 DB에 저장합니다.
+```yaml
+services:
+  everyup:
+    image: aiturn/everyup:latest
+    container_name: everyup
+    ports:
+      - "3001:3001"
+    volumes:
+      - everyup-data:/app/data
+    restart: unless-stopped
 
----
-
-### Docker Compose로 실행
-
-compose 파일을 받아서 바로 시작합니다.
+volumes:
+  everyup-data:
+```
 
 ```bash
-curl -O https://raw.githubusercontent.com/AI-turn/EveryUp/main/docker-compose.yml
 docker compose up -d
 ```
 
-**http://localhost:3001** 접속 후 브라우저에서 관리자 계정을 생성합니다. 별도 사전 설정이 필요 없습니다.
+---
 
-> 포트, 타임존, 관리자 계정을 미리 설정하려면 `.env.example`도 받아서 수정한 뒤 시작하세요.
-> ```bash
-> curl -O https://raw.githubusercontent.com/AI-turn/EveryUp/main/.env.example
-> cp .env.example .env
-> # .env 수정 후:
-> docker compose up -d
-> ```
+**http://localhost:3001** 접속 후 관리자 계정을 생성합니다.
 
-상태 확인:
-
-```bash
-docker compose ps
-docker compose logs -f
-```
+> 포트, 타임존, 관리자 계정 사전 설정이 필요하면 [설정](#설정) 섹션을 참고하세요.
 
 ---
 
@@ -152,6 +145,7 @@ docker cp everyup:/app/data/monitoring.db ./monitoring.db.bak
 
 ## 업그레이드
 
+**Docker:**
 ```bash
 docker pull aiturn/everyup:latest
 docker stop everyup && docker rm everyup
@@ -159,18 +153,15 @@ docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
-  -e TZ=Asia/Seoul \
   aiturn/everyup:latest
 ```
 
-> 데이터는 `everyup-data` 볼륨에 저장되며 업그레이드 시에도 유지됩니다.
-
-Docker Compose 사용 시:
-
+**Docker Compose:**
 ```bash
-docker compose pull
-docker compose up -d
+docker compose pull && docker compose up -d
 ```
+
+> 데이터는 `everyup-data` 볼륨에 저장되며 업그레이드 시에도 유지됩니다.
 
 ---
 

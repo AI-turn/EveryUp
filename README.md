@@ -31,55 +31,48 @@
 
 ## Quick Start
 
-### Run with Docker (recommended)
+> **No pre-configuration needed.** On first launch, create your admin account directly in the browser. Encryption keys and JWT secrets are auto-generated on first run.
 
-```bash
-docker pull aiturn/everyup:latest
-```
+Supports `linux/amd64` and `linux/arm64` — Docker automatically pulls the correct variant.
+
+### Docker
 
 ```bash
 docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
-  -e TZ=UTC \
   aiturn/everyup:latest
 ```
 
-The image supports both `linux/amd64` and `linux/arm64` — Docker automatically pulls the correct variant for your platform.
+### Docker Compose
 
-**Open → http://localhost:3001** and create your admin account.
+Create a `docker-compose.yml` file:
 
-> **No pre-configuration needed.** On first launch, create your admin account directly in the browser.
-> **Encryption keys and JWT secrets are auto-generated** on first run and stored in the database.
+```yaml
+services:
+  everyup:
+    image: aiturn/everyup:latest
+    container_name: everyup
+    ports:
+      - "3001:3001"
+    volumes:
+      - everyup-data:/app/data
+    restart: unless-stopped
 
----
-
-### Run with Docker Compose
-
-Download the compose file and start:
+volumes:
+  everyup-data:
+```
 
 ```bash
-curl -O https://raw.githubusercontent.com/AI-turn/EveryUp/main/docker-compose.yml
 docker compose up -d
 ```
 
-Open **http://localhost:3001** and create your admin account in the browser. No pre-configuration required.
+---
 
-> To customize port, timezone, or pre-seed an admin account, also download `.env.example`, copy it to `.env`, and edit before starting:
-> ```bash
-> curl -O https://raw.githubusercontent.com/AI-turn/EveryUp/main/.env.example
-> cp .env.example .env
-> # edit .env, then:
-> docker compose up -d
-> ```
+Open **http://localhost:3001** and create your admin account.
 
-Check status:
-
-```bash
-docker compose ps
-docker compose logs -f
-```
+> To customize port, timezone, or pre-seed an admin account, see [Configuration](#configuration).
 
 ---
 
@@ -152,6 +145,7 @@ docker cp everyup:/app/data/monitoring.db ./monitoring.db.bak
 
 ## Upgrading
 
+**Docker:**
 ```bash
 docker pull aiturn/everyup:latest
 docker stop everyup && docker rm everyup
@@ -159,18 +153,15 @@ docker run -d \
   --name everyup \
   -p 3001:3001 \
   -v everyup-data:/app/data \
-  -e TZ=UTC \
   aiturn/everyup:latest
 ```
 
-> Your data is stored in the `everyup-data` volume and is preserved across upgrades.
-
-With Docker Compose:
-
+**Docker Compose:**
 ```bash
-docker compose pull
-docker compose up -d
+docker compose pull && docker compose up -d
 ```
+
+> Your data is stored in the `everyup-data` volume and is preserved across upgrades.
 
 ---
 
