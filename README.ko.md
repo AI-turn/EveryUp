@@ -29,17 +29,6 @@
 
 ---
 
-## 프로젝트 구조
-
-```
-everyup/
-├── frontend/      # React + Vite + TypeScript + Tailwind CSS
-├── backend/       # Go (Fiber) + SQLite + WebSocket
-└── log-agent/     # Fluent Bit 기반 로그 수집 에이전트
-```
-
----
-
 ## 빠른 시작
 
 ### Docker로 실행 (권장)
@@ -68,13 +57,15 @@ docker run -d \
 
 ### Docker Compose로 실행
 
-이 저장소를 클론한 경우 Docker Compose를 사용할 수 있습니다.
+저장소를 클론하고 명령어 하나로 시작합니다.
 
 ```bash
 git clone https://github.com/AI-turn/EveryUp.git
 cd EveryUp
 docker compose up -d
 ```
+
+> **소스에서 직접 빌드합니다.** 미리 빌드된 Docker Hub 이미지를 사용하려면 `docker-compose.yml`을 열어 `build:` 블록을 `image: aiturn/everyup:latest`로 교체하세요.
 
 **http://localhost:3001** 접속 후 브라우저에서 관리자 계정을 생성합니다. 별도 사전 설정이 필요 없습니다.
 
@@ -114,6 +105,14 @@ pnpm dev
 # → http://localhost:5173
 ```
 
+**프로젝트 구조**
+```
+everyup/
+├── frontend/      # React + Vite + TypeScript + Tailwind CSS
+├── backend/       # Go (Fiber) + SQLite + WebSocket
+└── log-agent/     # Fluent Bit 기반 로그 수집 에이전트
+```
+
 ---
 
 ## 설정
@@ -142,8 +141,7 @@ EveryUp의 모든 데이터는 SQLite 단일 파일에 저장됩니다.
 # 볼륨 위치 확인
 docker volume inspect everyup-data
 
-# 백업 (컨테이너 실행 중에도 가능)
-docker exec everyup cp /app/data/monitoring.db /app/data/monitoring.db.bak
+# 로컬 머신으로 백업 (컨테이너 실행 중에도 가능)
 docker cp everyup:/app/data/monitoring.db ./monitoring.db.bak
 ```
 

@@ -29,17 +29,6 @@
 
 ---
 
-## Project Structure
-
-```
-everyup/
-├── frontend/      # React + Vite + TypeScript + Tailwind CSS
-├── backend/       # Go (Fiber) + SQLite + WebSocket
-└── log-agent/     # Fluent Bit-based log collection agent
-```
-
----
-
 ## Quick Start
 
 ### Run with Docker (recommended)
@@ -68,7 +57,7 @@ The image supports both `linux/amd64` and `linux/arm64` — Docker automatically
 
 ### Run with Docker Compose
 
-If you've cloned this repository, you can use Docker Compose:
+Clone the repository and start with a single command:
 
 ```bash
 git clone https://github.com/AI-turn/EveryUp.git
@@ -76,9 +65,11 @@ cd EveryUp
 docker compose up -d
 ```
 
+> **Builds the image from source.** To use the pre-built Docker Hub image instead, open `docker-compose.yml` and replace the `build:` block with `image: aiturn/everyup:latest`.
+
 Open **http://localhost:3001** and create your admin account in the browser. No pre-configuration required.
 
-> To customize port, timezone, or pre-seed an admin account via env vars, copy `.env.example` to `.env` before starting.
+> To customize port, timezone, or pre-seed an admin account, copy `.env.example` to `.env` before starting.
 
 Check status:
 
@@ -114,6 +105,14 @@ pnpm dev
 # → http://localhost:5173
 ```
 
+**Project Structure**
+```
+everyup/
+├── frontend/      # React + Vite + TypeScript + Tailwind CSS
+├── backend/       # Go (Fiber) + SQLite + WebSocket
+└── log-agent/     # Fluent Bit-based log collection agent
+```
+
 ---
 
 ## Configuration
@@ -142,8 +141,7 @@ All EveryUp data is stored in a single SQLite file.
 # Inspect volume location
 docker volume inspect everyup-data
 
-# Backup (safe while the container is running)
-docker exec everyup cp /app/data/monitoring.db /app/data/monitoring.db.bak
+# Backup to your local machine (safe while the container is running)
 docker cp everyup:/app/data/monitoring.db ./monitoring.db.bak
 ```
 
