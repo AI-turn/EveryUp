@@ -79,9 +79,9 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-bg-main-dark flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+      <div>
         {/* Logo / Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 w-80">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-4">
             <IconHealthCheck size={28} className="text-primary" />
           </div>
@@ -94,85 +94,98 @@ export function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-6 space-y-4">
-          {error && (
-            <div className="flex items-start gap-2 text-red-500 dark:text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2.5">
-              <MaterialIcon name="error_outline" className="text-base mt-0.5 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+        <div className="flex items-start gap-4">
+          {/* Login card */}
+          <div className="w-80 shrink-0">
+            <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-6 space-y-4">
+              {error && (
+                <div className="flex items-start gap-2 text-red-500 dark:text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2.5">
+                  <MaterialIcon name="error_outline" className="text-base mt-0.5 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
 
-          {isSetup && (
-            <div className="flex items-start gap-2 text-blue-500 dark:text-blue-400 text-sm bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2.5">
-              <MaterialIcon name="info" className="text-base mt-0.5 shrink-0" />
-              <span>{t('login.setupNotice')}</span>
-            </div>
-          )}
+              {isSetup && (
+                <div className="flex items-start gap-2 text-blue-500 dark:text-blue-400 text-sm bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2.5">
+                  <MaterialIcon name="info" className="text-base mt-0.5 shrink-0" />
+                  <span>{t('login.setupNotice')}</span>
+                </div>
+              )}
 
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div>
-              <label htmlFor="login-username" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t('login.username')}</label>
-              <input
-                id="login-username"
-                type="text"
-                value={username}
-                onChange={e => { setUsername(e.target.value); setError(''); }}
-                required
-                autoFocus
-                className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-2.5 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
-                placeholder="admin"
-              />
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div>
+                  <label htmlFor="login-username" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t('login.username')}</label>
+                  <input
+                    id="login-username"
+                    type="text"
+                    value={username}
+                    onChange={e => { setUsername(e.target.value); setError(''); }}
+                    required
+                    autoFocus
+                    className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-2.5 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
+                    placeholder="admin"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="login-password" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    {t('login.password')}{isSetup && ` (${t('login.passwordMinLength')})`}
+                  </label>
+                  <input
+                    id="login-password"
+                    type="password"
+                    value={password}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
+                    required
+                    className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-2.5 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
+                    placeholder={isSetup ? t('login.passwordMinLength') : t('login.password')}
+                  />
+                </div>
+                {!isSetup && (
+                  <div className="flex justify-end -mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgot(!showForgot)}
+                      className="text-xs text-blue-500 hover:text-blue-600 underline underline-offset-2 transition-colors"
+                    >
+                      {t('login.forgotPassword')}
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg py-2.5 text-sm shadow-sm hover:shadow-md active:scale-95 transition-all mt-2"
+                >
+                  {loading && <MaterialIcon name="progress_activity" className="text-base animate-spin" />}
+                  {loading ? t('login.processing') : isSetup ? t('login.setupButton') : t('login.loginButton')}
+                </button>
+              </form>
             </div>
-            <div>
-              <label htmlFor="login-password" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                {t('login.password')}{isSetup && ` (${t('login.passwordMinLength')})`}
-              </label>
-              <input
-                id="login-password"
-                type="password"
-                value={password}
-                onChange={e => { setPassword(e.target.value); setError(''); }}
-                required
-                className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-2.5 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
-                placeholder={isSetup ? t('login.passwordMinLength') : t('login.password')}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg py-2.5 text-sm shadow-sm hover:shadow-md active:scale-95 transition-all mt-2"
-            >
-              {loading && <MaterialIcon name="progress_activity" className="text-base animate-spin" />}
-              {loading ? t('login.processing') : isSetup ? t('login.setupButton') : t('login.loginButton')}
-            </button>
-          </form>
-        </div>
 
-        {!isSetup && (
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setShowForgot(!showForgot)}
-              className="text-xs text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-colors"
-            >
-              {t('login.forgotPassword')}
-            </button>
+            <p className="text-center text-slate-400 dark:text-slate-600 text-xs mt-4">
+              {t('login.hint')}
+            </p>
+          </div>
 
-            {showForgot && (
-              <div className="mt-3 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4 text-left space-y-4">
-                <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                  {t('login.forgotPasswordDesc')}
+          {/* Recovery panel — appears to the right when forgot password is open */}
+          {!isSetup && showForgot && (
+            <div className="w-80 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-5 space-y-4">
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                {t('login.forgotPassword')}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                {t('login.forgotPasswordDesc')}
+              </p>
+
+              {/* Method 1: Env var */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  {t('login.recoveryMethod1Title')}
                 </p>
-
-                {/* Method 1: Env var */}
-                <div className="space-y-1.5">
-                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    {t('login.recoveryMethod1Title')}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                    {t('login.recoveryMethod1Desc')}
-                  </p>
-                  <pre className="text-[11px] bg-slate-50 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                  {t('login.recoveryMethod1Desc')}
+                </p>
+                <pre className="text-[11px] bg-slate-50 dark:bg-bg-main-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
 {`# docker-compose.yml
 environment:
   MT_ADMIN_USERNAME: admin
@@ -180,34 +193,29 @@ environment:
 
 # then restart
 docker compose restart`}
-                  </pre>
-                </div>
+                </pre>
+              </div>
 
-                {/* Method 2: Docker exec */}
-                <div className="space-y-1.5">
-                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    {t('login.recoveryMethod2Title')}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                    {t('login.recoveryMethod2Desc')}
-                  </p>
-                  <pre className="text-[11px] bg-slate-50 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
+              {/* Method 2: Docker exec */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  {t('login.recoveryMethod2Title')}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                  {t('login.recoveryMethod2Desc')}
+                </p>
+                <pre className="text-[11px] bg-slate-50 dark:bg-bg-main-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
 {`docker exec -it everyup \\
   sqlite3 /app/data/everyup.db \\
   "DELETE FROM users;"
 
 # then restart
 docker compose restart`}
-                  </pre>
-                </div>
+                </pre>
               </div>
-            )}
-          </div>
-        )}
-
-        <p className="text-center text-slate-400 dark:text-slate-600 text-xs mt-4">
-          {t('login.hint')}
-        </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
