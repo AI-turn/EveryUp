@@ -95,8 +95,8 @@ export function LoginPage() {
         </div>
 
         {/* Login card — relative anchor for recovery panel */}
-        <div className="relative w-96">
-          <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-6 space-y-4">
+        <div className="w-96">
+          <div className="relative bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-6 space-y-4">
             {error && (
               <div className="flex items-start gap-2 text-red-500 dark:text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2.5">
                 <MaterialIcon name="error_outline" className="text-base mt-0.5 shrink-0" />
@@ -159,31 +159,26 @@ export function LoginPage() {
                 {loading ? t('login.processing') : isSetup ? t('login.setupButton') : t('login.loginButton')}
               </button>
             </form>
-          </div>
 
-          <p className="text-center text-slate-400 dark:text-slate-600 text-xs mt-4">
-            {t('login.hint')}
-          </p>
-
-          {/* Recovery panel — absolutely positioned to the right, outside of flow */}
-          {!isSetup && showForgot && (
-            <div className="absolute bottom-0 left-full ml-4 w-96 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-5 space-y-4">
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                {t('login.forgotPassword')}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                {t('login.forgotPasswordDesc')}
-              </p>
-
-              {/* Method 1: Env var */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  {t('login.recoveryMethod1Title')}
+            {/* Recovery panel — absolutely positioned to the right, bottom-aligned with card border */}
+            {!isSetup && showForgot && (
+              <div className="absolute bottom-0 left-full ml-4 w-96 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-5 space-y-4">
+                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  {t('login.forgotPassword')}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                  {t('login.recoveryMethod1Desc')}
+                  {t('login.forgotPasswordDesc')}
                 </p>
-                <pre className="text-[11px] bg-slate-50 dark:bg-bg-main-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
+
+                {/* Method 1: Env var */}
+                <div className="space-y-1.5">
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    {t('login.recoveryMethod1Title')}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                    {t('login.recoveryMethod1Desc')}
+                  </p>
+                  <pre className="text-[11px] bg-slate-50 dark:bg-bg-main-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
 {`# docker-compose.yml
 environment:
   MT_ADMIN_USERNAME: admin
@@ -191,28 +186,33 @@ environment:
 
 # then restart
 docker compose restart`}
-                </pre>
-              </div>
+                  </pre>
+                </div>
 
-              {/* Method 2: Docker exec */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  {t('login.recoveryMethod2Title')}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-text-muted-dark">
-                  {t('login.recoveryMethod2Desc')}
-                </p>
-                <pre className="text-[11px] bg-slate-50 dark:bg-bg-main-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
+                {/* Method 2: Docker exec */}
+                <div className="space-y-1.5">
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    {t('login.recoveryMethod2Title')}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-text-muted-dark">
+                    {t('login.recoveryMethod2Desc')}
+                  </p>
+                  <pre className="text-[11px] bg-slate-50 dark:bg-bg-main-dark border border-slate-200 dark:border-ui-border-dark rounded-lg p-2.5 overflow-x-auto text-slate-700 dark:text-slate-300 leading-relaxed">
 {`docker exec -it everyup \\
   sqlite3 /app/data/everyup.db \\
   "DELETE FROM users;"
 
 # then restart
 docker compose restart`}
-                </pre>
+                  </pre>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+
+          <p className="text-center text-slate-400 dark:text-slate-600 text-xs mt-4">
+            {t('login.hint')}
+          </p>
         </div>
       </div>
     </div>
