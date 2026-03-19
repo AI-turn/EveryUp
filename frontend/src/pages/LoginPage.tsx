@@ -94,73 +94,76 @@ export function LoginPage() {
           </p>
         </div>
 
-        {/* Login card — relative anchor for recovery panel */}
+        {/* Login card */}
         <div className="w-96">
-          <div className="relative bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-6 space-y-4">
-            {error && (
-              <div className="flex items-start gap-2 text-red-500 dark:text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2.5">
-                <MaterialIcon name="error_outline" className="text-base mt-0.5 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            {isSetup && (
-              <div className="flex items-start gap-2 text-blue-500 dark:text-blue-400 text-sm bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2.5">
-                <MaterialIcon name="info" className="text-base mt-0.5 shrink-0" />
-                <span>{t('login.setupNotice')}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div>
-                <label htmlFor="login-username" className="block text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t('login.username')}</label>
-                <input
-                  id="login-username"
-                  type="text"
-                  value={username}
-                  onChange={e => { setUsername(e.target.value); setError(''); }}
-                  required
-                  autoFocus
-                  className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-3 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
-                  placeholder="admin"
-                />
-              </div>
-              <div>
-                <label htmlFor="login-password" className="block text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                  {t('login.password')}{isSetup && ` (${t('login.passwordMinLength')})`}
-                </label>
-                <input
-                  id="login-password"
-                  type="password"
-                  value={password}
-                  onChange={e => { setPassword(e.target.value); setError(''); }}
-                  required
-                  className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-3 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
-                  placeholder={isSetup ? t('login.passwordMinLength') : t('login.password')}
-                />
-              </div>
-              {!isSetup && (
-                <div className="flex justify-end -mt-1">
-                  <button
-                    type="button"
-                    onClick={() => setShowForgot(!showForgot)}
-                    className="text-xs text-blue-500 hover:text-blue-600 underline underline-offset-2 transition-colors"
-                  >
-                    {t('login.forgotPassword')}
-                  </button>
+          {/* relative wrapper — height equals card only, anchor for recovery panel */}
+          <div className="relative">
+            <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-6 space-y-4">
+              {error && (
+                <div className="flex items-start gap-2 text-red-500 dark:text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2.5">
+                  <MaterialIcon name="error_outline" className="text-base mt-0.5 shrink-0" />
+                  <span>{error}</span>
                 </div>
               )}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg py-3 text-sm shadow-sm hover:shadow-md active:scale-95 transition-all mt-2"
-              >
-                {loading && <MaterialIcon name="progress_activity" className="text-base animate-spin" />}
-                {loading ? t('login.processing') : isSetup ? t('login.setupButton') : t('login.loginButton')}
-              </button>
-            </form>
 
-            {/* Recovery panel — absolutely positioned to the right, bottom-aligned with card border */}
+              {isSetup && (
+                <div className="flex items-start gap-2 text-blue-500 dark:text-blue-400 text-sm bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2.5">
+                  <MaterialIcon name="info" className="text-base mt-0.5 shrink-0" />
+                  <span>{t('login.setupNotice')}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div>
+                  <label htmlFor="login-username" className="block text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t('login.username')}</label>
+                  <input
+                    id="login-username"
+                    type="text"
+                    value={username}
+                    onChange={e => { setUsername(e.target.value); setError(''); }}
+                    required
+                    autoFocus
+                    className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-3 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
+                    placeholder="admin"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="login-password" className="block text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    {t('login.password')}{isSetup && ` (${t('login.passwordMinLength')})`}
+                  </label>
+                  <input
+                    id="login-password"
+                    type="password"
+                    value={password}
+                    onChange={e => { setPassword(e.target.value); setError(''); }}
+                    required
+                    className={`w-full bg-slate-50 dark:bg-ui-hover-dark border ${inputErrorClass} rounded-lg px-3 py-3 text-slate-900 dark:text-white text-sm placeholder-slate-400 outline-none focus:ring-2 focus:border-transparent transition-all`}
+                    placeholder={isSetup ? t('login.passwordMinLength') : t('login.password')}
+                  />
+                </div>
+                {!isSetup && (
+                  <div className="flex justify-end -mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgot(!showForgot)}
+                      className="text-xs text-blue-500 hover:text-blue-600 underline underline-offset-2 transition-colors"
+                    >
+                      {t('login.forgotPassword')}
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg py-3 text-sm shadow-sm hover:shadow-md active:scale-95 transition-all mt-2"
+                >
+                  {loading && <MaterialIcon name="progress_activity" className="text-base animate-spin" />}
+                  {loading ? t('login.processing') : isSetup ? t('login.setupButton') : t('login.loginButton')}
+                </button>
+              </form>
+            </div>
+
+            {/* Recovery panel — outside card div, bottom-aligned with card border */}
             {!isSetup && showForgot && (
               <div className="absolute bottom-0 left-full ml-4 w-96 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl shadow-sm p-5 space-y-4">
                 <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -208,7 +211,7 @@ docker compose restart`}
                 </div>
               </div>
             )}
-          </div>
+          </div>{/* end relative wrapper */}
 
           <p className="text-center text-slate-400 dark:text-slate-600 text-xs mt-4">
             {t('login.hint')}
