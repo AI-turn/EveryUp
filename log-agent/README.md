@@ -212,6 +212,8 @@ logging:
 2. **네트워크 연결 확인** — agent 컨테이너에서 EveryUp 서버에 접근할 수 있는지 확인:
    ```bash
    docker exec mt-log-agent wget -qO- http://your-everyup-server:3001/health
+   # wget이 없는 경우
+   docker exec mt-log-agent curl -sf http://your-everyup-server:3001/health
    ```
 
 3. **API Key 확인** — EveryUp 대시보드에서 해당 서비스의 API Key가 맞는지 확인하세요.

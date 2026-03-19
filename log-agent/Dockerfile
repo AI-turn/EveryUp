@@ -1,14 +1,21 @@
-FROM fluent/fluent-bit:latest
+# --- Stage 1: Prepare files (line-ending + permission fix) ---
+FROM alpine:3.21 AS prep
 
-# Copy configuration files
-COPY conf/fluent-bit.conf /fluent-bit/etc/fluent-bit.conf
-COPY conf/stdin.conf      /fluent-bit/etc/stdin.conf
-COPY conf/parsers.conf    /fluent-bit/etc/parsers.conf
-COPY conf/mt_transform.lua /fluent-bit/etc/mt_transform.lua
+COPY entrypoint.sh /entrypoint.sh
+COPY conf/ /conf/
 
-# Copy entrypoint (parses MT_ENDPOINT into host/port/tls)
-# Use --chmod to avoid RUN chmod (fluent-bit image has no shell on ARM)
-COPY --chmod=755 entrypoint.sh /entrypoint.sh
+# Fix CRLF → LF (handles Windows/macOS hosts) and set executable
+RUN sed -i 's/\r$//' /entrypoint.sh /conf/*.conf /conf/*.lua \
+    && chmod 755 /entrypoint.sh
+
+# --- Stage 2: Runtime ---
+FROM fluent/fluent-bit:3.2
+
+COPY --from=prep /conf/fluent-bit.conf   /fluent-bit/etc/fluent-bit.conf
+COPY --from=prep /conf/stdin.conf        /fluent-bit/etc/stdin.conf
+COPY --from=prep /conf/parsers.conf      /fluent-bit/etc/parsers.conf
+COPY --from=prep /conf/mt_transform.lua  /fluent-bit/etc/mt_transform.lua
+COPY --from=prep /entrypoint.sh          /entrypoint.sh
 
 # Default environment variables
 ENV MT_LOG_LEVEL=info

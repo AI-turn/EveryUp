@@ -1,31 +1,34 @@
 #!/bin/sh
 # Parse MT_ENDPOINT URL into host/port/tls components for Fluent Bit
-# Fluent Bit HTTP output requires separate host, port, tls settings
+# Uses only POSIX shell built-ins (no sed/awk) for maximum portability
 
 if [ -n "$MT_ENDPOINT" ]; then
-  # Detect TLS
+  # Detect TLS from scheme
   case "$MT_ENDPOINT" in
-    https://*) MT_TLS="on" ;;
-    *)         MT_TLS="off" ;;
+    https://*) MT_TLS="on";  _stripped="${MT_ENDPOINT#https://}" ;;
+    http://*)  MT_TLS="off"; _stripped="${MT_ENDPOINT#http://}" ;;
+    *)         MT_TLS="off"; _stripped="$MT_ENDPOINT" ;;
   esac
 
-  # Extract host (strip protocol and path)
-  MT_HOST=$(echo "$MT_ENDPOINT" | sed -E 's|https?://||' | sed -E 's|:[0-9]+.*||' | sed -E 's|/.*||')
+  # Remove path: "host:port/path" → "host:port"
+  _hostport="${_stripped%%/*}"
 
-  # Extract port (if present)
-  MT_PORT=$(echo "$MT_ENDPOINT" | sed -nE 's|https?://[^:/]+:([0-9]+).*|\1|p')
-  if [ -z "$MT_PORT" ]; then
-    if [ "$MT_TLS" = "on" ]; then
-      MT_PORT=443
-    else
-      MT_PORT=80
-    fi
-  fi
+  # Extract host and port
+  case "$_hostport" in
+    *:*)
+      MT_HOST="${_hostport%%:*}"
+      MT_PORT="${_hostport##*:}"
+      ;;
+    *)
+      MT_HOST="$_hostport"
+      if [ "$MT_TLS" = "on" ]; then MT_PORT=443; else MT_PORT=80; fi
+      ;;
+  esac
 
   export MT_TLS MT_HOST MT_PORT
 fi
 
-# Default values
+# Default values (set only if unset)
 : "${MT_LOG_LEVEL:=info}"
 : "${MT_FILE:=/var/log/app/*.log}"
 : "${MT_TLS:=off}"

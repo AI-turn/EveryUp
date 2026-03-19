@@ -26,10 +26,19 @@ air
 
 ### Docker
 
+**Linux / macOS**
 ```bash
 docker run -d -p 3001:3001 \
-  -v ./config.json:/app/config.json:ro \
+  -v "$(pwd)/config.json:/app/config.json:ro" \
   -v mt-data:/app/data \
+  aiturn/everyup:latest
+```
+
+**Windows (PowerShell)**
+```powershell
+docker run -d -p 3001:3001 `
+  -v "${PWD}/config.json:/app/config.json:ro" `
+  -v mt-data:/app/data `
   aiturn/everyup:latest
 ```
 
@@ -154,11 +163,18 @@ ws.onmessage = (event) => {
 
 ## 빌드
 
+**Linux / macOS**
 ```bash
-# 바이너리 빌드 (순수 Go SQLite — CGO 불필요)
 CGO_ENABLED=0 go build -o server ./cmd/server
+```
 
-# Docker 이미지 빌드
+**Windows (PowerShell)**
+```powershell
+$env:CGO_ENABLED="0"; go build -o server.exe ./cmd/server
+```
+
+**Docker 이미지 빌드**
+```bash
 docker build -t everyup .
 ```
 
