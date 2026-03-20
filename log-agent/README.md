@@ -31,34 +31,45 @@ Fluent Bit 기반 로그 수집 에이전트입니다.
 docker pull aiturn/everyup-log-agent:latest
 ```
 
-### 2. Docker Run
+### 2. Docker Compose (권장)
 
-호스트 파일시스템의 로그 디렉토리를 마운트해 바로 실행합니다.
+이 저장소의 `docker-compose.yml`과 `.env.example`을 사용합니다.
 
 ```bash
-docker run -d \
-  --name everyup-log-agent \
-  -v /path/to/your/app/logs:/var/log/app:ro \
-  -e MT_ENDPOINT=http://your-everyup-server:3001 \
-  -e MT_API_KEY=mt_your_api_key_here \
-  aiturn/everyup-log-agent:latest
+cp .env.example .env
+# .env 파일을 열어 MT_ENDPOINT, MT_API_KEY, LOG_PATH 를 설정
+docker compose up -d
 ```
 
-### 3. Docker Compose (권장)
+`.env` 파일에서 모든 옵션을 관리할 수 있습니다:
 
-모니터링할 서비스와 **같은 `docker-compose.yml`**에 사이드카로 추가하면, named volume으로 로그 파일을 자연스럽게 공유할 수 있습니다.
+```dotenv
+MT_ENDPOINT=http://your-everyup-server:3001
+MT_API_KEY=mt_your_api_key_here
+LOG_PATH=/path/to/your/app/logs
+
+# 선택 옵션
+MT_FILE=/var/log/app/*.log
+MT_LOG_LEVEL=info
+MT_TEST=false
+MT_TEST_PORT=8080
+```
+
+### 3. 기존 앱과 같은 Compose에 사이드카로 추가
+
+모니터링할 앱과 named volume을 공유하는 방식입니다.
 
 ```yaml
 services:
   my-app:
     image: my-app:latest
     volumes:
-      - app-logs:/var/log/app    # 앱이 이 경로에 로그 파일을 씁니다
+      - app-logs:/var/log/app
 
   mt-log-agent:
     image: aiturn/everyup-log-agent:latest
     volumes:
-      - app-logs:/var/log/app:ro # 같은 볼륨을 읽기 전용으로 마운트
+      - app-logs:/var/log/app:ro
     environment:
       - MT_ENDPOINT=http://your-everyup-server:3001
       - MT_API_KEY=mt_your_api_key_here
@@ -70,8 +81,15 @@ volumes:
   app-logs:
 ```
 
+### 4. Docker Run
+
 ```bash
-docker compose up -d
+docker run -d \
+  --name everyup-log-agent \
+  -v /path/to/your/app/logs:/var/log/app:ro \
+  -e MT_ENDPOINT=http://your-everyup-server:3001 \
+  -e MT_API_KEY=mt_your_api_key_here \
+  aiturn/everyup-log-agent:latest
 ```
 
 ---
