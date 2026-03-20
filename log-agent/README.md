@@ -77,6 +77,8 @@ Log Agent는 앱의 로그 **파일**을 읽어야 합니다. 같은 compose에 
 | `MT_API_KEY` | 서비스 API Key **(필수)** | `changeme` |
 | `MT_FILE` | 수집할 로그 파일 경로 (glob 지원) | `/var/log/app/*.log` |
 | `MT_LOG_LEVEL` | Fluent Bit 로그 레벨 (`debug`, `info`, `warn`, `error`) | `info` |
+| `MT_TEST` | 테스트 콘솔 UI 활성화 | `false` |
+| `MT_TEST_PORT` | 테스트 콘솔 포트 | `8080` |
 
 > **`MT_ENDPOINT` 자동 파싱:**
 > - `http://192.168.1.10:3001` → host=192.168.1.10, port=3001, tls=off
@@ -115,6 +117,112 @@ echo '{"level":"error","message":"test log from agent"}' | \
 ```
 
 EveryUp 대시보드의 Logs 탭에서 "test log from agent" 메시지가 보이면 연결이 정상입니다.
+
+---
+
+## 테스트 콘솔 UI
+
+`MT_TEST=true`로 실행하면 이미지에 내장된 웹 UI가 활성화됩니다.
+브라우저에서 버튼 한 번으로 INFO / WARN / ERROR 로그를 전송할 수 있습니다.
+
+```
+┌──────────────────────────────────────────┐
+│  LOG AGENT  Test Console                 │
+├──────────────────────────────────────────┤
+│  Send Test Log                           │
+│  ┌────────────────────────────────────┐  │
+│  │ Test log from UI                   │  │
+│  └────────────────────────────────────┘  │
+│  [ ▸ INFO ]  [ ▸ WARN ]  [ ▸ ERROR ]    │
+│  ● Sent · INFO · "Test log from UI"      │
+├──────────────────────────────────────────┤
+│  Sent Logs                          (3)  │
+│  INFO  Test log from UI       10:01:23   │
+│  WARN  Test log from UI       10:01:20   │
+│  ERROR Test log from UI       10:01:18   │
+└──────────────────────────────────────────┘
+```
+
+전송된 로그는 `/var/log/app/test.log`에 기록되고, Fluent Bit이 이를 감지해 EveryUp으로 전달합니다.
+
+### 같은 서버의 별도 Compose에서 테스트하기
+
+EveryUp 서버와 **같은 머신**에서 log agent를 별도 compose로 띄워 테스트할 수 있습니다.
+코드 경로는 실제 원격 서버에서 보내는 것과 동일합니다.
+
+#### 방법 A — host.docker.internal 경유 (간단)
+
+`docker-compose.test.yml` 파일을 작성합니다:
+
+```yaml
+services:
+  mt-log-agent:
+    image: aiturn/everyup-log-agent:latest   # 또는 build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - MT_TEST=true
+      - MT_ENDPOINT=http://host.docker.internal:3001  # 같은 머신의 EveryUp 접근
+      - MT_API_KEY=mt_your_api_key_here
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Linux 필수 / Windows·Mac은 자동
+```
+
+```bash
+docker compose -f docker-compose.test.yml up
+```
+
+브라우저에서 `http://localhost:8080` 접속 후 버튼을 클릭하면 EveryUp 대시보드 Logs 탭에 로그가 수신됩니다.
+
+> `host.docker.internal`은 Docker Desktop(Windows/Mac)에서는 별도 설정 없이 동작합니다.
+> Linux 서버에서는 `extra_hosts` 항목이 필수입니다.
+
+#### 방법 B — 공유 네트워크 경유 (포트 노출 불필요)
+
+EveryUp compose와 같은 Docker 네트워크를 공유하여 컨테이너끼리 직접 통신합니다.
+
+**1단계 — EveryUp `docker-compose.yml`에 네트워크 추가:**
+
+```yaml
+services:
+  everyup:
+    # ...기존 설정 유지...
+    networks:
+      - everyup-net          # 추가
+
+networks:
+  everyup-net:
+    name: everyup-net        # 추가
+```
+
+```bash
+# 변경 적용
+docker compose up -d
+```
+
+**2단계 — log agent `docker-compose.test.yml` 작성:**
+
+```yaml
+services:
+  mt-log-agent:
+    image: aiturn/everyup-log-agent:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - MT_TEST=true
+      - MT_ENDPOINT=http://everyup:3001   # 서비스 이름으로 직접 접근
+      - MT_API_KEY=mt_your_api_key_here
+    networks:
+      - everyup-net
+
+networks:
+  everyup-net:
+    external: true            # 이미 존재하는 네트워크 참조
+```
+
+```bash
+docker compose -f docker-compose.test.yml up
+```
 
 ---
 
@@ -211,9 +319,7 @@ logging:
 
 2. **네트워크 연결 확인** — agent 컨테이너에서 EveryUp 서버에 접근할 수 있는지 확인:
    ```bash
-   docker exec mt-log-agent wget -qO- http://your-everyup-server:3001/health
-   # wget이 없는 경우
-   docker exec mt-log-agent curl -sf http://your-everyup-server:3001/health
+   docker exec mt-log-agent wget -qO- http://your-everyup-server:3001/api/v1/health
    ```
 
 3. **API Key 확인** — EveryUp 대시보드에서 해당 서비스의 API Key가 맞는지 확인하세요.

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Agent — Test Console</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 0 24px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-badge {
+      background: #3b76c9;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.08em;
+    }
+    .header-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .header-meta {
+      margin-left: auto;
+      font-size: 12px;
+      color: #475569;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 780px;
+      margin: 28px auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Card */
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    /* Input row */
+    .input-row { display: flex; gap: 8px; }
+    .input {
+      flex: 1;
+      padding: 9px 13px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1e293b;
+      background: #f8fafc;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input:focus {
+      border-color: #3b76c9;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(59,118,201,0.1);
+    }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .btn {
+      padding: 8px 20px;
+      border: 1.5px solid transparent;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-info  { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+    .btn-warn  { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+    .btn-error { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+    .btn-info:hover  { background: #dbeafe; }
+    .btn-warn:hover  { background: #fef3c7; }
+    .btn-error:hover { background: #fee2e2; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Status bar */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      min-height: 36px;
+      transition: all 0.2s;
+    }
+    .status.ok    { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+    .status.error { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #cbd5e1; flex-shrink: 0; transition: background 0.2s;
+    }
+    .status.ok    .status-dot { background: #10b981; }
+    .status.error .status-dot { background: #ef4444; }
+
+    /* Log list */
+    .log-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .log-count {
+      margin-left: auto;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .clear-btn {
+      background: none; border: none; cursor: pointer;
+      color: #94a3b8; font-size: 12px;
+      padding: 2px 8px; border-radius: 4px; margin-left: 6px;
+    }
+    .clear-btn:hover { background: #f1f5f9; color: #64748b; }
+
+    .log-list {
+      list-style: none;
+      max-height: 340px;
+      overflow-y: auto;
+    }
+    .log-empty {
+      text-align: center;
+      color: #94a3b8;
+      padding: 36px 16px;
+      font-size: 14px;
+    }
+    .log-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #f8fafc;
+      font-size: 13px;
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-lvl {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      min-width: 42px;
+      text-align: center;
+    }
+    .lvl-info  { background: #eff6ff; color: #2563eb; }
+    .lvl-warn  { background: #fffbeb; color: #d97706; }
+    .lvl-error { background: #fef2f2; color: #dc2626; }
+    .log-msg  { flex: 1; color: #374151; word-break: break-all; font-family: 'Menlo', 'Consolas', monospace; font-size: 12px; }
+    .log-time { font-size: 11px; color: #94a3b8; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+    /* Info box */
+    .info-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #0369a1;
+      line-height: 1.6;
+    }
+    .info-box code {
+      background: #e0f2fe;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="header-badge">LOG AGENT</span>
+    <span class="header-title">Test Console</span>
+    <span class="header-meta" id="header-meta">loading...</span>
+  </div>
+
+  <div class="container">
+
+    <div class="info-box">
+      Logs are written to <code>/var/log/app/test.log</code> inside the container.
+      Fluent Bit picks them up and forwards to your EveryUp server via <code>MT_ENDPOINT</code>.
+    </div>
+
+    <div class="card">
+      <div class="card-label">Send Test Log</div>
+      <div class="input-row">
+        <input class="input" id="msg" type="text"
+               placeholder="Log message..."
+               value="Test log from UI"
+               onkeydown="if(event.key==='Enter') sendLog(lastLevel||'info')">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-info"  id="btn-info"  onclick="sendLog('info')">▸ INFO</button>
+        <button class="btn btn-warn"  id="btn-warn"  onclick="sendLog('warn')">▸ WARN</button>
+        <button class="btn btn-error" id="btn-error" onclick="sendLog('error')">▸ ERROR</button>
+      </div>
+      <div class="status" id="status">
+        <div class="status-dot"></div>
+        <span id="status-msg">Ready — click a button to send a test log</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="log-header">
+        <span class="card-label" style="margin-bottom:0">Sent Logs</span>
+        <span class="log-count" id="log-count">0</span>
+        <button class="clear-btn" onclick="clearLogs()">Clear</button>
+      </div>
+      <ul class="log-list" id="log-list">
+        <li class="log-empty">No logs sent yet.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+    const logs = [];
+    let lastLevel = 'info';
+    let sending = false;
+
+    async function sendLog(level) {
+      if (sending) return;
+      lastLevel = level;
+
+      const msg = document.getElementById('msg').value.trim() || 'Test log message';
+      const ts  = new Date().toISOString();
+      const line = JSON.stringify({ level, message: msg, timestamp: ts, source: 'test-ui' }) + '\n';
+
+      setSending(true);
+      setStatus('', 'Sending…');
+
+      try {
+        const res = await fetch('/cgi-bin/log.sh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: line
+        });
+        if (res.ok) {
+          pushLog(level, msg, ts);
+          setStatus('ok', 'Sent · ' + level.toUpperCase() + ' · "' + truncate(msg, 60) + '"');
+        } else {
+          setStatus('error', 'HTTP ' + res.status + ' — check agent container logs');
+        }
+      } catch (e) {
+        setStatus('error', 'Connection failed: ' + e.message);
+      } finally {
+        setSending(false);
+      }
+    }
+
+    function setSending(v) {
+      sending = v;
+      ['info','warn','error'].forEach(l => {
+        document.getElementById('btn-' + l).disabled = v;
+      });
+    }
+
+    function pushLog(level, msg, ts) {
+      logs.unshift({ level, msg, ts });
+      renderLogs();
+    }
+
+    function clearLogs() {
+      logs.length = 0;
+      renderLogs();
+    }
+
+    function renderLogs() {
+      const ul = document.getElementById('log-list');
+      document.getElementById('log-count').textContent = logs.length;
+      if (!logs.length) {
+        ul.innerHTML = '<li class="log-empty">No logs sent yet.</li>';
+        return;
+      }
+      ul.innerHTML = logs.map(function(l) {
+        return '<li class="log-item">'
+          + '<span class="log-lvl lvl-' + l.level + '">' + l.level.toUpperCase() + '</span>'
+          + '<span class="log-msg">' + esc(l.msg) + '</span>'
+          + '<span class="log-time">' + new Date(l.ts).toLocaleTimeString() + '</span>'
+          + '</li>';
+      }).join('');
+    }
+
+    function setStatus(cls, msg) {
+      const el = document.getElementById('status');
+      el.className = 'status' + (cls ? ' ' + cls : '');
+      document.getElementById('status-msg').textContent = msg;
+    }
+
+    function truncate(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
+    function esc(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.getElementById('header-meta').textContent =
+      location.host || ('port ' + (location.port || '8080'));
+  </script>
+</body>
+</html>
