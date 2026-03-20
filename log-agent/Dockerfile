@@ -6,14 +6,16 @@ COPY conf/ /conf/
 COPY test/ /test/
 
 # Fix CRLF → LF (handles Windows/macOS hosts) and set permissions.
-# Copy busybox under distinct names so the runtime stage can install
-# them as separate binaries (busybox dispatches by argv[0]).
-RUN sed -i 's/\r$//' /entrypoint.sh /conf/*.conf /conf/*.lua \
+# busybox-static: statically linked binary — no musl/glibc dependency,
+# works in the Distroless (Debian-based) fluent-bit runtime image.
+# Copy under distinct names so busybox dispatches by argv[0].
+RUN apk add --no-cache busybox-static \
+    && sed -i 's/\r$//' /entrypoint.sh /conf/*.conf /conf/*.lua \
     && chmod 755 /entrypoint.sh /test/www/cgi-bin/log.sh \
-    && cp /bin/busybox /bin/bb-sh \
-    && cp /bin/busybox /bin/bb-httpd \
-    && cp /bin/busybox /bin/bb-cat \
-    && cp /bin/busybox /bin/bb-mkdir
+    && cp /bin/busybox.static /bin/bb-sh \
+    && cp /bin/busybox.static /bin/bb-httpd \
+    && cp /bin/busybox.static /bin/bb-cat \
+    && cp /bin/busybox.static /bin/bb-mkdir
 
 # --- Stage 2: Runtime ---
 FROM fluent/fluent-bit:3.2
