@@ -41,14 +41,17 @@ cp .env.example .env
 docker compose up -d
 ```
 
-`.env` 파일에서 모든 옵션을 관리할 수 있습니다:
+`.env` 파일에서 모든 옵션을 관리할 수 있습니다. `docker-compose.yml`은 이 파일을 자동으로 읽어 컨테이너에 전달합니다:
 
 ```dotenv
+# 필수
 MT_ENDPOINT=http://your-everyup-server:3001
 MT_API_KEY=mt_your_api_key_here
+
+# 호스트의 로그 디렉토리 (컨테이너 내부 /var/log/app 로 마운트)
 LOG_PATH=/path/to/your/app/logs
 
-# 선택 옵션
+# 선택
 MT_FILE=/var/log/app/*.log
 MT_LOG_LEVEL=info
 MT_TEST=false
