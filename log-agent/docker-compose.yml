@@ -8,4 +8,4 @@ services:
     ports:
       - "${MT_TEST_PORT:-8080}:${MT_TEST_PORT:-8080}"
     volumes:
-      - ${LOG_PATH:-/var/log/app}:/var/log/app:ro
+      - ${LOG_PATH:-/var/log/app}:/var/log/app
