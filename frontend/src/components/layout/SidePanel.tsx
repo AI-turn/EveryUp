@@ -41,29 +41,27 @@ export function SidePanel() {
                     transitionProperty: 'transform'
                 }}
             >
-                <div className="flex flex-col h-full min-w-full">
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-6 h-16 border-b border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark sticky top-0 z-10 transition-colors duration-200">
-                        <div className="flex items-center gap-3">
-                            <MaterialIcon name="apps" className="text-slate-400 dark:text-text-muted-dark" />
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                                {title}
-                            </h2>
-                        </div>
-                        <button
-                            type="button"
-                            className="p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:hover:text-text-base-dark rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark transition-colors"
-                            onClick={closePanel}
-                        >
-                            <MaterialIcon name="close" className="text-xl" />
-                            <span className="sr-only">Close panel</span>
-                        </button>
+                {/* Header */}
+                <div className="flex-none flex items-center justify-between px-6 h-16 border-b border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark z-10 transition-colors duration-200">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <MaterialIcon name="apps" className="text-slate-400 dark:text-text-muted-dark shrink-0" />
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight truncate">
+                            {title}
+                        </h2>
                     </div>
+                    <button
+                        type="button"
+                        className="p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:hover:text-text-base-dark rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark transition-colors shrink-0"
+                        onClick={closePanel}
+                    >
+                        <MaterialIcon name="close" className="text-xl" />
+                        <span className="sr-only">Close panel</span>
+                    </button>
+                </div>
 
-                    {/* Content */}
-                    <div className="flex-1 overflow-y-auto px-6 pt-6 pb-20 lg:pb-6 custom-scrollbar">
-                        {content}
-                    </div>
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-20 lg:pb-6 custom-scrollbar">
+                    {content}
                 </div>
             </div>
         </>

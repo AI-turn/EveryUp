@@ -47,7 +47,7 @@ export function BottomNavMobile() {
           `}
         >
           <item.Icon size={23} />
-          <span className="text-sm font-medium">{t(item.labelKey)}</span>
+          <span className="text-xs font-medium whitespace-nowrap">{t(item.labelKey)}</span>
         </Link>
       ))}
     </nav>
