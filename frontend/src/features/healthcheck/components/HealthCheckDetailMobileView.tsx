@@ -63,34 +63,22 @@ export function HealthCheckDetailMobileView({
 
   return (
     <div className="space-y-4">
-      {/* Header Card */}
-      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4">
-        <div className="flex items-center justify-between mb-2">
-          <button onClick={() => navigate('/healthcheck')} className="p-1 -ml-1 cursor-pointer">
-            <MaterialIcon name="arrow_back" className="text-xl text-slate-500 dark:text-text-muted-dark" />
-          </button>
-          <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
-            <span className="relative flex h-2 w-2">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
-            </span>
-            {t(`common.${service.status}`)}
-          </span>
-        </div>
-        <h1 className="text-xl font-black text-slate-900 dark:text-white">{service.name}</h1>
-        <p className="text-sm text-slate-500 dark:text-text-muted-dark truncate mt-0.5">
-          {service.url || service.host || '-'}
-        </p>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2 mt-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
+      {/* Nav Bar */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => navigate('/healthcheck')}
+          className="flex items-center gap-1 text-slate-500 dark:text-text-muted-dark active:opacity-60 transition-opacity cursor-pointer"
+        >
+          <MaterialIcon name="arrow_back" className="text-lg" />
+          <span className="text-sm font-medium">{t('common.backToList')}</span>
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
             <Toggle checked={isLive} onChange={onLiveToggle} />
             <span className="text-xs font-medium text-slate-700 dark:text-text-secondary-dark">
               {t('common.live')}
             </span>
           </div>
-          <div className="flex-1" />
           <button
             onClick={onRefresh}
             className="p-2.5 rounded-lg bg-slate-100 dark:bg-chart-surface text-slate-700 dark:text-white active:scale-95 transition-transform"
@@ -111,6 +99,23 @@ export function HealthCheckDetailMobileView({
           >
             <MaterialIcon name="delete" className="text-lg" />
           </button>
+        </div>
+      </div>
+
+      {/* Title */}
+      <div>
+        <h1 className="text-xl font-black text-slate-900 dark:text-white">{service.name}</h1>
+        <div className="flex items-center gap-2 mt-1.5">
+          <span className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
+            <span className="relative flex h-2 w-2">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
+            </span>
+            {t(`common.${service.status}`)}
+          </span>
+          <p className="text-sm text-slate-500 dark:text-text-muted-dark truncate">
+            {service.url || service.host || '-'}
+          </p>
         </div>
       </div>
 

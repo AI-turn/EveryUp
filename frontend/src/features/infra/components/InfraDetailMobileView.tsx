@@ -60,56 +60,24 @@ export function InfraDetailMobileView({
 
   return (
     <div className="space-y-4">
-      {/* Header Card */}
-      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-4">
-        <div className="flex items-center justify-between mb-2">
-          <button onClick={() => navigate('/infra')} className="p-1 -ml-1 cursor-pointer">
-            <MaterialIcon name="arrow_back" className="text-xl text-slate-500 dark:text-text-muted-dark" />
-          </button>
-          {!hostLoading && (
-            <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
-              <span className="relative flex h-2 w-2">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
-              </span>
-              {t(`common.${status}`)}
-            </span>
-          )}
-        </div>
-        {hostLoading ? (
-          <div className="animate-pulse space-y-2">
-            <div className="h-7 w-40 bg-slate-200 dark:bg-ui-hover-dark rounded-lg" />
-            <div className="h-4 w-28 bg-slate-100 dark:bg-ui-active-dark rounded" />
-          </div>
-        ) : (
-          <>
-            <h1 className="text-xl font-black text-slate-900 dark:text-white">{name}</h1>
-            {ip && <p className="text-sm text-slate-500 dark:text-text-muted-dark">IP: {ip} {isLocal && '(Local)'}</p>}
-          </>
-        )}
-
-        {/* Error Banner */}
-        {host?.status === 'error' && host.lastError && (
-          <div className="mt-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-            <div className="flex items-center gap-2 mb-1">
-              <MaterialIcon name="error_outline" className="text-sm text-red-500" />
-              <p className="text-xs font-bold text-red-700 dark:text-red-400">{t('infra.error.lastError')}</p>
-            </div>
-            <p className="text-xs text-red-600 dark:text-red-500 truncate">{host.lastError}</p>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex gap-2 mt-3">
+      {/* Nav Bar */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => navigate('/infra')}
+          className="flex items-center gap-1 text-slate-500 dark:text-text-muted-dark active:opacity-60 transition-opacity cursor-pointer"
+        >
+          <MaterialIcon name="arrow_back" className="text-lg" />
+          <span className="text-sm font-medium">{t('common.backToList')}</span>
+        </button>
+        <div className="flex items-center gap-2">
           {host && !isLocal && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 dark:bg-chart-surface rounded-lg">
               <Toggle checked={host.isActive} onChange={onPauseResume} />
               <span className="text-xs font-medium text-slate-700 dark:text-text-secondary-dark">
                 {host.isActive ? t('infra.active') : t('infra.paused')}
               </span>
             </div>
           )}
-          <div className="flex-1" />
           {host && (
             <>
               <button
@@ -129,6 +97,41 @@ export function InfraDetailMobileView({
             </>
           )}
         </div>
+      </div>
+
+      {/* Title */}
+      <div>
+        {hostLoading ? (
+          <div className="animate-pulse space-y-2">
+            <div className="h-7 w-40 bg-slate-200 dark:bg-ui-hover-dark rounded-lg" />
+            <div className="h-4 w-28 bg-slate-100 dark:bg-ui-active-dark rounded" />
+          </div>
+        ) : (
+          <>
+            <h1 className="text-xl font-black text-slate-900 dark:text-white">{name}</h1>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full ${sc.bg} ${sc.text} text-xs font-bold uppercase tracking-wider`}>
+                <span className="relative flex h-2 w-2">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sc.dot} opacity-75`} />
+                  <span className={`relative inline-flex rounded-full h-2 w-2 ${sc.dot}`} />
+                </span>
+                {t(`common.${status}`)}
+              </span>
+              {ip && <p className="text-sm text-slate-500 dark:text-text-muted-dark">IP: {ip} {isLocal && '(Local)'}</p>}
+            </div>
+          </>
+        )}
+
+        {/* Error Banner */}
+        {host?.status === 'error' && host.lastError && (
+          <div className="mt-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+            <div className="flex items-center gap-2 mb-1">
+              <MaterialIcon name="error_outline" className="text-sm text-red-500" />
+              <p className="text-xs font-bold text-red-700 dark:text-red-400">{t('infra.error.lastError')}</p>
+            </div>
+            <p className="text-xs text-red-600 dark:text-red-500 truncate">{host.lastError}</p>
+          </div>
+        )}
       </div>
 
       {/* Tab Bar */}
