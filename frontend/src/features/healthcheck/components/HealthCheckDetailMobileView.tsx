@@ -141,7 +141,6 @@ export function HealthCheckDetailMobileView({
             lastCheckedAt={service.lastCheckedAt}
             type={service.type as 'http' | 'tcp'}
             status={getIdentityStatus(service.status)}
-            icon={service.type === 'http' ? 'api' : 'dns'}
             scheduleType={service.scheduleType}
             interval={service.interval}
             timeout={service.timeout}

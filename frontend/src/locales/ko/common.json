@@ -47,7 +47,8 @@
         "collapse": "접기",
         "status": "상태",
         "optional": "선택",
-        "viewMore": "더보기"
+        "viewMore": "더보기",
+        "backToList": "목록으로"
     },
     "nav": {
         "dashboard": "메인",

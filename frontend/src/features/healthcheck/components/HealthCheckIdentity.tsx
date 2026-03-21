@@ -10,7 +10,6 @@ interface HealthCheckIdentityProps {
   lastCheckedAt?: string;
   type: 'http' | 'tcp';
   status: 'online' | 'offline' | 'degraded';
-  icon: string;
   scheduleType?: 'interval' | 'cron';
   interval?: number;       // seconds
   timeout?: number;        // seconds
@@ -46,7 +45,6 @@ export function HealthCheckIdentity({
   lastCheckedAt,
   type,
   status,
-  icon,
   scheduleType,
   interval,
   timeout,
@@ -99,11 +97,8 @@ export function HealthCheckIdentity({
       : '-';
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-8 bg-slate-100/50 dark:bg-bg-surface-dark/30 p-6 rounded-xl border border-slate-200 dark:border-chart-surface">
-      <div className="bg-primary/20 rounded-xl p-4 sm:p-6 flex items-center justify-center border border-primary/30 shrink-0">
-        <MaterialIcon name={icon} className="text-4xl sm:text-5xl text-primary" />
-      </div>
-      <div className="flex-1 min-w-0">
+    <div className="mb-8">
+      <div className="min-w-0">
         {/* Name + status */}
         <div className="flex items-center gap-3 mb-2">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{name}</h1>

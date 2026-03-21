@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
 import { ko, enUS } from 'date-fns/locale';
 import { MaterialIcon } from '../../../components/common';
-import { IconLogs } from '../../../components/icons/SidebarIcons';
 import { Service } from '../../../services/api';
 
 interface Props {
@@ -44,13 +43,8 @@ export function LogServiceIdentity({ service, onSettingsClick }: Props) {
     : '-';
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-8 bg-slate-100/50 dark:bg-bg-surface-dark/30 p-6 rounded-xl border border-slate-200 dark:border-chart-surface">
-      {/* Icon */}
-      <div className="bg-primary/20 rounded-xl p-4 sm:p-6 flex items-center justify-center border border-primary/30 shrink-0">
-        <IconLogs size={48} className="text-primary" />
-      </div>
-
-      <div className="flex-1 min-w-0">
+    <div className="mb-8">
+      <div className="min-w-0">
         {/* Name + type badge */}
         <div className="flex items-center gap-3 mb-1.5">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white truncate">{service.name}</h1>

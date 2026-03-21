@@ -53,8 +53,7 @@ export function HealthCheckDetailDesktopView({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
         <Breadcrumbs
           items={[
-            { label: t('nav.healthcheck'), href: '/healthcheck' },
-            { label: service.name },
+            { label: t('common.backToList'), href: '/healthcheck' },
           ]}
         />
         <div className="flex items-center gap-3">
@@ -108,7 +107,6 @@ export function HealthCheckDetailDesktopView({
         lastCheckedAt={service.lastCheckedAt}
         type={service.type as 'http' | 'tcp'}
         status={getIdentityStatus(service.status)}
-        icon={service.type === 'http' ? 'api' : 'dns'}
         scheduleType={service.scheduleType}
         interval={service.interval}
         timeout={service.timeout}

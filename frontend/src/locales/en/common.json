@@ -46,7 +46,8 @@
         "collapse": "Collapse",
         "status": "Status",
         "optional": "optional",
-        "viewMore": "View More"
+        "viewMore": "View More",
+        "backToList": "Back to List"
     },
     "nav": {
         "dashboard": "Main",

@@ -74,8 +74,7 @@ export function LogDetailDesktopView({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
         <Breadcrumbs
           items={[
-            { label: t('nav.logs'), href: '/logs' },
-            { label: service.name },
+            { label: t('common.backToList'), href: '/logs' },
           ]}
         />
         <div className="flex items-center gap-3">
