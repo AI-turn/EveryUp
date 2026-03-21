@@ -59,8 +59,8 @@ export function SidePanel() {
                     </button>
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-20 lg:pb-6 custom-scrollbar">
+                {/* Content — forms provide their own scroll area + footer */}
+                <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                     {content}
                 </div>
             </div>

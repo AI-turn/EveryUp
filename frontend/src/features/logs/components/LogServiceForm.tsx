@@ -60,6 +60,8 @@ export function LogServiceForm({ onSuccess }: LogServiceFormProps) {
         `w-full px-4 py-2 bg-slate-50 dark:bg-ui-hover-dark border ${hasError ? 'border-red-500' : 'border-slate-200 dark:border-ui-border-dark'} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm dark:text-white`;
 
     return (
+        <>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-4 custom-scrollbar">
         <div className="space-y-6">
             {/* Info Banner */}
             <div className="flex gap-3 p-4 bg-primary/5 border border-primary/10 rounded-xl">
@@ -125,29 +127,30 @@ export function LogServiceForm({ onSuccess }: LogServiceFormProps) {
                 </div>
             </div>
 
-            {/* Actions */}
-            <div className="pt-8 flex gap-3 sticky bottom-0 bg-white dark:bg-bg-surface-dark py-4 mt-auto">
-                <button
-                    onClick={closePanel}
-                    className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all"
-                >
-                    {t('common.cancel')}
-                </button>
-                <button
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                    className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                    {submitting ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                        <>
-                            <MaterialIcon name="save" className="text-lg" />
-                            {t('common.save')}
-                        </>
-                    )}
-                </button>
-            </div>
         </div>
+        </div>
+        <div className="flex-none border-t border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark px-6 py-4 flex gap-3">
+            <button
+                onClick={closePanel}
+                className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all"
+            >
+                {t('common.cancel')}
+            </button>
+            <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+                {submitting ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                    <>
+                        <MaterialIcon name="save" className="text-lg" />
+                        {t('common.save')}
+                    </>
+                )}
+            </button>
+        </div>
+        </>
     );
 }

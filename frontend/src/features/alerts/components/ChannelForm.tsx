@@ -115,7 +115,9 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-4 custom-scrollbar">
+        <form id="channel-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
                 <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -189,29 +191,32 @@ export function ChannelForm({ onSuccess, channel }: ChannelFormProps) {
                 )}
             </div>
 
-            <div className="pt-8 flex gap-3 sticky bottom-0 bg-white dark:bg-bg-surface-dark py-4 mt-auto">
-                <button
-                    type="button"
-                    onClick={closePanel}
-                    className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all"
-                >
-                    {t('common.cancel')}
-                </button>
-                <button
-                    type="submit"
-                    disabled={isSubmitting || isTesting}
-                    className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                    {isSubmitting || isTesting ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                        <>
-                            <MaterialIcon name="save" className="text-lg" />
-                            {t('common.save')}
-                        </>
-                    )}
-                </button>
-            </div>
         </form>
+        </div>
+        <div className="flex-none border-t border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark px-6 py-4 flex gap-3">
+            <button
+                type="button"
+                onClick={closePanel}
+                className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all"
+            >
+                {t('common.cancel')}
+            </button>
+            <button
+                type="submit"
+                form="channel-form"
+                disabled={isSubmitting || isTesting}
+                className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+                {isSubmitting || isTesting ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                    <>
+                        <MaterialIcon name="save" className="text-lg" />
+                        {t('common.save')}
+                    </>
+                )}
+            </button>
+        </div>
+        </>
     );
 }

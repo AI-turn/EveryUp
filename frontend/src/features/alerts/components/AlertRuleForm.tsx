@@ -129,7 +129,9 @@ function SystemRuleEditor({ rule, channels, onSuccess }: { rule: AlertRule; chan
     };
 
     return (
-        <div className="space-y-8 pb-20">
+        <>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-4 custom-scrollbar">
+        <div className="space-y-8">
             <section>
                 <SectionHeader icon="power_settings_new" label={t('alerts.rules.systemRule')} />
                 <div className="p-4 bg-slate-50 dark:bg-ui-hover-dark/50 rounded-xl mb-4">
@@ -167,15 +169,17 @@ function SystemRuleEditor({ rule, channels, onSuccess }: { rule: AlertRule; chan
                 </div>
             </section>
 
-            <div className="pt-8 flex gap-3 sticky bottom-0 bg-white dark:bg-bg-surface-dark py-4 mt-auto">
-                <button type="button" onClick={closePanel} className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all">
-                    {t('common.cancel')}
-                </button>
-                <button type="button" onClick={handleSave} disabled={isSubmitting} className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2">
-                    {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span>{t('common.save')}</span>}
-                </button>
-            </div>
         </div>
+        </div>
+        <div className="flex-none border-t border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark px-6 py-4 flex gap-3">
+            <button type="button" onClick={closePanel} className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all">
+                {t('common.cancel')}
+            </button>
+            <button type="button" onClick={handleSave} disabled={isSubmitting} className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2">
+                {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span>{t('common.save')}</span>}
+            </button>
+        </div>
+        </>
     );
 }
 
@@ -329,10 +333,12 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
         + (isEndpoint ? ` — [${targetLabel}]` : ` — ${watchedDuration}min [${targetLabel}]`);
 
     return (
-        <form onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+        <>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-4 custom-scrollbar">
+        <form id="alert-rule-form" onSubmit={handleSubmit(onSubmit, (validationErrors) => {
             const firstError = Object.values(validationErrors)[0];
             toast.error(firstError?.message as string || t('alerts.rules.validationFailed', { defaultValue: 'Please check required fields' }));
-        })} className="space-y-8 pb-20">
+        })} className="space-y-8">
             <section>
                 <SectionHeader icon="target" label={t('alerts.rules.sectionTarget')} />
                 <div className="flex gap-2 mb-4">
@@ -592,14 +598,16 @@ function FullRuleForm({ onSuccess, rule, channels }: AlertRuleFormProps) {
                 </div>
             </section>
 
-            <div className="pt-8 flex gap-3 sticky bottom-0 bg-white dark:bg-bg-surface-dark py-4 mt-auto">
-                <button type="button" onClick={closePanel} className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all">
-                    {t('common.cancel')}
-                </button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2">
-                    {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span>{t('common.save')}</span>}
-                </button>
-            </div>
         </form>
+        </div>
+        <div className="flex-none border-t border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark px-6 py-4 flex gap-3">
+            <button type="button" onClick={closePanel} className="flex-1 py-3 rounded-lg border border-slate-200 dark:border-ui-border-dark text-slate-600 dark:text-text-muted-dark font-bold hover:bg-slate-50 dark:hover:bg-ui-hover-dark transition-all">
+                {t('common.cancel')}
+            </button>
+            <button type="submit" form="alert-rule-form" disabled={isSubmitting} className="flex-1 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2">
+                {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span>{t('common.save')}</span>}
+            </button>
+        </div>
+        </>
     );
 }
