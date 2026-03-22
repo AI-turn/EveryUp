@@ -1,268 +1,136 @@
-# MT Log Agent
+# EveryUp Log Agent
 
-Fluent Bit 기반 로그 수집 에이전트입니다.
-모니터링할 서비스가 실행 중인 서버에 함께 배포하여, 로그 파일을 EveryUp 서버로 전송합니다.
+Collect logs from your application and forward them to your EveryUp dashboard.
 
-```
-┌─────────────────────────────────────────────┐
-│  모니터링 대상 서버                            │
-│                                             │
-│  ┌──────────┐    로그 파일    ┌────────────┐ │       ┌──────────────┐
-│  │  My App  │ ──────────── > │ Log Agent  │ │ ────> │ EveryUp 서버  │
-│  └──────────┘  /var/log/app  └────────────┘ │ HTTP  └──────────────┘
-└─────────────────────────────────────────────┘
-```
+Supports `linux/amd64` and `linux/arm64` — Docker automatically pulls the correct variant.
 
 ---
 
-## 사전 준비
+## Prerequisites
 
-1. **EveryUp 서버**가 실행 중이어야 합니다
-2. **서비스 등록** — EveryUp 대시보드에서 로그를 수집할 서비스를 먼저 등록합니다
-3. **API Key 발급** — 서비스 상세 → **Integration** 탭에서 API Key를 복사합니다
+1. EveryUp server is running
+2. Register a service in the EveryUp dashboard
+3. Get your API key from **Service detail → Integration** tab
 
 ---
 
-## 빠른 시작
+## Quick Start
 
-### 1. 이미지 받기
-
-```bash
-docker pull aiturn/everyup-log-agent:latest
-```
-
-### 2. 환경 설정
-
-`.env.example`을 복사하여 값을 채웁니다.
-
-```bash
-cp .env.example .env
-```
-
-```dotenv
-# 필수
-MT_ENDPOINT=http://your-everyup-server:3001
-MT_API_KEY=mt_your_api_key_here
-
-# 호스트의 로그 디렉토리 (컨테이너 내부 /var/log/app 로 마운트)
-LOG_PATH=/path/to/your/app/logs
-
-# 선택
-MT_FILE=/var/log/app/*.log
-MT_LOG_LEVEL=info
-MT_TEST=false
-MT_TEST_PORT=8080
-```
-
-`docker-compose.yml`:
-
-```yaml
-services:
-  mt-log-agent:
-    image: aiturn/everyup-log-agent:latest
-    restart: unless-stopped
-    env_file:
-      - path: .env
-        required: true
-    ports:
-      - "${MT_TEST_PORT:-8080}:${MT_TEST_PORT:-8080}"
-    volumes:
-      - ${LOG_PATH:-/var/log/app}:/var/log/app
-```
-
-### 3. 실행
-
-```bash
-docker compose up -d
-```
-
-### 4. Docker Run (Compose 없이 바로 실행)
+### Docker
 
 ```bash
 docker run -d \
   --name everyup-log-agent \
   -v /path/to/your/app/logs:/var/log/app:ro \
   -e MT_ENDPOINT=http://your-everyup-server:3001 \
-  -e MT_API_KEY=mt_your_api_key_here \
+  -e MT_API_KEY=mt_your_api_key \
+  --restart unless-stopped \
   aiturn/everyup-log-agent:latest
 ```
 
----
-
-## 기존 앱과 같은 Compose에 사이드카로 추가
-
-모니터링할 앱과 같은 `docker-compose.yml`에 추가하는 방식입니다.
+### Docker Compose
 
 `.env`:
 ```dotenv
 MT_ENDPOINT=http://your-everyup-server:3001
-MT_API_KEY=mt_your_api_key_here
+MT_API_KEY=mt_your_api_key
+LOG_PATH=/path/to/your/app/logs
 ```
 
 `docker-compose.yml`:
 ```yaml
 services:
-  my-app:
-    image: my-app:latest
-    volumes:
-      - app-logs:/var/log/app
-
-  mt-log-agent:
+  everyup-log-agent:
     image: aiturn/everyup-log-agent:latest
-    env_file:
-      - path: .env
-        required: true
-    volumes:
-      - app-logs:/var/log/app:ro
-    depends_on:
-      - my-app
     restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ${LOG_PATH}:/var/log/app:ro
+```
 
-volumes:
-  app-logs:
+```bash
+docker compose up -d
 ```
 
 ---
 
-## 환경 변수
+## Configuration
 
-| 변수 | 설명 | 기본값 |
-|------|------|--------|
-| `MT_ENDPOINT` | EveryUp 서버 URL **(권장)** | — |
-| `MT_API_KEY` | 서비스 API Key **(필수)** | `changeme` |
-| `MT_FILE` | 수집할 로그 파일 경로 (glob 지원) | `/var/log/app/*.log` |
-| `MT_LOG_LEVEL` | Fluent Bit 로그 레벨 (`debug`, `info`, `warn`, `error`) | `info` |
-| `MT_RETRY_LIMIT` | 전송 실패 시 재시도 횟수 (0 = 무제한) | `3` |
-| `MT_TEST` | 테스트 콘솔 UI 활성화 | `false` |
-| `MT_TEST_PORT` | 테스트 콘솔 포트 | `8080` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MT_ENDPOINT` | EveryUp server URL | — |
+| `MT_API_KEY` | Service API key **(required)** | — |
+| `MT_FILE` | Log file path (glob supported) | `/var/log/app/*.log` |
+| `MT_LOG_LEVEL` | Log level (`debug`, `info`, `warn`, `error`) | `info` |
+| `MT_RETRY_LIMIT` | Retry count on failure (`0` = unlimited) | `3` |
 
-> **`MT_ENDPOINT` 자동 파싱:**
+> **`MT_ENDPOINT` URL parsing:**
 > - `http://192.168.1.10:3001` → host=192.168.1.10, port=3001, tls=off
 > - `https://monitoring.example.com` → host=monitoring.example.com, port=443, tls=on
 
 ---
 
-## 테스트 콘솔 UI
+## Log Format
 
-`MT_TEST=true`로 실행하면 이미지에 내장된 웹 UI가 활성화됩니다.
-버튼 한 번으로 INFO / WARN / ERROR 로그를 전송하고, EveryUp 대시보드에서 수신을 바로 확인할 수 있습니다.
-
-> **⚠️ 보안 주의:** `MT_TEST=true`는 인증 없는 HTTP 서버를 `MT_TEST_PORT`에 노출합니다.
-> **운영 환경에서는 절대 사용하지 마세요.** 로컬 개발 또는 격리된 테스트 환경에서만 사용하세요.
-
-`.env`:
-```dotenv
-MT_ENDPOINT=http://your-everyup-server:3001
-MT_API_KEY=mt_your_api_key_here
-MT_TEST=true
-MT_TEST_PORT=8080
-LOG_PATH=/var/log/app
-```
-
-```bash
-docker compose up
-```
-
-`http://<서버-IP>:8080` 접속 후 버튼을 클릭하면 EveryUp 대시보드 Logs 탭에 로그가 수신됩니다.
-
-> EveryUp 서버의 방화벽에서 **3001 포트 인바운드**가 허용되어 있어야 합니다.
-
----
-
-## 로그 포맷
-
-### JSON (권장)
+### JSON (recommended)
 
 ```json
 {"level": "error", "message": "connection failed", "service": "api", "userId": 123}
 ```
 
-인식하는 필드:
-- **message**: `message`, `msg`, `log` 중 하나
-- **level**: `level`, `levelname`, `severity` 중 하나
-- **나머지 필드**: `metadata`로 자동 수집
+Recognized fields:
+- **message**: `message`, `msg`, or `log`
+- **level**: `level`, `levelname`, or `severity`
+- **other fields**: collected automatically as `metadata`
 
-레벨 매핑:
+Level mapping:
 
-| 입력값 | 변환 |
-|--------|------|
+| Input | Mapped to |
+|-------|-----------|
 | `FATAL`, `CRITICAL`, `ERROR`, `ERR` | `error` |
 | `WARN`, `WARNING` | `warn` |
 | `INFO`, `DEBUG`, `TRACE` | `info` |
-| 미지정 또는 기타 | `error` |
+| unset or other | `error` |
 
-### 일반 텍스트
+### Plain text
 
-JSON이 아닌 텍스트도 수집됩니다. 전체 라인이 `message`로 들어가고 레벨은 `error`로 설정됩니다.
+Non-JSON lines are collected as-is. The full line becomes `message` and level is set to `error`.
 
 ---
 
-## 트러블슈팅
+## Troubleshooting
 
-### 로그가 수집되지 않음
+### Logs not being collected
 
-- **볼륨 마운트 확인**
+- **Check volume mount**
   ```bash
   docker exec everyup-log-agent ls -la /var/log/app/
   ```
-  파일이 보이지 않으면 볼륨 설정이 잘못된 것입니다.
+  If no files appear, your volume path is misconfigured.
 
-- **파일 경로 확인** — 기본값은 `/var/log/app/*.log`입니다. 확장자가 다르면 `.env`에서 수정하세요.
-  ```dotenv
+- **Check file extension** — default pattern is `/var/log/app/*.log`. If your app uses a different extension, set `MT_FILE`:
+  ```
   MT_FILE=/var/log/app/*
   ```
 
-- **앱이 파일로 로그를 쓰는지 확인** — 컨테이너는 기본적으로 stdout/stderr로만 출력합니다. 앱의 로깅 설정에서 `/var/log/app/app.log` 파일 출력을 추가해야 합니다.
+- **App must write to a file** — containers typically log to stdout/stderr only. Configure your app to also write logs to a file (e.g. `/var/log/app/app.log`).
 
-### EveryUp 서버에 로그가 안 보임
+### Logs not appearing in EveryUp
 
-- **Agent 로그 확인**
+- **Check agent logs**
   ```bash
   docker logs everyup-log-agent
   ```
-  `Connection refused`, `401 Unauthorized` 등의 에러를 확인하세요.
+  Look for `Connection refused` or `401 Unauthorized`.
 
-- **네트워크 연결 확인**
+- **Check network connectivity**
   ```bash
   docker exec everyup-log-agent wget -qO- http://your-everyup-server:3001/api/v1/health
   ```
 
-- **API Key 확인** — EveryUp 대시보드에서 해당 서비스의 API Key가 맞는지 확인하세요.
+- **Verify API key** — confirm the key matches the one shown in the Integration tab.
 
-- **디버그 로그 활성화** — `.env`에서 수정 후 재시작
-  ```dotenv
+- **Enable debug logging**
+  ```
   MT_LOG_LEVEL=debug
   ```
-
----
-
-## 고급: stdin 모드
-
-파일 tail 대신 표준 입력(stdin)으로 로그를 주입할 수 있습니다.
-`conf/stdin.conf`를 사용하면 `echo '{"level":"error","message":"test"}' | docker run -i ...` 형태로 동작합니다.
-
-```bash
-docker run -i \
-  -e MT_ENDPOINT=http://your-everyup-server:3001 \
-  -e MT_API_KEY=mt_your_api_key_here \
-  -e MT_CONFIG=/fluent-bit/etc/stdin.conf \
-  aiturn/everyup-log-agent:latest
-```
-
-> 이 모드는 파이프 통합이나 CI 테스트용입니다. 운영 로그 수집에는 기본 tail 모드를 사용하세요.
-
----
-
-## 빌드 (개발자용)
-
-```bash
-# 로컬 빌드
-docker build -t everyup-log-agent .
-
-# Docker Hub 배포 (멀티 플랫폼)
-docker buildx build \
-  --platform linux/amd64,linux/arm64 \
-  -t aiturn/everyup-log-agent:latest \
-  --push \
-  .
-```
