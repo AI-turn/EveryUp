@@ -1,6 +1,6 @@
 import { api } from '../services/api';
 import { useDataFetch } from './useDataFetch';
-import { mockGauges, mockCharts as mockTrendCharts, mockProcesses } from '../mocks/infra';
+import { mockGauges, mockCharts as mockTrendCharts, mockProcesses, mockHost } from '../mocks/infra';
 import { mockResources } from '../mocks/infra/resourceList.mock';
 import {
   hostsToResources,
@@ -50,5 +50,5 @@ export function useMonitoringResources() {
 }
 
 export function useHost(hostId: string) {
-  return useDataFetch(null, async () => api.getHostById(hostId), [hostId]);
+  return useDataFetch(mockHost, async () => api.getHostById(hostId), [hostId]);
 }
