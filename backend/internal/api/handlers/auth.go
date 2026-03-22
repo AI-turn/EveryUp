@@ -47,7 +47,7 @@ func (h *AuthHandler) SetupStatus(c *fiber.Ctx) error {
 	repo := database.NewUserRepository()
 	count, err := repo.Count()
 	if err != nil {
-		return internalError(c, "DB_ERROR", err)
+		return internalError(c, ErrCodeDatabase, err)
 	}
 	return c.JSON(fiber.Map{
 		"success": true,
@@ -62,7 +62,7 @@ func (h *AuthHandler) Setup(c *fiber.Ctx) error {
 
 	count, err := repo.Count()
 	if err != nil {
-		return internalError(c, "DB_ERROR", err)
+		return internalError(c, ErrCodeDatabase, err)
 	}
 	if count > 0 {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
@@ -98,7 +98,7 @@ func (h *AuthHandler) Setup(c *fiber.Ctx) error {
 
 	user, err := repo.Create(body.Username, string(hash), "admin")
 	if err != nil {
-		return internalError(c, "DB_ERROR", err)
+		return internalError(c, ErrCodeDatabase, err)
 	}
 
 	token, err := crypto.SignToken(crypto.UserClaims{
@@ -147,7 +147,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 	if err != nil {
-		return internalError(c, "DB_ERROR", err)
+		return internalError(c, ErrCodeDatabase, err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(body.Password)); err != nil {
@@ -212,7 +212,7 @@ func (h *AuthHandler) Me(c *fiber.Ctx) error {
 func (h *AuthHandler) Reset(c *fiber.Ctx) error {
 	repo := database.NewUserRepository()
 	if err := repo.DeleteAll(); err != nil {
-		return internalError(c, "DB_ERROR", err)
+		return internalError(c, ErrCodeDatabase, err)
 	}
 
 	if err := crypto.RotateSecret(database.DB); err != nil {

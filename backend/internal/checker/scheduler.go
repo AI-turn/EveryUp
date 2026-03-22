@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"sync"
-	"time"
 
 	"github.com/aiturn/everyup/internal/alerter"
 	"github.com/aiturn/everyup/internal/config"
@@ -13,7 +12,9 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-// Scheduler manages periodic health checks
+// Scheduler manages periodic health checks.
+// Check execution logic lives in runner.go.
+// Metric/incident DB writes live in recorder.go.
 type Scheduler struct {
 	cron         *cron.Cron
 	entries      map[string]cron.EntryID
@@ -89,6 +90,12 @@ func (s *Scheduler) Start(services []config.ServiceConfig) error {
 	return nil
 }
 
+// Stop stops the scheduler
+func (s *Scheduler) Stop() {
+	s.cron.Stop()
+	log.Println("Scheduler stopped")
+}
+
 // AddService adds a service to the scheduler
 func (s *Scheduler) AddService(svc *models.Service) {
 	s.mu.Lock()
@@ -151,13 +158,7 @@ func (s *Scheduler) UpdateService(svc *models.Service) {
 	s.AddService(svc)
 }
 
-// Stop stops the scheduler
-func (s *Scheduler) Stop() {
-	s.cron.Stop()
-	log.Println("Scheduler stopped")
-}
-
-// syncServices syncs configured services to database
+// syncServices syncs config-file services to the database on startup
 func (s *Scheduler) syncServices(services []config.ServiceConfig) error {
 	for _, svc := range services {
 		existing, err := s.serviceRepo.GetByID(svc.ID)
@@ -205,200 +206,3 @@ func (s *Scheduler) syncServices(services []config.ServiceConfig) error {
 	}
 	return nil
 }
-
-// checkService performs a health check for a service
-func (s *Scheduler) checkService(svc *models.Service) {
-	// Re-fetch from DB to ensure we have latest IsActive status
-	service, err := s.serviceRepo.GetByID(svc.ID)
-	if err != nil {
-		log.Printf("Failed to get service %s: %v", svc.ID, err)
-		return
-	}
-	if service == nil || !service.IsActive {
-		return
-	}
-
-	var result *CheckResult
-
-	switch service.Type {
-	case models.ServiceTypeHTTP:
-		result = s.httpChecker.Check(service.GetHTTPConfig())
-	case models.ServiceTypeTCP:
-		result = s.tcpChecker.Check(service.GetTCPConfig())
-	case models.ServiceTypeLog:
-		// Log services receive data via ingest API — no polling needed
-		return
-	default:
-		log.Printf("Unknown service type: %s", service.Type)
-		return
-	}
-
-	// Save metric
-	metric := result.ToMetric(service.ID)
-	if err := s.metricRepo.Create(metric); err != nil {
-		log.Printf("Failed to save metric for %s: %v", service.ID, err)
-	}
-
-	// Evaluate endpoint alert rules
-	if s.serviceEvaluator != nil {
-		s.serviceEvaluator.Evaluate(service.ID, service.Name, result.StatusCode, result.ResponseTime)
-	}
-
-	// Determine status for incident handling and broadcast
-	var status models.ServiceStatus
-	if result.Status == models.CheckStatusSuccess {
-		status = models.StatusHealthy
-		s.handleRecovery(service.ID)
-	} else {
-		status = models.StatusUnhealthy
-		s.handleFailure(service.ID, result.ErrorMessage)
-	}
-
-	// Broadcast update
-	if s.broadcast != nil {
-		s.broadcast(map[string]interface{}{
-			"type": "metric",
-			"data": map[string]interface{}{
-				"serviceId":    service.ID,
-				"status":       string(status),
-				"responseTime": result.ResponseTime,
-				"checkedAt":    result.CheckedAt,
-			},
-		})
-	}
-}
-
-// handleFailure handles service failure
-func (s *Scheduler) handleFailure(serviceID, errorMessage string) {
-	s.mu.Lock()
-	s.failureCounts[serviceID]++
-	count := s.failureCounts[serviceID]
-	s.mu.Unlock()
-
-	cfg := config.Get()
-	threshold := 3
-	if cfg != nil && cfg.Alerts.ConsecutiveFailures > 0 {
-		threshold = cfg.Alerts.ConsecutiveFailures
-	}
-
-	// Create incident after consecutive failures
-	if count == threshold {
-		incident := &models.Incident{
-			ServiceID: serviceID,
-			Type:      models.IncidentTypeDown,
-			Message:   errorMessage,
-			StartedAt: time.Now(),
-		}
-		if err := s.incidentRepo.Create(incident); err != nil {
-			log.Printf("Failed to create incident for %s: %v", serviceID, err)
-		}
-
-		// Log error
-		logEntry := &models.Log{
-			ServiceID: serviceID,
-			Level:     models.LogLevelError,
-			Message:   fmt.Sprintf("Service down: %s", errorMessage),
-			CreatedAt: time.Now(),
-		}
-		s.logRepo.Create(logEntry)
-
-		// Broadcast incident
-		if s.broadcast != nil {
-			s.broadcast(map[string]interface{}{
-				"type": "incident",
-				"data": incident,
-			})
-		}
-
-		log.Printf("Incident created for service %s: %s", serviceID, errorMessage)
-	}
-}
-
-// handleRecovery handles service recovery
-func (s *Scheduler) handleRecovery(serviceID string) {
-	s.mu.Lock()
-	previousCount := s.failureCounts[serviceID]
-	s.failureCounts[serviceID] = 0
-	s.mu.Unlock()
-
-	cfg := config.Get()
-	threshold := 3
-	if cfg != nil && cfg.Alerts.ConsecutiveFailures > 0 {
-		threshold = cfg.Alerts.ConsecutiveFailures
-	}
-
-	// Resolve incident if there was one
-	if previousCount >= threshold {
-		if err := s.incidentRepo.Resolve(serviceID); err != nil {
-			log.Printf("Failed to resolve incident for %s: %v", serviceID, err)
-		}
-
-		// Log recovery
-		logEntry := &models.Log{
-			ServiceID: serviceID,
-			Level:     models.LogLevelInfo,
-			Message:   "Service recovered",
-			CreatedAt: time.Now(),
-		}
-		s.logRepo.Create(logEntry)
-
-		log.Printf("Service %s recovered", serviceID)
-	}
-}
-
-// cleanup removes old data based on retention settings
-func (s *Scheduler) cleanup() {
-	cfg := config.Get()
-	if cfg == nil {
-		return
-	}
-
-	// Delete old metrics
-	metricRetention := config.GetRetentionDuration(cfg.Retention.Metrics)
-	if deleted, err := s.metricRepo.DeleteOld(metricRetention); err == nil {
-		log.Printf("Cleaned up %d old metrics", deleted)
-	}
-
-	// Delete old logs
-	logRetention := config.GetRetentionDuration(cfg.Retention.Logs)
-	if deleted, err := s.logRepo.DeleteOld(logRetention); err == nil {
-		log.Printf("Cleaned up %d old logs", deleted)
-	}
-
-	// Delete old system metrics
-	if cfg.Retention.SystemMetrics != "" {
-		sysRetention := config.GetRetentionDuration(cfg.Retention.SystemMetrics)
-		sysRepo := database.NewSystemMetricRepository()
-		if deleted, err := sysRepo.DeleteOld(sysRetention); err == nil {
-			log.Printf("Cleaned up %d old system metrics", deleted)
-		}
-	}
-}
-
-// CheckNow performs an immediate check for a service
-func (s *Scheduler) CheckNow(serviceID string) (*CheckResult, error) {
-	service, err := s.serviceRepo.GetByID(serviceID)
-	if err != nil {
-		return nil, err
-	}
-	if service == nil {
-		return nil, fmt.Errorf("service not found: %s", serviceID)
-	}
-
-	s.checkService(service)
-
-	// Return the latest result
-	metrics, err := s.metricRepo.GetByServiceID(serviceID, 1)
-	if err != nil || len(metrics) == 0 {
-		return nil, fmt.Errorf("failed to get check result")
-	}
-
-	return &CheckResult{
-		Status:       metrics[0].Status,
-		ResponseTime: metrics[0].ResponseTime,
-		StatusCode:   metrics[0].StatusCode,
-		ErrorMessage: metrics[0].ErrorMessage,
-		CheckedAt:    metrics[0].CheckedAt,
-	}, nil
-}
-

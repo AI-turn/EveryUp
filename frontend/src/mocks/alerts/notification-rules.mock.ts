@@ -1,6 +1,7 @@
 /**
- * Mock data for notification rules
- * Used by: NotificationRulesTable component
+ * Mock data for notification rules.
+ * Used by: useNotificationRules() hook (hooks/useAlerts.ts)
+ * TODO: Replace with real API when backend implements notification rules endpoint.
  */
 
 export interface NotificationRule {

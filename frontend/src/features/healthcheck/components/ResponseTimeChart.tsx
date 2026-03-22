@@ -121,7 +121,7 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
             {t('healthcheck.detail.metrics.responseTime')}
           </h2>
           <p className="text-slate-400 dark:text-text-chart-dim text-sm">
-            {t('detail.responseTimeChartDesc', {
+            {t('healthcheck.detail.metrics.responseTimeChartDesc', {
               range: t(TIME_RANGE_KEYS[timeRange]),
             })}
           </p>

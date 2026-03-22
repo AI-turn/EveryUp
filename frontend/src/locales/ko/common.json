@@ -48,7 +48,18 @@
         "status": "상태",
         "optional": "선택",
         "viewMore": "더보기",
-        "backToList": "목록으로"
+        "backToList": "목록으로",
+        "retry": "다시 시도",
+        "saved": "저장됨",
+        "errorGeneric": "예기치 못한 오류가 발생했습니다. 다시 시도해 주세요.",
+        "loadError": "불러오기 실패",
+        "none": "-",
+        "noData": "데이터 없음",
+        "clearFilters": "필터 초기화",
+        "disabled": "비활성",
+        "days": "일",
+        "overview": "개요",
+        "deleting": "삭제 중..."
     },
     "nav": {
         "dashboard": "메인",

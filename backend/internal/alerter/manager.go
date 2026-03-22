@@ -146,19 +146,19 @@ func (m *Manager) sendToChannel(ch models.NotificationChannel, notification Noti
 	var provider AlertProvider
 
 	switch ch.Type {
-	case "discord":
+	case ChannelTypeDiscord:
 		var config models.DiscordConfig
 		if err := json.Unmarshal([]byte(ch.Config), &config); err != nil {
 			log.Printf("Failed to parse Discord config for channel %s: %v", ch.Name, err)
 			return
 		}
-		if err := ValidateWebhookURL("discord", config.WebhookURL); err != nil {
+		if err := ValidateWebhookURL(ChannelTypeDiscord, config.WebhookURL); err != nil {
 			log.Printf("[SECURITY] Blocked Discord webhook for channel %s: %v", ch.Name, err)
 			return
 		}
 		provider = NewDiscordProvider(config.WebhookURL)
 
-	case "telegram":
+	case ChannelTypeTelegram:
 		var config models.TelegramConfig
 		if err := json.Unmarshal([]byte(ch.Config), &config); err != nil {
 			log.Printf("Failed to parse Telegram config for channel %s: %v", ch.Name, err)
@@ -166,13 +166,13 @@ func (m *Manager) sendToChannel(ch models.NotificationChannel, notification Noti
 		}
 		provider = NewTelegramProvider(config.BotToken, config.ChatID)
 
-	case "slack":
+	case ChannelTypeSlack:
 		var config models.SlackConfig
 		if err := json.Unmarshal([]byte(ch.Config), &config); err != nil {
 			log.Printf("Failed to parse Slack config for channel %s: %v", ch.Name, err)
 			return
 		}
-		if err := ValidateWebhookURL("slack", config.WebhookURL); err != nil {
+		if err := ValidateWebhookURL(ChannelTypeSlack, config.WebhookURL); err != nil {
 			log.Printf("[SECURITY] Blocked Slack webhook for channel %s: %v", ch.Name, err)
 			return
 		}

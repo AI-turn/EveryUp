@@ -6,6 +6,21 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Error code constants — use these instead of raw string literals to catch typos at compile time.
+const (
+	ErrCodeDatabase = "DATABASE_ERROR"
+	ErrCodeFetch    = "FETCH_ERROR"
+	ErrCodeCreate   = "CREATE_ERROR"
+	ErrCodeUpdate   = "UPDATE_ERROR"
+	ErrCodeDelete   = "DELETE_ERROR"
+	ErrCodeToggle   = "TOGGLE_ERROR"
+	ErrCodeSecret   = "SECRET_ERROR"
+	ErrCodeHash     = "HASH_ERROR"
+	ErrCodeToken    = "TOKEN_ERROR"
+	ErrCodeSend     = "SEND_ERROR"
+	ErrCodeQuery    = "QUERY_ERROR"
+)
+
 // internalError logs the full error server-side and returns a generic message to the client.
 // This prevents leaking internal details (DB structure, file paths, SQL errors) to API consumers.
 func internalError(c *fiber.Ctx, code string, err error) error {
@@ -22,7 +37,7 @@ func internalError(c *fiber.Ctx, code string, err error) error {
 // genericMessage returns a user-safe message for the given error code.
 func genericMessage(code string) string {
 	switch code {
-	case "DB_ERROR", "DATABASE_ERROR":
+	case ErrCodeDatabase, "DB_ERROR": // "DB_ERROR" kept for backward compat
 		return "A database error occurred"
 	case "FETCH_ERROR":
 		return "Failed to fetch the requested resource"

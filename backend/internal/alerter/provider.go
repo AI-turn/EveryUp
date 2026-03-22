@@ -20,6 +20,18 @@ const (
 	AlertTypeSystem      = "system"
 )
 
+// Channel types — mirror the notification_channels.type column in the database.
+// Manager.sendToChannel() (manager.go) switches on these to pick the AlertProvider:
+//
+//	ChannelTypeDiscord  → NewDiscordProvider  (discord.go)
+//	ChannelTypeTelegram → NewTelegramProvider (telegram.go)
+//	ChannelTypeSlack    → NewSlackProvider    (slack.go)
+const (
+	ChannelTypeDiscord  = "discord"
+	ChannelTypeTelegram = "telegram"
+	ChannelTypeSlack    = "slack"
+)
+
 // Notification represents an alert notification
 type Notification struct {
 	RuleID      string // alert rule ID that triggered this notification (empty for non-rule alerts)

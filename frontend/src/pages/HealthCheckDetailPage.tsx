@@ -6,10 +6,8 @@ import { toast } from 'react-hot-toast';
 import { MaterialIcon } from '../components/common';
 import { useSidePanel } from '../contexts/SidePanelContext';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
-import { useIsMobile } from '../hooks/useMediaQuery';
 import { HealthCheckForm } from '../features/healthcheck/components/HealthCheckForm';
-import { HealthCheckDetailDesktopView } from '../features/healthcheck/components/HealthCheckDetailDesktopView';
-import { HealthCheckDetailMobileView } from '../features/healthcheck/components/HealthCheckDetailMobileView';
+import { HealthCheckDetailView } from '../features/healthcheck/components/HealthCheckDetailView';
 import { api, Service } from '../services/api';
 
 export function HealthCheckDetailPage() {
@@ -17,7 +15,6 @@ export function HealthCheckDetailPage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['healthcheck', 'common']);
   const { openPanel } = useSidePanel();
-  const isMobile = useIsMobile();
 
   const [isLive, setIsLive] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -130,12 +127,8 @@ export function HealthCheckDetailPage() {
     getIdentityStatus,
   } as const;
 
-  if (isMobile) {
-    return <HealthCheckDetailMobileView {...sharedProps} />;
-  }
-
   return (
-    <HealthCheckDetailDesktopView
+    <HealthCheckDetailView
       {...sharedProps}
       lastUpdated={lastUpdated}
       dateLocale={dateLocale}

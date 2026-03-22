@@ -19,10 +19,12 @@ const LEVEL_STYLE: Record<string, { text: string; bg: string; icon: string }> = 
 
 function InfoChip({ icon, label, value, accent }: { icon: string; label: string; value: string; accent?: boolean }) {
   return (
-    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark">
+    <div className="relative group flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark cursor-default">
       <MaterialIcon name={icon} className={`text-sm ${accent ? 'text-primary' : 'text-slate-400 dark:text-text-dim-dark'}`} />
-      <span className="text-xs text-slate-400 dark:text-text-dim-dark font-medium">{label}</span>
-      <span className="text-xs font-bold text-slate-700 dark:text-text-base-dark">{value}</span>
+      <span className="text-xs font-semibold text-slate-700 dark:text-text-base-dark">{value}</span>
+      <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-800 dark:bg-slate-700 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        {label}
+      </div>
     </div>
   );
 }
@@ -48,15 +50,12 @@ export function LogServiceIdentity({ service, onSettingsClick }: Props) {
         {/* Name + type badge */}
         <div className="flex items-center gap-3 mb-1.5">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white truncate">{service.name}</h1>
-          <span className="shrink-0 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
-            LOG
-          </span>
         </div>
 
         {/* Service ID */}
         <p className="text-sm text-slate-500 dark:text-text-muted-dark mb-4">
           <span className="text-slate-400 dark:text-text-dim-dark mr-1">{t('logServices.identity.id')}:</span>
-          <code className="bg-slate-200 dark:bg-chart-surface px-2 py-0.5 rounded text-primary text-xs">{service.id}</code>
+          <code className="text-xs">{service.id}</code>
         </p>
 
         {/* Info chips */}
@@ -72,7 +71,7 @@ export function LogServiceIdentity({ service, onSettingsClick }: Props) {
 
           {/* Created at */}
           <InfoChip
-            icon="schedule"
+            icon="event"
             label={t('logServices.identity.createdAt')}
             value={createdText}
           />

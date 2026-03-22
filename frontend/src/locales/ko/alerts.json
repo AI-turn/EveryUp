@@ -51,6 +51,7 @@
         "test": "테스트",
         "modal": {
             "title": "알림 채널 추가",
+            "editTitle": "채널 편집",
             "namePlaceholder": "예: 내 텔레그램 봇",
             "botToken": "봇 토큰",
             "botTokenPlaceholder": "123456:ABC-DEF1234ghIkl...",

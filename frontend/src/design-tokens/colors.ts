@@ -1,43 +1,15 @@
 /**
- * Centralized Color Design Token System
+ * Runtime Tailwind class mappings for status-driven UI.
  *
- * Maps semantic color names to Tailwind theme variables.
- * These correspond to CSS custom properties defined in @theme directive.
+ * CSS design tokens (color values) live exclusively in `src/index.css` (@theme block).
+ * This file contains *Tailwind class name maps* used for dynamic status rendering —
+ * they are not CSS variable duplicates and cannot be replaced by CSS variables alone.
+ *
+ * Usage: `statusColorClasses[service.status].bg` → Tailwind bg class string
  */
 
-export const colorTokens = {
-  // Primary brand color
-  primary: 'primary',
-
-  // Status colors
-  status: {
-    healthy: 'status-healthy',
-    degraded: 'status-degraded',
-    warning: 'status-warning',
-    offline: 'status-offline',
-  },
-
-  // Semantic colors
-  semantic: {
-    error: 'error',
-    warning: 'warning',
-    success: 'success',
-    info: 'info',
-  },
-
-  // UI component colors (dark mode specific)
-  ui: {
-    cardDark: 'bg-surface-dark',
-    borderDark: 'ui-border-dark',
-    hoverDark: 'ui-hover-dark',
-    textMutedDark: 'text-muted-dark',
-    textSecondaryDark: 'text-dim-dark',
-  }
-} as const;
-
 /**
- * Status color mapping for dynamic components
- * Returns the appropriate Tailwind color class for a given status
+ * Service status color mapping (healthy/degraded/warning/offline)
  */
 export const statusColorClasses = {
   healthy: {
@@ -124,9 +96,8 @@ export const incidentColorClasses = {
 } as const;
 
 /**
- * Get CSS variable reference for direct use in inline styles
- * @param token - The color token name (without --color- prefix)
- * @returns CSS variable reference string
+ * Returns a CSS variable reference for use in inline styles (e.g. recharts color props).
+ * Prefer Tailwind classes for static styles — use this only when a CSS string is required.
  */
 export function getCSSVariable(token: string): string {
   return `var(--color-${token})`;

@@ -51,6 +51,7 @@
         "test": "Test",
         "modal": {
             "title": "Add Notification Channel",
+            "editTitle": "Edit Channel",
             "namePlaceholder": "e.g. My Telegram Bot",
             "botToken": "Bot Token",
             "botTokenPlaceholder": "123456:ABC-DEF1234ghIkl...",

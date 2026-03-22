@@ -3,12 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { useHost } from '../hooks/useData';
-import { useIsMobile } from '../hooks/useMediaQuery';
 import { useSidePanel } from '../contexts/SidePanelContext';
 import { api } from '../services/api';
 import { InfraForm } from '../features/infra';
-import { InfraDetailDesktopView } from '../features/infra/components/InfraDetailDesktopView';
-import { InfraDetailMobileView } from '../features/infra/components/InfraDetailMobileView';
+import { InfraDetailView } from '../features/infra/components/InfraDetailView';
 
 const hostStatusMap: Record<string, string> = {
   online: 'healthy',
@@ -22,7 +20,6 @@ export function InfraDetailPage() {
   const { t } = useTranslation(['infra', 'common']);
   const navigate = useNavigate();
   const { openPanel } = useSidePanel();
-  const isMobile = useIsMobile();
 
   const hostId = resourceId || 'local';
   const { data: host, loading: hostLoading, refetch } = useHost(hostId);
@@ -102,12 +99,8 @@ export function InfraDetailPage() {
     onDeleteDialogClose: () => setIsDeleteDialogOpen(false),
   } as const;
 
-  if (isMobile) {
-    return <InfraDetailMobileView {...sharedProps} />;
-  }
-
   return (
-    <InfraDetailDesktopView
+    <InfraDetailView
       {...sharedProps}
       cluster={cluster}
       isPausing={isPausing}

@@ -5,10 +5,8 @@ import { ko, enUS } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
 import { MaterialIcon } from '../components/common';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
-import { useIsMobile } from '../hooks/useMediaQuery';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
-import { LogDetailDesktopView } from '../features/logs/components/LogDetailDesktopView';
-import { LogDetailMobileView } from '../features/logs/components/LogDetailMobileView';
+import { LogDetailView } from '../features/logs/components/LogDetailView';
 import { api, Service } from '../services/api';
 
 type TabKey = 'logs' | 'integration' | 'settings';
@@ -20,7 +18,6 @@ export function LogDetailPage() {
   const [searchParams] = useSearchParams();
   const { t, i18n } = useTranslation(['healthcheck', 'logs', 'common']);
   const { copy } = useCopyToClipboard();
-  const isMobile = useIsMobile();
 
   const [isLive, setIsLive] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -170,12 +167,8 @@ export function LogDetailPage() {
     onCopyKey: copy,
   } as const;
 
-  if (isMobile) {
-    return <LogDetailMobileView {...sharedProps} />;
-  }
-
   return (
-    <LogDetailDesktopView
+    <LogDetailView
       {...sharedProps}
       lastUpdated={lastUpdated}
       dateLocale={dateLocale}

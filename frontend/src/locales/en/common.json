@@ -47,7 +47,18 @@
         "status": "Status",
         "optional": "optional",
         "viewMore": "View More",
-        "backToList": "Back to List"
+        "backToList": "Back to List",
+        "retry": "Retry",
+        "saved": "Saved",
+        "errorGeneric": "An unexpected error occurred. Please try again.",
+        "loadError": "Failed to load",
+        "none": "-",
+        "noData": "No data available",
+        "clearFilters": "Clear Filters",
+        "disabled": "Disabled",
+        "days": "days",
+        "overview": "Overview",
+        "deleting": "Deleting..."
     },
     "nav": {
         "dashboard": "Main",

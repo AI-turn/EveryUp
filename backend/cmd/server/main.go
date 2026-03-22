@@ -33,6 +33,11 @@ func main() {
 	configPath := flag.String("config", "", "Path to config file")
 	flag.Parse()
 
+	// Initialization dependency order:
+	//   config → database → crypto/JWT (need DB) → admin user (need DB)
+	//   → fiber/websocket → scheduler → hosts (need DB) → collectors
+	//   → alerter + evaluators → routes → start all
+
 	// Load configuration
 	cfg, err := config.Load(*configPath)
 	if err != nil {
@@ -60,26 +65,8 @@ func main() {
 	}
 	log.Printf("JWT: signing secret loaded (HMAC-SHA256, key managed in DB)")
 
-	// Initialize admin account from env vars on startup
-	// Set MT_ADMIN_USERNAME + MT_ADMIN_PASSWORD to create or reset the admin account
-	if adminUser := os.Getenv("MT_ADMIN_USERNAME"); adminUser != "" {
-		if adminPass := os.Getenv("MT_ADMIN_PASSWORD"); adminPass != "" {
-			// Block weak default passwords in production mode
-			if cfg.Server.Mode == "production" && (adminPass == "admin" || adminPass == "password" || adminPass == "changeme" || len(adminPass) < 8) {
-				log.Fatalf("[SECURITY] Default or weak admin password is not allowed in production mode. "+
-					"Set MT_ADMIN_PASSWORD to a strong password (at least 8 characters).")
-			}
-			hash, err := bcrypt.GenerateFromPassword([]byte(adminPass), bcrypt.DefaultCost)
-			if err != nil {
-				log.Fatalf("Failed to hash admin password: %v", err)
-			}
-			userRepo := database.NewUserRepository()
-			if _, err := userRepo.Upsert(adminUser, string(hash), "admin"); err != nil {
-				log.Fatalf("Failed to initialize admin user: %v", err)
-			}
-			log.Printf("Admin account initialized: %s", adminUser)
-		}
-	}
+	// Initialize admin account from env vars (MT_ADMIN_USERNAME + MT_ADMIN_PASSWORD)
+	initAdminAccount(cfg)
 
 	// Warm up API key cache
 	serviceRepo := database.NewServiceRepository()
@@ -214,6 +201,33 @@ func main() {
 	if err := app.Listen(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
+}
+
+// initAdminAccount creates or resets the admin account from env vars.
+// Set MT_ADMIN_USERNAME + MT_ADMIN_PASSWORD to trigger this on startup.
+// In production mode, weak passwords are rejected at startup.
+func initAdminAccount(cfg *config.Config) {
+	adminUser := os.Getenv("MT_ADMIN_USERNAME")
+	adminPass := os.Getenv("MT_ADMIN_PASSWORD")
+	if adminUser == "" || adminPass == "" {
+		return
+	}
+
+	if cfg.Server.Mode == "production" && (adminPass == "admin" || adminPass == "password" || adminPass == "changeme" || len(adminPass) < 8) {
+		log.Fatalf("[SECURITY] Default or weak admin password is not allowed in production mode. " +
+			"Set MT_ADMIN_PASSWORD to a strong password (at least 8 characters).")
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(adminPass), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("Failed to hash admin password: %v", err)
+	}
+
+	userRepo := database.NewUserRepository()
+	if _, err := userRepo.Upsert(adminUser, string(hash), "admin"); err != nil {
+		log.Fatalf("Failed to initialize admin user: %v", err)
+	}
+	log.Printf("Admin account initialized: %s", adminUser)
 }
 
 func getLocalIP() string {

@@ -31,10 +31,12 @@ interface InfoChipProps {
 
 function InfoChip({ icon, label, value, accent }: InfoChipProps) {
   return (
-    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark">
+    <div className="relative group flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-ui-hover-dark border border-slate-200 dark:border-ui-border-dark cursor-default">
       <MaterialIcon name={icon} className={`text-sm ${accent ? 'text-primary' : 'text-slate-400 dark:text-text-dim-dark'}`} />
-      <span className="text-xs text-slate-400 dark:text-text-dim-dark font-medium">{label}</span>
-      <span className="text-xs font-bold text-slate-700 dark:text-text-base-dark">{value}</span>
+      <span className="text-xs font-semibold text-slate-700 dark:text-text-base-dark">{value}</span>
+      <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-800 dark:bg-slate-700 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        {label}
+      </div>
     </div>
   );
 }
@@ -116,31 +118,30 @@ export function HealthCheckIdentity({
         {/* Endpoint */}
         <p className="text-slate-500 dark:text-text-muted-dark text-sm mb-3">
           <span className="text-slate-400 dark:text-text-dim-dark mr-1">{t('healthcheck.detail.identity.endpoint')}:</span>
-          <code className="bg-slate-200 dark:bg-chart-surface px-2 py-0.5 rounded text-primary break-all">{endpoint}</code>
+          <code className="break-all">{endpoint}</code>
         </p>
 
         {/* Info chips */}
         <div className="flex flex-wrap gap-2">
           <InfoChip
-            icon={type === 'http' ? 'http' : 'dns'}
+            icon="language"
             label={t('healthcheck.detail.identity.type')}
             value={type.toUpperCase()}
-            accent
           />
           <InfoChip
-            icon={scheduleType === 'cron' ? 'schedule' : 'timer'}
+            icon="sync"
             label={scheduleType === 'cron' ? 'CRON' : t('healthcheck.detail.identity.interval')}
             value={scheduleLabel}
           />
           {timeout != null && (
             <InfoChip
-              icon="hourglass_top"
+              icon="alarm"
               label={t('healthcheck.detail.identity.timeout')}
               value={`${timeout}s`}
             />
           )}
           <InfoChip
-            icon="history"
+            icon="event"
             label={t('healthcheck.detail.identity.lastChecked')}
             value={lastCheckedText}
           />
