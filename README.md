@@ -51,8 +51,15 @@ docker run -d \
 
 ### Docker Compose
 
-**1. Create `docker-compose.yml`:**
+`.env` (all variables are optional):
+```dotenv
+# MT_SERVER_PORT=3001
+# MT_ADMIN_USERNAME=admin
+# MT_ADMIN_PASSWORD=changeme
+# TZ=Asia/Seoul
+```
 
+`docker-compose.yml`:
 ```yaml
 services:
   everyup:
@@ -70,26 +77,6 @@ services:
 volumes:
   everyup-data:
 ```
-
-**2. (Optional) Configure via `.env`:**
-
-```bash
-cp .env.example .env   # Linux / macOS
-# copy .env.example .env   # Windows CMD
-```
-
-Key variables (all optional — sensible defaults apply):
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MT_SERVER_PORT` | `3001` | Host port |
-| `MT_ADMIN_USERNAME` | *(unset)* | Pre-seed admin account on startup |
-| `MT_ADMIN_PASSWORD` | *(unset)* | Password for the admin account |
-| `TZ` | System default | Timezone (e.g. `Asia/Seoul`) |
-
-> Skip this step to use defaults and create your account via the browser on first launch.
-
-**3. Start:**
 
 ```bash
 docker compose up -d
