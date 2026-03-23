@@ -51,7 +51,7 @@ docker run -d \
 
 ### Docker Compose
 
-`docker-compose.yml` 파일을 만들고 실행합니다.
+**1. `docker-compose.yml` 생성:**
 
 ```yaml
 services:
@@ -59,14 +59,37 @@ services:
     image: aiturn/everyup:latest
     container_name: everyup
     ports:
-      - "3001:3001"
+      - "${MT_SERVER_PORT:-3001}:3001"
     volumes:
       - everyup-data:/app/data
+    env_file:
+      - path: .env
+        required: false
     restart: unless-stopped
 
 volumes:
   everyup-data:
 ```
+
+**2. (선택) `.env`로 설정:**
+
+```bash
+cp .env.example .env   # Linux / macOS
+# copy .env.example .env   # Windows CMD
+```
+
+주요 환경변수 (모두 선택 사항 — 기본값 적용):
+
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `MT_SERVER_PORT` | `3001` | 호스트 포트 |
+| `MT_ADMIN_USERNAME` | *(미설정)* | 시작 시 관리자 계정 사전 생성 |
+| `MT_ADMIN_PASSWORD` | *(미설정)* | 관리자 계정 비밀번호 |
+| `TZ` | 시스템 기본값 | 타임존 (예: `Asia/Seoul`) |
+
+> 이 단계를 건너뛰면 기본값이 적용되며, 최초 접속 시 브라우저에서 계정을 생성합니다.
+
+**3. 실행:**
 
 ```bash
 docker compose up -d
@@ -75,8 +98,6 @@ docker compose up -d
 ---
 
 **http://localhost:3001** 접속 후 관리자 계정을 생성합니다.
-
-> 포트, 타임존, 관리자 계정 사전 설정이 필요하면 [설정](#설정) 섹션을 참고하세요.
 
 ---
 

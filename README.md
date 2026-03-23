@@ -51,7 +51,7 @@ docker run -d \
 
 ### Docker Compose
 
-Create a `docker-compose.yml` file:
+**1. Create `docker-compose.yml`:**
 
 ```yaml
 services:
@@ -59,14 +59,37 @@ services:
     image: aiturn/everyup:latest
     container_name: everyup
     ports:
-      - "3001:3001"
+      - "${MT_SERVER_PORT:-3001}:3001"
     volumes:
       - everyup-data:/app/data
+    env_file:
+      - path: .env
+        required: false
     restart: unless-stopped
 
 volumes:
   everyup-data:
 ```
+
+**2. (Optional) Configure via `.env`:**
+
+```bash
+cp .env.example .env   # Linux / macOS
+# copy .env.example .env   # Windows CMD
+```
+
+Key variables (all optional — sensible defaults apply):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MT_SERVER_PORT` | `3001` | Host port |
+| `MT_ADMIN_USERNAME` | *(unset)* | Pre-seed admin account on startup |
+| `MT_ADMIN_PASSWORD` | *(unset)* | Password for the admin account |
+| `TZ` | System default | Timezone (e.g. `Asia/Seoul`) |
+
+> Skip this step to use defaults and create your account via the browser on first launch.
+
+**3. Start:**
 
 ```bash
 docker compose up -d
@@ -75,8 +98,6 @@ docker compose up -d
 ---
 
 Open **http://localhost:3001** and create your admin account.
-
-> To customize port, timezone, or pre-seed an admin account, see [Configuration](#configuration).
 
 ---
 
