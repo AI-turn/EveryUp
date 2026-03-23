@@ -1,5 +1,7 @@
 # EveryUp Log Agent
 
+![EveryUp Log Agent Overview](../docs/images/log-agent-overview.png)
+
 Collect logs from your application and forward them to your EveryUp dashboard.
 
 Supports `linux/amd64` and `linux/arm64` — Docker automatically pulls the correct variant.
