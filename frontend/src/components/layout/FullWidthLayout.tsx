@@ -87,15 +87,9 @@ export function FullWidthLayout() {
       <footer className="max-w-[1200px] mx-auto mt-12 mb-12 px-6 pt-8 border-t border-slate-200 dark:border-ui-border-dark flex flex-col md:flex-row justify-between items-center text-slate-500 dark:text-text-dim-dark text-sm">
         <p>© 2023 DevMonitor Analytics Platform. All rights reserved.</p>
         <div className="flex gap-6 mt-4 md:mt-0">
-          <a className="hover:text-slate-900 dark:hover:text-white" href="#">
-            System Status
-          </a>
-          <a className="hover:text-slate-900 dark:hover:text-white" href="#">
-            API Docs
-          </a>
-          <a className="hover:text-slate-900 dark:hover:text-white" href="#">
-            Support
-          </a>
+          <span>System Status</span>
+          <span>API Docs</span>
+          <span>Support</span>
         </div>
       </footer>
     </div>

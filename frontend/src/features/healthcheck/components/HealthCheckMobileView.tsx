@@ -44,6 +44,7 @@ export function HealthCheckMobileView({
         <input
           type="text"
           placeholder={t('healthcheck.searchPlaceholder')}
+          aria-label={t('healthcheck.searchPlaceholder')}
           className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white dark:placeholder-text-muted-dark text-sm"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}

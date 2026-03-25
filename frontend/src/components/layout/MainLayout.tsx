@@ -14,6 +14,14 @@ export function MainLayout() {
 
   return (
     <div className="flex flex-col h-dvh overflow-hidden bg-background-light dark:bg-bg-main-dark">
+      {/* Skip to main content (accessibility) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:font-bold focus:text-sm focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
       {/* 0. Demo Banner (only in demo mode) */}
       <DemoBanner />
 
@@ -27,12 +35,13 @@ export function MainLayout() {
           <Sidebar />
         </div>
 
-        <main className="flex-1 flex flex-col overflow-hidden relative min-w-0 bg-white dark:bg-bg-main-dark transition-all duration-500 ease-in-out">
+        <main id="main-content" className="flex-1 flex flex-col overflow-hidden relative min-w-0 bg-white dark:bg-bg-main-dark transition-all duration-500 ease-in-out">
           {/* Toolbar Area: lg+ 전용 (모바일은 BottomNav로 네비게이션) */}
           <div className="hidden lg:flex h-12 border-b border-slate-100 dark:border-ui-border-dark items-center px-2 shrink-0 gap-4">
             <button
               onClick={toggleSidebar}
               className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark transition-colors"
+              aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
               title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
               <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

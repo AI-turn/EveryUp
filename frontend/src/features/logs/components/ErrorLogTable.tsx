@@ -4,6 +4,7 @@ import { MaterialIcon } from '../../../components/common';
 import { api, LogEntry } from '../../../services/api';
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard';
 import { isJSON, formatJSON } from '../../../utils/formatters';
+import { useDebouncedValue } from '../../../hooks/useDebouncedValue';
 
 interface ErrorLogTableProps {
   serviceId?: string;
@@ -68,9 +69,11 @@ export function ErrorLogTable({ serviceId, refreshKey }: ErrorLogTableProps) {
     fetchLogs();
   }, [serviceId, refreshKey, isPaused, levelFilter, limit, t]);
 
+  const debouncedSearch = useDebouncedValue(searchQuery);
+
   const filteredLogs = logs.filter((log) => {
     const matchesLevel = levelFilter === 'all' || log.level === levelFilter;
-    const matchesSearch = log.message.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = log.message.toLowerCase().includes(debouncedSearch.toLowerCase());
     return matchesLevel && matchesSearch;
   });
 
@@ -171,6 +174,7 @@ export function ErrorLogTable({ serviceId, refreshKey }: ErrorLogTableProps) {
             <input
               type="text"
               placeholder={t('logs.searchPlaceholder')}
+              aria-label={t('logs.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-slate-100 dark:bg-ui-hover-dark border-none rounded-lg pl-10 pr-4 py-1.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-text-dim-dark w-full sm:w-64 focus:ring-1 focus:ring-primary"

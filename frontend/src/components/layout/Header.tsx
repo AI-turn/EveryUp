@@ -9,7 +9,7 @@ import { useIsMobile } from '../../hooks/useMediaQuery';
 
 function IconSun() {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="4" />
             <line x1="12" y1="2" x2="12" y2="5" />
             <line x1="12" y1="19" x2="12" y2="22" />
@@ -25,7 +25,7 @@ function IconSun() {
 
 function IconMoon() {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
     );
@@ -65,6 +65,7 @@ export function Header() {
                 {isMobile ? (
                     <button
                         onClick={toggleLanguage}
+                        aria-label={i18n.language.startsWith('ko') ? 'Switch to English' : '한국어로 전환'}
                         className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-bg-surface-dark text-xs font-bold text-slate-600 dark:text-text-muted-dark active:scale-95 transition-all"
                     >
                         {i18n.language.startsWith('ko') ? 'EN' : 'KO'}

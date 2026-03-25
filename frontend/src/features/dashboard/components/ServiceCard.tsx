@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, StatusBadge } from '../../../components/common';
 import { IconHealthCheck } from '../../../components/icons/SidebarIcons';
@@ -14,13 +15,16 @@ function formatInterval(seconds: number): string {
   return `${Math.round(seconds / 3600)}h`;
 }
 
-export function ServiceCard({ service, onClick }: ServiceCardProps) {
+export const ServiceCard = memo(function ServiceCard({ service, onClick }: ServiceCardProps) {
   const { t } = useTranslation(['healthcheck', 'common']);
 
   return (
     <div
-      className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0' : ''}`}
+      className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2' : ''}`}
       onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
     >
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
@@ -74,4 +78,4 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
       </div>
     </div>
   );
-}
+});

@@ -1,21 +1,35 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { MainLayout } from './components/layout';
 import { NetworkStatusBanner } from './components/feedback/NetworkStatusBanner';
-import {
-  DashboardPage,
-  HealthCheckDetailPage,
-  HealthCheckPage,
-  LogListPage,
-  LogDetailPage,
-  InfraDetailPage,
-  InfraPage,
-  AlertsPage,
-  SettingsPage,
-  NotFoundPage,
-  LoginPage,
-} from './pages';
 import { useAuth } from './contexts/AuthContext';
 import { env } from './config/env';
+
+const DashboardPage        = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const HealthCheckPage      = lazy(() => import('./pages/HealthCheckPage').then(m => ({ default: m.HealthCheckPage })));
+const HealthCheckDetailPage = lazy(() => import('./pages/HealthCheckDetailPage').then(m => ({ default: m.HealthCheckDetailPage })));
+const LogListPage          = lazy(() => import('./pages/LogListPage').then(m => ({ default: m.LogListPage })));
+const LogDetailPage        = lazy(() => import('./pages/LogDetailPage').then(m => ({ default: m.LogDetailPage })));
+const InfraPage            = lazy(() => import('./pages/InfraPage').then(m => ({ default: m.InfraPage })));
+const InfraDetailPage      = lazy(() => import('./pages/InfraDetailPage').then(m => ({ default: m.InfraDetailPage })));
+const AlertsPage           = lazy(() => import('./pages/AlertsPage').then(m => ({ default: m.AlertsPage })));
+const SettingsPage         = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const NotFoundPage         = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+const LoginPage            = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+
+function PageLoader() {
+  return (
+    <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-4 animate-pulse">
+      <div className="h-8 bg-slate-200 dark:bg-ui-active-dark rounded-lg w-48" />
+      <div className="h-4 bg-slate-100 dark:bg-ui-hover-dark rounded w-72" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-40 bg-slate-100 dark:bg-ui-hover-dark rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function ProtectedRoute() {
   const { isAuthenticated } = useAuth();
@@ -31,24 +45,26 @@ function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <NetworkStatusBanner />
       <div className="bg-background-light dark:bg-bg-main-dark text-slate-900 dark:text-text-base-dark transition-colors duration-200">
-        <Routes>
-          {/* 데모 모드에서는 /login 접근 시 홈으로 리다이렉트 */}
-          <Route path="/login" element={env.isDemoMode ? <Navigate to="/" replace /> : <LoginPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route element={<MainLayout />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="/healthcheck" element={<HealthCheckPage />} />
-              <Route path="/healthcheck/:serviceId" element={<HealthCheckDetailPage />} />
-              <Route path="/logs" element={<LogListPage />} />
-              <Route path="/logs/:serviceId" element={<LogDetailPage />} />
-              <Route path="/infra" element={<InfraPage />} />
-              <Route path="/infra/:resourceId" element={<InfraDetailPage />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="*" element={<NotFoundPage />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* 데모 모드에서는 /login 접근 시 홈으로 리다이렉트 */}
+            <Route path="/login" element={env.isDemoMode ? <Navigate to="/" replace /> : <LoginPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<MainLayout />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="/healthcheck" element={<HealthCheckPage />} />
+                <Route path="/healthcheck/:serviceId" element={<HealthCheckDetailPage />} />
+                <Route path="/logs" element={<LogListPage />} />
+                <Route path="/logs/:serviceId" element={<LogDetailPage />} />
+                <Route path="/infra" element={<InfraPage />} />
+                <Route path="/infra/:resourceId" element={<InfraDetailPage />} />
+                <Route path="/alerts" element={<AlertsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+          </Routes>
+        </Suspense>
       </div>
     </BrowserRouter>
   );

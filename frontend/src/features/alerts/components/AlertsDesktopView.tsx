@@ -83,10 +83,12 @@ export function AlertsDesktopView({
       </PageHeader>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-slate-100 dark:bg-bg-surface-dark/50 p-1 rounded-xl w-fit">
+      <div role="tablist" aria-label={t('alerts.title')} className="flex gap-1 mb-6 bg-slate-100 dark:bg-bg-surface-dark/50 p-1 rounded-xl w-fit">
         {tabs.map(tab => (
           <button
             key={tab.key}
+            role="tab"
+            aria-selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.key
               ? 'bg-white dark:bg-bg-surface-dark text-slate-900 dark:text-white shadow-sm'

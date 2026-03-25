@@ -72,19 +72,19 @@ export function AlertsMobileView({
       {/* Stats Summary */}
       {stats && (
         <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
-          <div className="shrink-0 flex-1 min-w-[100px] bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3">
+          <div className="shrink-0 flex-1 min-w-25 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3">
             <p className="text-xs font-medium text-slate-500 dark:text-text-muted-dark">
               {t('alerts.history.stats.successRate', { defaultValue: 'Success' })}
             </p>
             <p className="text-xl font-bold text-slate-900 dark:text-white">{stats.successRate.toFixed(0)}%</p>
           </div>
-          <div className="shrink-0 flex-1 min-w-[100px] bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3">
+          <div className="shrink-0 flex-1 min-w-25 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3">
             <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
               {t('alerts.history.stats.sent', { defaultValue: 'Sent' })}
             </p>
             <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{stats.totalSent}</p>
           </div>
-          <div className="shrink-0 flex-1 min-w-[100px] bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3">
+          <div className="shrink-0 flex-1 min-w-25 bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-3">
             <p className="text-xs font-medium text-red-500">
               {t('alerts.history.stats.failed', { defaultValue: 'Failed' })}
             </p>
@@ -94,10 +94,12 @@ export function AlertsMobileView({
       )}
 
       {/* Tab Bar */}
-      <div className="flex bg-slate-100 dark:bg-bg-surface-dark/50 p-1 rounded-xl">
+      <div role="tablist" aria-label={t('alerts.title')} className="flex bg-slate-100 dark:bg-bg-surface-dark/50 p-1 rounded-xl">
         {tabs.map(tab => (
           <button
             key={tab.key}
+            role="tab"
+            aria-selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === tab.key

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, StatusBadge } from '../../../components/common';
 import type { Resource } from '../../../mocks/infra/resourceList.mock';
@@ -19,13 +20,16 @@ const typeBadgeColors: Record<Resource['type'], string> = {
     container: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400',
 };
 
-export function InfraCard({ resource, onClick }: InfraCardProps) {
+export const InfraCard = memo(function InfraCard({ resource, onClick }: InfraCardProps) {
     const { t } = useTranslation(['infra', 'common']);
     return (
         <div
             onClick={onClick}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
             className="p-6 rounded-xl border border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark
-                 hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer transition-all duration-150 flex flex-col justify-between"
+                 hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer transition-all duration-150 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
         >
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -78,4 +82,4 @@ export function InfraCard({ resource, onClick }: InfraCardProps) {
             </div>
         </div>
     );
-}
+});

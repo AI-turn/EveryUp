@@ -17,14 +17,9 @@ interface InfraTrendsProps {
   hostId: string;
 }
 
-const GRID_COLOR_LIGHT = '#e2e8f0';
-const GRID_COLOR_DARK = '#2e3c4a';   // chart-border
-const TICK_COLOR_LIGHT = '#64748b';
-const TICK_COLOR_DARK = '#94a3b8';   // text-muted-dark
-const TOOLTIP_BG_LIGHT = '#ffffff';
-const TOOLTIP_BG_DARK = '#161b22';   // bg-surface-dark
-const TOOLTIP_BORDER_LIGHT = '#e2e8f0';
-const TOOLTIP_BORDER_DARK = '#2e3c4a'; // chart-border
+function getCssVar(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
 
 function getIsDark() {
   return document.documentElement.classList.contains('dark');
@@ -36,10 +31,10 @@ export function InfraTrends({ hostId }: InfraTrendsProps) {
   const { data: charts, loading } = useMonitoringTrends(hostId, timeRange.toLowerCase());
 
   const isDark = getIsDark();
-  const gridColor = isDark ? GRID_COLOR_DARK : GRID_COLOR_LIGHT;
-  const tickColor = isDark ? TICK_COLOR_DARK : TICK_COLOR_LIGHT;
-  const tooltipBg = isDark ? TOOLTIP_BG_DARK : TOOLTIP_BG_LIGHT;
-  const tooltipBorder = isDark ? TOOLTIP_BORDER_DARK : TOOLTIP_BORDER_LIGHT;
+  const gridColor    = isDark ? getCssVar('--color-chart-border')   : getCssVar('--color-ui-border');
+  const tickColor    = isDark ? getCssVar('--color-text-muted-dark') : getCssVar('--color-text-muted');
+  const tooltipBg    = isDark ? getCssVar('--color-bg-surface-dark') : '#ffffff';
+  const tooltipBorder = isDark ? getCssVar('--color-chart-border')  : getCssVar('--color-ui-border');
 
   const rangeLabel: Record<string, string> = {
     '6H': t('infra.trends.last6h'),

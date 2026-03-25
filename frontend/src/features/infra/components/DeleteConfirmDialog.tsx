@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { MaterialIcon } from '../../../components/common';
 import { useTranslation } from 'react-i18next';
 
@@ -17,18 +18,28 @@ export function DeleteConfirmDialog({
   isDeleting,
 }: DeleteConfirmDialogProps) {
   const { t } = useTranslation(['infra', 'common']);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen) cancelRef.current?.focus();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-dialog-title"
+        className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+      >
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 dark:border-ui-border-dark flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-full">
             <MaterialIcon name="warning" className="text-red-600 dark:text-red-400 text-xl" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('infra.deleteConfirm.title')}</h2>
+          <h2 id="delete-dialog-title" className="text-xl font-bold text-slate-900 dark:text-white">{t('infra.deleteConfirm.title')}</h2>
         </div>
 
         {/* Content */}
@@ -44,6 +55,7 @@ export function DeleteConfirmDialog({
         {/* Actions */}
         <div className="px-6 pb-6 flex gap-3">
           <button
+            ref={cancelRef}
             type="button"
             onClick={onClose}
             disabled={isDeleting}

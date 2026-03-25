@@ -193,12 +193,12 @@ export function SettingsDesktopView({
       {/* Reset Confirm Dialog */}
       {showResetConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-bg-surface-dark rounded-xl shadow-2xl max-w-sm w-full p-6">
+          <div role="dialog" aria-modal="true" aria-labelledby="reset-dialog-title-desktop" className="bg-white dark:bg-bg-surface-dark rounded-xl shadow-2xl max-w-sm w-full p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 shrink-0">
                 <MaterialIcon name="warning" className="text-2xl text-red-600 dark:text-red-400" />
               </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 id="reset-dialog-title-desktop" className="text-base font-bold text-slate-900 dark:text-white">
                 {t('settings.accountReset.confirmTitle')}
               </h3>
             </div>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useDeferredValue } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon, EmptyState } from '../../../components/common';
@@ -37,10 +37,13 @@ export function ServiceHealthGrid({
     }
   }, [refreshKey, refetch]);
 
+  const deferredSearch = useDeferredValue(searchQuery);
+  const deferredStatus = useDeferredValue(statusFilter);
+
   const filteredServices = (services || []).filter(s => {
     const matchesSearch =
-      s.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = !statusFilter || s.status === statusFilter;
+      s.name.toLowerCase().includes(deferredSearch.toLowerCase());
+    const matchesStatus = !deferredStatus || s.status === deferredStatus;
     return matchesSearch && matchesStatus;
   });
 

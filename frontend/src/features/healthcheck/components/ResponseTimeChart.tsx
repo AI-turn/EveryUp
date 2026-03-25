@@ -126,11 +126,12 @@ export function ResponseTimeChart({ serviceId, refreshKey, timeout }: ResponseTi
             })}
           </p>
         </div>
-        <div className="flex bg-slate-100 dark:bg-chart-surface p-1 rounded-lg self-start sm:self-auto">
+        <div role="group" aria-label={t('healthcheck.detail.metrics.responseTime')} className="flex bg-slate-100 dark:bg-chart-surface p-1 rounded-lg self-start sm:self-auto">
           {(['24H', '7D', '30D'] as const).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
+              aria-pressed={timeRange === range}
               className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${
                 timeRange === range
                   ? 'bg-slate-200 dark:bg-chart-border text-slate-900 dark:text-white'
