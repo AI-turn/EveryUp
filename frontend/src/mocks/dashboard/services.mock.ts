@@ -12,6 +12,8 @@ export const mockServices: Service[] = [
     latency: '42ms',
     uptime: '100%',
     icon: 'api',
+    type: 'http',
+    interval: 30,
   },
   {
     id: '2',
@@ -20,6 +22,8 @@ export const mockServices: Service[] = [
     latency: '1,240ms',
     uptime: '98.2%',
     icon: 'lock',
+    type: 'http',
+    interval: 60,
   },
   {
     id: '3',
@@ -28,6 +32,8 @@ export const mockServices: Service[] = [
     latency: '12ms',
     uptime: '99.9%',
     icon: 'database',
+    type: 'tcp',
+    interval: 30,
   },
   {
     id: '4',
@@ -36,6 +42,8 @@ export const mockServices: Service[] = [
     latency: '2ms',
     uptime: '100%',
     icon: 'memory',
+    type: 'tcp',
+    interval: 15,
   },
   {
     id: '5',
@@ -44,6 +52,8 @@ export const mockServices: Service[] = [
     latency: '156ms',
     uptime: '99.9%',
     icon: 'payments',
+    type: 'http',
+    interval: 120,
   },
   {
     id: '6',
@@ -52,5 +62,7 @@ export const mockServices: Service[] = [
     latency: '88ms',
     uptime: '99.5%',
     icon: 'search',
+    type: 'http',
+    interval: 60,
   },
 ];

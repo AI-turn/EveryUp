@@ -1,23 +1,21 @@
-import { useTranslation } from 'react-i18next';
-import { MaterialIcon, StatusBadge } from '../../../components/common';
+import { StatusBadge } from '../../../components/common';
 import { IconLogs } from '../../../components/icons/SidebarIcons';
-import { Service, LogEntry } from '../../../services/api';
-import { relativeTime } from '../../../utils/formatters';
+import { Service } from '../../../services/api';
 
 interface LogServiceCardProps {
   service: Service;
-  latestLog?: LogEntry | null;
   onClick?: () => void;
 }
 
-const levelBadge: Record<string, string> = {
-  error:   'bg-red-500 text-white',
-  warning: 'bg-amber-500 text-white',
-  info:    'bg-blue-500 text-white',
+const levelBadgeStyle: Record<string, string> = {
+  error:   'bg-red-500/10 text-red-500',
+  warn:    'bg-amber-500/10 text-amber-500',
+  info:    'bg-blue-500/10 text-blue-500',
 };
 
-export function LogServiceCard({ service, latestLog, onClick }: LogServiceCardProps) {
-  const { t } = useTranslation(['logs', 'common']);
+export function LogServiceCard({ service, onClick }: LogServiceCardProps) {
+  const levels = service.logLevelFilter ?? [];
+  const allLevels = levels.length === 0 || levels.length === 3;
 
   return (
     <div
@@ -31,31 +29,25 @@ export function LogServiceCard({ service, latestLog, onClick }: LogServiceCardPr
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-sm truncate text-slate-900 dark:text-white">{service.name}</h3>
-          <p className="text-xs text-slate-500 dark:text-text-muted-dark mt-0.5">{service.tags?.[0] || 'default'}</p>
         </div>
         <StatusBadge status={service.status} />
       </div>
 
-      {/* Latest log row */}
-      <div className="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-ui-border-dark/50">
-        {latestLog ? (
-          <>
-            <span className={`text-xs font-bold px-1.5 py-0.5 rounded uppercase shrink-0 ${levelBadge[latestLog.level] ?? 'bg-slate-400 text-white'}`}>
-              {latestLog.level === 'warning' ? 'WARN' : latestLog.level.toUpperCase()}
-            </span>
-            <span className="text-xs text-slate-500 dark:text-text-muted-dark flex-1 truncate">
-              {latestLog.message}
-            </span>
-            <span className="text-xs text-slate-400 dark:text-text-dim-dark shrink-0">
-              {relativeTime(latestLog.createdAt)}
-            </span>
-          </>
-        ) : latestLog === null ? (
-          <span className="text-xs text-slate-400 dark:text-text-dim-dark italic">
-            {t('logs.noLogs')}
+      {/* Log level filter badges */}
+      <div className="flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-ui-border-dark/50">
+        {allLevels ? (
+          <span className="px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-ui-hover-dark text-slate-500 dark:text-text-muted-dark">
+            ALL
           </span>
         ) : (
-          <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-ui-hover-dark animate-pulse" />
+          levels.map((level) => (
+            <span
+              key={level}
+              className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${levelBadgeStyle[level] ?? 'bg-slate-100 dark:bg-ui-hover-dark text-slate-500'}`}
+            >
+              {level === 'warn' ? 'WARN' : level.toUpperCase()}
+            </span>
+          ))
         )}
       </div>
     </div>
