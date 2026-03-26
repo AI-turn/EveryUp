@@ -89,7 +89,7 @@ func SetupRoutes(app *fiber.App, scheduler *checker.Scheduler, collectorMgr *col
 	local.Post("/hosts/:hostId/pause", hostHandler.Pause)
 	local.Post("/hosts/:hostId/resume", hostHandler.Resume)
 
-	// SSH connection test
+	// SSH connection test — registered after CRUD but static path takes precedence over :hostId params
 	sshTestHandler := handlers.NewSSHTestHandler()
 	local.Post("/hosts/test-connection", sshTestHandler.TestConnection)
 

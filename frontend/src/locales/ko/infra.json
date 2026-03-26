@@ -65,8 +65,9 @@
             "displayName": "표시 이름",
             "ipAddress": "IP 주소",
             "ipPlaceholder": "192.168.1.100",
-            "port": "포트",
-            "portPlaceholder": "22",
+            "port": "서비스 포트",
+            "portPlaceholder": "",
+            "portHint": "선택사항 · 이 호스트 서비스에 접근할 포트",
             "group": "그룹",
             "groupPlaceholder": "production",
             "groupHint": "선택사항: 환경별로 호스트 그룹화",
@@ -81,6 +82,7 @@
             "sshUser": "SSH 사용자",
             "sshUserPlaceholder": "monitor",
             "sshPort": "SSH 포트",
+            "sshPortHint": "원격 서버 SSH 연결 포트 (기본값: 22)",
             "authType": "인증 방식",
             "authPassword": "비밀번호",
             "authKey": "SSH 키 (PEM)",
@@ -101,7 +103,9 @@
             "testing": "테스트 중...",
             "connectionSuccess": "연결 성공",
             "connectionFailed": "연결 실패",
-            "latency": "지연시간"
+            "latency": "지연시간",
+            "testRequiredFields": "연결 테스트를 위해 IP 주소와 SSH 사용자를 입력해주세요",
+            "editModePasswordRequired": "연결 테스트를 위해 비밀번호를 다시 입력해주세요 (보안상 저장된 비밀번호는 전송되지 않습니다)"
         },
         "error": {
             "lastError": "최근 에러",

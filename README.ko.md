@@ -51,7 +51,24 @@ docker run -d \
 
 ### Docker Compose
 
-`.env` (모두 선택 사항):
+**1.** 이미지 Pull:
+
+```bash
+docker pull aiturn/everyup:latest
+```
+
+**2.** `.env` 파일 생성 — 모든 항목은 선택 사항입니다. 기본값으로 충분하다면 이 파일 없이 진행해도 됩니다.
+
+```bash
+# Linux / macOS
+cp .env.example .env
+
+# Windows (PowerShell)
+Copy-Item .env.example .env
+```
+
+또는 변경이 필요한 항목만 직접 작성합니다:
+
 ```dotenv
 # MT_SERVER_PORT=3001
 # MT_ADMIN_USERNAME=admin
@@ -59,7 +76,8 @@ docker run -d \
 # TZ=Asia/Seoul
 ```
 
-`docker-compose.yml`:
+**3.** `docker-compose.yml` 생성:
+
 ```yaml
 services:
   everyup:
@@ -77,6 +95,8 @@ services:
 volumes:
   everyup-data:
 ```
+
+**4.** 시작:
 
 ```bash
 docker compose up -d

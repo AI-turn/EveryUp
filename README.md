@@ -51,7 +51,24 @@ docker run -d \
 
 ### Docker Compose
 
-`.env` (all variables are optional):
+**1.** Pull the image:
+
+```bash
+docker pull aiturn/everyup:latest
+```
+
+**2.** Create `.env` — all variables are optional. Skip this file entirely if the defaults are fine.
+
+```bash
+# Linux / macOS
+cp .env.example .env
+
+# Windows (PowerShell)
+Copy-Item .env.example .env
+```
+
+Or create it manually with the variables you want to override:
+
 ```dotenv
 # MT_SERVER_PORT=3001
 # MT_ADMIN_USERNAME=admin
@@ -59,7 +76,8 @@ docker run -d \
 # TZ=Asia/Seoul
 ```
 
-`docker-compose.yml`:
+**3.** Create `docker-compose.yml`:
+
 ```yaml
 services:
   everyup:
@@ -77,6 +95,8 @@ services:
 volumes:
   everyup-data:
 ```
+
+**4.** Start:
 
 ```bash
 docker compose up -d

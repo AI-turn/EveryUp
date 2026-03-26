@@ -131,7 +131,11 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
     const handleTestConnection = async () => {
         const values = getValues();
         if (!values.ip || !values.sshUser) {
-            toast.error('IP and SSH User are required');
+            toast.error(t('infra.modal.testRequiredFields'));
+            return;
+        }
+        if (isEditMode && values.sshAuthType === 'password' && !values.sshPassword) {
+            toast.error(t('infra.modal.editModePasswordRequired'));
             return;
         }
         setIsTesting(true);
@@ -276,6 +280,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                             placeholder={t('infra.modal.portPlaceholder')}
                             className={inputClass(!!errors.port)}
                         />
+                        <p className="text-xs text-slate-400">{t('infra.modal.portHint')}</p>
                     </div>
                 </div>
 
@@ -318,6 +323,7 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                                     placeholder="22"
                                     className={inputClass(!!errors.sshPort)}
                                 />
+                                <p className="text-xs text-slate-400">{t('infra.modal.sshPortHint')}</p>
                             </div>
                         </div>
 
@@ -352,6 +358,9 @@ export function InfraForm({ onSuccess, host }: InfraFormProps) {
                                     placeholder={isEditMode ? t('infra.modal.passwordChangePlaceholder') : t('infra.modal.passwordPlaceholder')}
                                     className={inputClass(!!errors.sshPassword)}
                                 />
+                                {isEditMode && (
+                                    <p className="text-xs text-slate-400">{t('infra.modal.editModePasswordRequired')}</p>
+                                )}
                             </div>
                         )}
 

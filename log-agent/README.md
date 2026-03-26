@@ -36,14 +36,30 @@ docker run -d \
 
 ### Docker Compose
 
-`.env`:
+**1.** Pull the image:
+
+```bash
+docker pull aiturn/everyup-log-agent:latest
+```
+
+**2.** Create `.env` — fill in your values before starting:
+
+```bash
+cp .env.example .env
+```
+
+Or create it manually:
+
 ```dotenv
 LOG_AGENT_ENDPOINT=http://your-everyup-server:3001
 LOG_AGENT_API_KEY=la_your_api_key
 LOG_AGENT_PATH=/path/to/your/app/logs
 ```
 
-`docker-compose.yml`:
+> `LOG_AGENT_ENDPOINT` and `LOG_AGENT_API_KEY` are required. The agent will not start without them.
+
+**3.** Create `docker-compose.yml`:
+
 ```yaml
 services:
   everyup-log-agent:
@@ -53,6 +69,8 @@ services:
     volumes:
       - ${LOG_AGENT_PATH}:/var/log/app:ro
 ```
+
+**4.** Start:
 
 ```bash
 docker compose up -d

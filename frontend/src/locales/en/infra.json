@@ -65,8 +65,9 @@
             "displayName": "Display name",
             "ipAddress": "IP Address",
             "ipPlaceholder": "192.168.1.100",
-            "port": "Port",
-            "portPlaceholder": "22",
+            "port": "Service Port",
+            "portPlaceholder": "",
+            "portHint": "Optional · Port used to access this host's service",
             "group": "Group",
             "groupPlaceholder": "production",
             "groupHint": "Optional: Group hosts by environment",
@@ -81,6 +82,7 @@
             "sshUser": "SSH User",
             "sshUserPlaceholder": "monitor",
             "sshPort": "SSH Port",
+            "sshPortHint": "Port used for SSH connection (default: 22)",
             "authType": "Auth Type",
             "authPassword": "Password",
             "authKey": "SSH Key (PEM)",
@@ -101,7 +103,9 @@
             "testing": "Testing...",
             "connectionSuccess": "Connected successfully",
             "connectionFailed": "Connection failed",
-            "latency": "Latency"
+            "latency": "Latency",
+            "testRequiredFields": "IP address and SSH user are required to test the connection",
+            "editModePasswordRequired": "Enter the password again to test the connection (stored credentials are not sent for security reasons)"
         },
         "error": {
             "lastError": "Last Error",
