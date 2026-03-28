@@ -23,4 +23,5 @@ export interface Incident {
   type: 'error' | 'warning' | 'success' | 'info';
   serviceName: string;
   message: string;
+  serviceId?: string;
 }

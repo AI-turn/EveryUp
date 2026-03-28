@@ -19,7 +19,7 @@ func NewDashboardHandler() *DashboardHandler {
 
 // GetTimeline returns recent events timeline
 func (h *DashboardHandler) GetTimeline(c *fiber.Ctx) error {
-	limit := 20
+	limit := 5
 
 	events, err := h.incidentRepo.GetTimeline(limit)
 	if err != nil {

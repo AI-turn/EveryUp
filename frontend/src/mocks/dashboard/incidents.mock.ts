@@ -11,6 +11,7 @@ export const mockIncidents: Incident[] = [
     type: 'error',
     serviceName: 'Auth Service',
     message: 'transitioned from Healthy to Degraded',
+    serviceId: '2',
   },
   {
     id: '2',
@@ -18,6 +19,7 @@ export const mockIncidents: Incident[] = [
     type: 'warning',
     serviceName: 'User Database',
     message: 'reporting high connection pool usage (88%)',
+    serviceId: '3',
   },
   {
     id: '3',
@@ -25,6 +27,7 @@ export const mockIncidents: Incident[] = [
     type: 'success',
     serviceName: 'API Gateway',
     message: 'latency stabilized after deployment',
+    serviceId: '1',
   },
   {
     id: '4',
@@ -39,5 +42,6 @@ export const mockIncidents: Incident[] = [
     type: 'success',
     serviceName: 'Redis Cache',
     message: 'successfully scaled to 3 nodes',
+    serviceId: '5',
   },
 ];

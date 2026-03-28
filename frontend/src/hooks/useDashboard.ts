@@ -29,15 +29,16 @@ export function useDashboardIncidents() {
     const timeline = await api.getDashboardTimeline();
     return timeline.map((item) => ({
       id: item.id,
-      time: new Date(item.timestamp).toLocaleTimeString('en-US', {
+      time: new Date(item.time).toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
         hour12: true,
       }),
       type: item.type,
-      serviceName: item.serviceName || 'System',
+      serviceName: item.service || 'System',
       message: item.message,
+      serviceId: item.serviceId,
     }));
   });
 }

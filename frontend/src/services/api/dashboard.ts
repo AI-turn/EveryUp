@@ -6,9 +6,9 @@ export interface TimelineItem {
   id: string;
   type: string;
   message: string;
-  timestamp: string;
+  time: string;
+  service?: string;
   serviceId?: string;
-  serviceName?: string;
 }
 
 // --- API ---
