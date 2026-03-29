@@ -37,8 +37,8 @@ export interface InfraDetailViewProps {
 // --- 공통 헤더 (상태 배지 + 에러 배너) ---
 
 function HostHeader({
-  host, hostLoading, name, ip, status, isLocal, isPausing, onPauseResume, mobile,
-}: Pick<InfraDetailViewProps, 'host' | 'hostLoading' | 'name' | 'ip' | 'status' | 'isLocal' | 'isPausing' | 'onPauseResume'> & { mobile?: boolean }) {
+  host, hostLoading, name, ip, cluster, status, isLocal, isPausing, onPauseResume, mobile,
+}: Pick<InfraDetailViewProps, 'host' | 'hostLoading' | 'name' | 'ip' | 'cluster' | 'status' | 'isLocal' | 'isPausing' | 'onPauseResume'> & { mobile?: boolean }) {
   const { t } = useTranslation(['infra', 'common']);
   const sc = infraStatusColorClasses[status as keyof typeof infraStatusColorClasses] || infraStatusColorClasses.healthy;
 
@@ -64,7 +64,13 @@ function HostHeader({
               </span>
               {t(`common.${status}`)}
             </span>
-            {ip && <p className="text-sm text-slate-500 dark:text-text-muted-dark">IP: {ip} {isLocal && '(Local)'}</p>}
+            {(cluster || ip) && (
+              <p className="text-sm text-slate-500 dark:text-text-muted-dark">
+                {cluster && <span className="mr-2">{cluster}</span>}
+                {ip && `IP: ${ip}`}
+                {isLocal && ' (Local)'}
+              </p>
+            )}
           </div>
         </>
       ) : (
@@ -81,9 +87,9 @@ function HostHeader({
               {t(`common.${status}`)}
             </span>
           </div>
-          <p className="text-slate-500 dark:text-text-muted-dark text-base">
-            {ip && `IP: ${ip}`}
-            {host?.type === 'local' && ' (Local)'}
+          <p className="text-slate-500 dark:text-text-muted-dark text-base flex items-center gap-2">
+            {cluster && <span>{cluster}</span>}
+            {ip && <span>IP: {ip}{host?.type === 'local' ? ' (Local)' : ''}</span>}
           </p>
         </>
       )}
@@ -125,7 +131,7 @@ function HostHeader({
 function DesktopLayout(props: InfraDetailViewProps) {
   const { t } = useTranslation(['infra', 'common']);
   const {
-    host, hostId, hostLoading, status, name, ip, isLocal, isPausing, isDeleting,
+    host, hostId, hostLoading, status, name, ip, cluster, isLocal, isPausing, isDeleting,
     isDeleteDialogOpen, onPauseResume, onDelete, onEdit, onDeleteDialogOpen, onDeleteDialogClose,
   } = props;
 
@@ -187,7 +193,7 @@ function DesktopLayout(props: InfraDetailViewProps) {
       {/* Header */}
       <div className="mb-6">
         <HostHeader
-          host={host} hostLoading={hostLoading} name={name} ip={ip}
+          host={host} hostLoading={hostLoading} name={name} ip={ip} cluster={cluster}
           status={status} isLocal={isLocal} isPausing={isPausing} onPauseResume={onPauseResume}
         />
       </div>
@@ -215,7 +221,7 @@ function MobileLayout(props: InfraDetailViewProps) {
   const { t } = useTranslation(['infra', 'common']);
   const navigate = useNavigate();
   const {
-    host, hostId, hostLoading, status, name, ip, isLocal, isDeleting,
+    host, hostId, hostLoading, status, name, ip, cluster, isLocal, isDeleting,
     isDeleteDialogOpen, onPauseResume, onDelete, onEdit, onDeleteDialogOpen, onDeleteDialogClose,
     isPausing,
   } = props;
@@ -274,7 +280,7 @@ function MobileLayout(props: InfraDetailViewProps) {
       {/* Title */}
       <div>
         <HostHeader
-          host={host} hostLoading={hostLoading} name={name} ip={ip}
+          host={host} hostLoading={hostLoading} name={name} ip={ip} cluster={cluster}
           status={status} isLocal={isLocal} isPausing={isPausing} onPauseResume={onPauseResume}
           mobile
         />
