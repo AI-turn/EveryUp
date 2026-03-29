@@ -42,7 +42,7 @@ export function Footer() {
           {/* Center - GitHub + Bug Report */}
           <div className="flex items-center gap-5">
             <a
-              href="https://github.com/AI-turn/Monitoring"
+              href="https://github.com/ai-turn/Monitoring"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-text-muted-dark hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -51,7 +51,7 @@ export function Footer() {
               <span>GitHub</span>
             </a>
             <a
-              href="https://github.com/AI-turn/Monitoring/issues"
+              href="https://github.com/ai-turn/Monitoring/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-text-muted-dark hover:text-red-500 dark:hover:text-red-400 transition-colors"

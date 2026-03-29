@@ -113,7 +113,7 @@ docker compose up -d
 **사전 준비:** [Go 1.24+](https://go.dev/dl/), [Node.js 22+](https://nodejs.org/), [pnpm](https://pnpm.io/installation)
 
 ```bash
-git clone https://github.com/AI-turn/EveryUp.git
+git clone https://github.com/ai-turn/EveryUp.git
 cd EveryUp
 ```
 
@@ -223,7 +223,7 @@ docker run -d \
 
 ## 기여
 
-버그 리포트나 기능 제안은 [GitHub Issues](https://github.com/AI-turn/EveryUp/issues)에 남겨주세요.
+버그 리포트나 기능 제안은 [GitHub Issues](https://github.com/ai-turn/EveryUp/issues)에 남겨주세요.
 
 Pull Request를 보내실 때는 변경 사항을 간략히 설명해 주시면 감사합니다.
 

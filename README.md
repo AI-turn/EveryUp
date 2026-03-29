@@ -113,7 +113,7 @@ Open **http://localhost:3001** and create your admin account.
 **Prerequisites:** [Go 1.24+](https://go.dev/dl/), [Node.js 22+](https://nodejs.org/), [pnpm](https://pnpm.io/installation)
 
 ```bash
-git clone https://github.com/AI-turn/EveryUp.git
+git clone https://github.com/ai-turn/EveryUp.git
 cd EveryUp
 ```
 
@@ -223,7 +223,7 @@ See [log-agent/README.md](log-agent/README.md) for more details.
 
 ## Contributing
 
-Bug reports and feature requests are welcome via [GitHub Issues](https://github.com/AI-turn/EveryUp/issues).
+Bug reports and feature requests are welcome via [GitHub Issues](https://github.com/ai-turn/EveryUp/issues).
 
 When submitting a Pull Request, please include a brief description of your changes.
 
