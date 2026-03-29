@@ -9,7 +9,7 @@ interface KPICardProps {
 const colorConfig = {
     primary: {
         valueText: 'text-primary',
-        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
+        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-300 dark:border-ui-border-dark',
     },
     red: {
         valueText: 'text-red-600 dark:text-red-400',
@@ -17,11 +17,11 @@ const colorConfig = {
     },
     emerald: {
         valueText: 'text-emerald-600 dark:text-emerald-400',
-        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
+        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-300 dark:border-ui-border-dark',
     },
     amber: {
         valueText: 'text-amber-600 dark:text-amber-400',
-        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-200 dark:border-ui-border-dark',
+        cardBg: 'bg-white dark:bg-bg-surface-dark border-slate-300 dark:border-ui-border-dark',
     },
 };
 

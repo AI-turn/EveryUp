@@ -22,10 +22,10 @@ interface TimelineProps {
 
 export function Timeline({ title, events, emptyMessage = 'No events found', action }: TimelineProps) {
     return (
-        <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-bg-surface-dark border border-slate-300 dark:border-ui-border-dark rounded-xl overflow-hidden">
             {/* Header - only rendered when title is provided */}
             {title && (
-                <div className="px-6 py-4 border-b border-slate-200 dark:border-ui-border-dark flex items-center justify-between">
+                <div className="px-6 py-4 border-b border-slate-300 dark:border-ui-border-dark flex items-center justify-between">
                     <h2 className="font-bold text-slate-900 dark:text-white">{title}</h2>
                     {action && (
                         <span

@@ -38,7 +38,7 @@ export function Sidebar() {
     >
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-ui-border-dark">
-        <nav className={`space-y-1 transition-all duration-300 ${isCollapsed ? 'px-2' : 'px-4'}`}>
+        <nav className={`space-y-1.5 transition-all duration-300 ${isCollapsed ? 'px-2' : 'px-4'}`}>
           {navItems.map((item) => {
             const isActive = item.href === '/'
               ? location.pathname === '/'
@@ -50,7 +50,7 @@ export function Sidebar() {
                 title={isCollapsed ? t(item.labelKey) : undefined}
                 className={`
                   flex items-center rounded-lg transition-all duration-200
-                  ${isCollapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2'}
+                  ${isCollapsed ? 'justify-center px-0 py-3' : 'gap-3 px-3 py-3'}
                   ${isActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-slate-600 dark:text-text-muted-dark hover:bg-slate-100 dark:hover:bg-ui-hover-dark dark:hover:text-white'
@@ -58,12 +58,12 @@ export function Sidebar() {
                 `}
               >
                 <item.Icon
-                  size={isCollapsed ? 22 : 20}
+                  size={isCollapsed ? 24 : 22}
                   className="shrink-0 transition-all duration-200"
                 />
                 <span
                   className={`
-                    text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300
+                    text-base font-medium whitespace-nowrap overflow-hidden transition-all duration-300
                     ${isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}
                   `}
                 >

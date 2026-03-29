@@ -58,7 +58,7 @@ export function IncidentTimeline() {
                   <div
                     key={incident.id}
                     onClick={() => handleIncidentClick(incident.serviceId)}
-                    className={`flex items-center gap-3 py-2.5 px-1 min-h-[44px] rounded-lg transition-colors ${clickable ? 'cursor-pointer active:bg-slate-50 dark:active:bg-ui-hover-dark' : ''}`}
+                    className={`flex items-center gap-3 py-2.5 px-1 min-h-11 rounded-lg transition-colors ${clickable ? 'cursor-pointer active:bg-slate-50 dark:active:bg-ui-hover-dark' : ''}`}
                     style={{ touchAction: 'manipulation' }}
                   >
                     {/* Status icon */}
@@ -123,7 +123,7 @@ export function IncidentTimeline() {
       {loading ? (
         <TableSkeleton rows={4} columns={3} />
       ) : error ? (
-        <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-6">
+        <div className="bg-white dark:bg-bg-surface-dark border border-slate-300 dark:border-ui-border-dark rounded-xl p-6">
           <p className="text-red-500 text-sm">{t('common.error')}</p>
         </div>
       ) : (

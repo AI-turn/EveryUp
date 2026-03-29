@@ -28,7 +28,7 @@ export const InfraCard = memo(function InfraCard({ resource, onClick }: InfraCar
             role="button"
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
-            className="p-6 rounded-xl border border-slate-200 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark
+            className="p-6 rounded-xl border border-slate-300 dark:border-ui-border-dark bg-white dark:bg-bg-surface-dark
                  hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer transition-all duration-150 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
         >
             <div className="flex items-start justify-between mb-4">
@@ -40,10 +40,9 @@ export const InfraCard = memo(function InfraCard({ resource, onClick }: InfraCar
                         />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-900 dark:text-white">
+                        <h3 className="font-bold text-lg text-slate-900 dark:text-white">
                             {resource.name}
                         </h3>
-                        <p className="text-xs text-slate-500 dark:text-text-muted-dark">{resource.cluster}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-1.5">

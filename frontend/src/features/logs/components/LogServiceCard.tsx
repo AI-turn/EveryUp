@@ -20,7 +20,7 @@ export const LogServiceCard = memo(function LogServiceCard({ service, onClick }:
 
   return (
     <div
-      className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2' : ''}`}
+      className={`bg-white dark:bg-bg-surface-dark border border-slate-300 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2' : ''}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -32,7 +32,7 @@ export const LogServiceCard = memo(function LogServiceCard({ service, onClick }:
           <IconLogs size={20} className="text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-sm truncate text-slate-900 dark:text-white">{service.name}</h3>
+          <h3 className="font-bold text-lg truncate text-slate-900 dark:text-white">{service.name}</h3>
         </div>
         <StatusBadge status={service.status} />
       </div>

@@ -15,12 +15,13 @@ function formatInterval(seconds: number): string {
   return `${Math.round(seconds / 3600)}h`;
 }
 
+
 export const ServiceCard = memo(function ServiceCard({ service, onClick }: ServiceCardProps) {
   const { t } = useTranslation(['healthcheck', 'common']);
 
   return (
     <div
-      className={`bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2' : ''}`}
+      className={`bg-white dark:bg-bg-surface-dark border border-slate-300 dark:border-ui-border-dark rounded-xl p-5 transition-all duration-150 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2' : ''}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -33,7 +34,7 @@ export const ServiceCard = memo(function ServiceCard({ service, onClick }: Servi
             <IconHealthCheck size={20} className="text-primary" />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-sm truncate">{service.name}</h3>
+            <h3 className="font-bold text-lg truncate text-slate-900 dark:text-white">{service.name}</h3>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -49,12 +50,12 @@ export const ServiceCard = memo(function ServiceCard({ service, onClick }: Servi
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">{t('healthcheck.detail.metrics.responseTime')}</p>
-          <p className="text-lg font-bold tabular-nums">{service.latency}</p>
+          <p className="text-xs text-slate-500 dark:text-text-muted-dark uppercase font-semibold tracking-wide">{t('healthcheck.detail.metrics.responseTime')}</p>
+          <p className="text-base font-bold tabular-nums text-slate-900 dark:text-white">{service.latency}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 uppercase font-semibold">{t('healthcheck.detail.uptime')}</p>
-          <p className="text-lg font-bold tabular-nums">{service.uptime}</p>
+          <p className="text-xs text-slate-500 dark:text-text-muted-dark uppercase font-semibold tracking-wide">{t('healthcheck.detail.uptime')}</p>
+          <p className="text-base font-bold tabular-nums text-slate-900 dark:text-white">{service.uptime}</p>
         </div>
       </div>
 

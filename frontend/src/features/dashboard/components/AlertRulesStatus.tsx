@@ -59,7 +59,7 @@ export function AlertRulesStatus() {
         </button>
       </div>
 
-      <div className="bg-white dark:bg-bg-surface-dark border border-slate-200 dark:border-ui-border-dark rounded-xl p-5">
+      <div className="bg-white dark:bg-bg-surface-dark border border-slate-300 dark:border-ui-border-dark rounded-xl p-5">
         {/* Loading skeleton */}
         {loading && (
           <div className="space-y-2">
