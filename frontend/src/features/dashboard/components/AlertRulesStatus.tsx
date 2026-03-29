@@ -39,9 +39,9 @@ export function AlertRulesStatus() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 pt-2">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">
             {t('dashboard.alertRules.title')}
           </h2>
           {!loading && (

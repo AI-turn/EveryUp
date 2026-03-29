@@ -114,8 +114,8 @@ export function IncidentTimeline() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center mb-6 pt-2">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+      <div className="flex items-center mb-6">
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">
           {t('dashboard.timeline.title')}
         </h2>
       </div>

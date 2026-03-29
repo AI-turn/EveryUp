@@ -34,7 +34,7 @@ export const ServiceCard = memo(function ServiceCard({ service, onClick }: Servi
             <IconHealthCheck size={20} className="text-primary" />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-lg truncate text-slate-900 dark:text-white">{service.name}</h3>
+            <h3 className="font-bold text-base truncate text-slate-900 dark:text-white">{service.name}</h3>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -51,11 +51,11 @@ export const ServiceCard = memo(function ServiceCard({ service, onClick }: Servi
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
           <p className="text-xs text-slate-500 dark:text-text-muted-dark uppercase font-semibold tracking-wide">{t('healthcheck.detail.metrics.responseTime')}</p>
-          <p className="text-base font-bold tabular-nums text-slate-900 dark:text-white">{service.latency}</p>
+          <p className="text-sm font-bold tabular-nums text-slate-900 dark:text-white">{service.latency}</p>
         </div>
         <div>
           <p className="text-xs text-slate-500 dark:text-text-muted-dark uppercase font-semibold tracking-wide">{t('healthcheck.detail.uptime')}</p>
-          <p className="text-base font-bold tabular-nums text-slate-900 dark:text-white">{service.uptime}</p>
+          <p className="text-sm font-bold tabular-nums text-slate-900 dark:text-white">{service.uptime}</p>
         </div>
       </div>
 

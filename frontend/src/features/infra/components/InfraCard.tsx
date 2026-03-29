@@ -40,7 +40,7 @@ export const InfraCard = memo(function InfraCard({ resource, onClick }: InfraCar
                         />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg text-slate-900 dark:text-white">
+                        <h3 className="font-bold text-base text-slate-900 dark:text-white">
                             {resource.name}
                         </h3>
                     </div>
@@ -57,7 +57,7 @@ export const InfraCard = memo(function InfraCard({ resource, onClick }: InfraCar
 
             {/* Footer: IP + badges */}
             <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-ui-border-dark/50">
-                <span className="text-xs text-slate-500 dark:text-text-muted-dark font-mono min-w-0 truncate">
+                <span className="text-sm text-slate-500 dark:text-text-muted-dark font-mono min-w-0 truncate">
                     {resource.ip}
                     {resource.isRemote && resource.sshPort ? `:${resource.sshPort}` : ''}
                 </span>

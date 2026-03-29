@@ -32,7 +32,7 @@ export const LogServiceCard = memo(function LogServiceCard({ service, onClick }:
           <IconLogs size={20} className="text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-lg truncate text-slate-900 dark:text-white">{service.name}</h3>
+          <h3 className="font-bold text-base truncate text-slate-900 dark:text-white">{service.name}</h3>
         </div>
         <StatusBadge status={service.status} />
       </div>

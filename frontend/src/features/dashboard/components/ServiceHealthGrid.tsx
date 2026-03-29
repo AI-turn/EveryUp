@@ -53,9 +53,9 @@ export function ServiceHealthGrid({
     <div>
       {/* Header */}
       {!hideHeader && (
-        <div className="flex items-center justify-between mb-6 pt-2">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               {t('dashboard.healthCheck.title')}
             </h2>
             {!loading && services && services.length > 0 && (
@@ -129,7 +129,7 @@ export function ServiceHealthGrid({
         </div>
       )}
 
-      {!bare && <div className="mt-6 mx-6 h-px bg-slate-200 dark:bg-ui-border-dark" />}
+      {!bare && <div className="mt-8 mx-6 h-px bg-slate-200 dark:bg-ui-border-dark" />}
     </div>
   );
 }
